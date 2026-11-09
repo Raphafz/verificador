@@ -19,6 +19,8 @@ Projeto desenvolvido por **Raphael Ferraz** em parceria com **[castrox-dev](http
 
 > ⚠️ **Uso comercial não autorizado.** Este projeto **não autoriza** o uso para comercialização — é proibido vender, sublicenciar, hospedar como serviço pago ou usar este código/produto com fins comerciais sem autorização expressa dos autores.
 
+Licença: [PolyForm Noncommercial 1.0.0](LICENSE) — uso permitido apenas para fins não comerciais.
+
 ---
 
 ## Objetivo
