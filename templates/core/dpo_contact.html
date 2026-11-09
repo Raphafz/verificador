@@ -1,0 +1,44 @@
+{% extends 'docs_base.html' %}
+
+{% block title %}Encarregado de dados (DPO) - RM Systems{% endblock %}
+{% block docs_nav_dpo %} is-active{% endblock %}
+{% block docs_icon %}fa-user-shield{% endblock %}
+{% block docs_title %}Encarregado de Proteção de Dados{% endblock %}
+{% block docs_lead %}Canal oficial para direitos LGPD, incidentes de privacidade e dúvidas sobre tratamento de dados.{% endblock %}
+
+{% block docs_body %}
+<div class="docs-callout">
+  <h2><i class="fas fa-shield-alt" aria-hidden="true"></i> Contato do encarregado</h2>
+  <p>Para exercer direitos previstos na LGPD, reportar incidentes ou esclarecer dúvidas sobre privacidade, utilize o e-mail abaixo.</p>
+</div>
+
+<section class="docs-section">
+  <div class="docs-contact-box">
+    <p class="mb-0"><strong>E-mail do DPO:</strong>
+      <a href="mailto:{{ site_dpo_email }}">{{ site_dpo_email }}</a>
+    </p>
+    <p class="mb-0"><strong>Suporte técnico:</strong>
+      <a href="mailto:{{ site_support_email }}">{{ site_support_email }}</a>
+    </p>
+  </div>
+  <p class="docs-form-hint" style="margin-top: 1rem;">Prazo de resposta: até <strong>15 dias úteis</strong>, conforme art. 18 da LGPD.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">Documentos relacionados</h2>
+  <div class="docs-pills">
+    <a href="{% url 'lgpd' %}" class="docs-pill"><i class="fas fa-gavel" aria-hidden="true"></i> Compliance LGPD</a>
+    <a href="{% url 'politica_privacidade' %}" class="docs-pill"><i class="fas fa-shield-alt" aria-hidden="true"></i> Privacidade</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'my_data_portal' %}" class="docs-pill"><i class="fas fa-user-lock" aria-hidden="true"></i> Portal do titular</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block docs_actions_extra %}
+<a href="{% url 'politica_privacidade' %}" class="docs-btn">Privacidade</a>
+<a href="mailto:{{ site_dpo_email }}" class="docs-btn docs-btn--primary">
+  <i class="fas fa-envelope" aria-hidden="true"></i> Enviar e-mail
+</a>
+{% endblock %}

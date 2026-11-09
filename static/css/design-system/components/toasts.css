@@ -1,0 +1,47 @@
+/**
+ * RM Systems DS — Toasts e mensagens Django
+ */
+
+.rm-ui-v2 .messages {
+  padding: 0 var(--ds-page-gutter);
+  margin-bottom: var(--ds-space-4);
+}
+
+.rm-ui-v2 .messages .message,
+.rm-ui-v2 .messages .alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: var(--ds-space-2);
+  border-radius: var(--ds-radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  animation: dsFadeUp var(--ds-duration-normal) var(--ds-ease-out) both;
+}
+
+.rm-ui-v2 .messages .success,
+.rm-ui-v2 .messages .alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--ds-status-online);
+}
+
+.rm-ui-v2 .messages .error,
+.rm-ui-v2 .messages .alert-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--ds-status-offline);
+}
+
+.rm-ui-v2 .messages .warning,
+.rm-ui-v2 .messages .alert-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: var(--ds-status-degraded);
+}
+
+.rm-ui-v2 .messages .info,
+.rm-ui-v2 .messages .alert-info {
+  background: rgba(0, 210, 255, 0.08);
+  border-color: rgba(0, 210, 255, 0.2);
+  color: var(--ds-text-accent);
+}

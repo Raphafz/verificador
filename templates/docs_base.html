@@ -1,0 +1,71 @@
+{% extends ui_shell %}
+{% load static %}
+
+{% block body_class %}docs-page-layout{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/docs-pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="docs-page">
+  <div class="docs-page__grid">
+    <aside class="docs-sidebar" aria-label="Navegação da central de informações">
+      <div class="docs-sidebar__brand">
+        <img src="{% static 'img/letreiro-rm.png' %}" alt="RM Systems" class="docs-sidebar__logo" width="168" height="34">
+      </div>
+      <nav class="docs-sidebar__nav">
+        <p class="docs-sidebar__label">Legal</p>
+        <a href="{% url 'termos_uso' %}" class="docs-sidebar__link{% block docs_nav_termos %}{% endblock %}">
+          <i class="fas fa-file-contract" aria-hidden="true"></i> Termos de Uso
+        </a>
+        <a href="{% url 'politica_privacidade' %}" class="docs-sidebar__link{% block docs_nav_privacidade %}{% endblock %}">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i> Privacidade
+        </a>
+        <a href="{% url 'politica_cookies' %}" class="docs-sidebar__link{% block docs_nav_cookies %}{% endblock %}">
+          <i class="fas fa-cookie-bite" aria-hidden="true"></i> Cookies
+        </a>
+        <a href="{% url 'lgpd' %}" class="docs-sidebar__link{% block docs_nav_lgpd %}{% endblock %}">
+          <i class="fas fa-gavel" aria-hidden="true"></i> LGPD
+        </a>
+        <a href="{% url 'dpo_contact' %}" class="docs-sidebar__link{% block docs_nav_dpo %}{% endblock %}">
+          <i class="fas fa-user-shield" aria-hidden="true"></i> Encarregado (DPO)
+        </a>
+        <p class="docs-sidebar__label">Suporte</p>
+        <a href="{% url 'faq' %}" class="docs-sidebar__link{% block docs_nav_faq %}{% endblock %}">
+          <i class="fas fa-question-circle" aria-hidden="true"></i> FAQ
+        </a>
+        <a href="{% url 'ajuda' %}" class="docs-sidebar__link{% block docs_nav_ajuda %}{% endblock %}">
+          <i class="fas fa-life-ring" aria-hidden="true"></i> Ajuda
+        </a>
+      </nav>
+    </aside>
+
+    <div class="docs-main">
+      <header class="docs-hero">
+        <div class="docs-hero__icon" aria-hidden="true">
+          <i class="fas {% block docs_icon %}fa-circle-info{% endblock %}"></i>
+        </div>
+        <div>
+          <h1>{% block docs_title %}Documentação{% endblock %}</h1>
+          {% block docs_lead %}{% endblock %}
+          {% block docs_meta %}{% endblock %}
+        </div>
+      </header>
+
+      <article class="docs-article">
+        {% block docs_body %}{% endblock %}
+
+        <footer class="docs-actions">
+          <div class="docs-actions__group">
+            <a href="{% url 'home_redirect' %}" class="docs-btn docs-btn--ghost">
+              <i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar
+            </a>
+            {% block docs_actions_extra %}{% endblock %}
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,170 @@
+/**
+ * RM Systems — Alertas WhatsApp / NOC console
+ * Escopo: .alerts-console (v1 + v2)
+ */
+
+.alerts-console .wa-line-card {
+  border: 1px solid var(--ds-border-default, var(--rm-border-surface, var(--rm-card-border)));
+  border-radius: var(--ds-radius-lg, 1rem);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: var(--ds-bg-elevated, var(--rm-card-bg));
+  box-shadow: var(--ds-shadow-xs, var(--rm-shadow-sm));
+  transition:
+    border-color var(--ds-duration-normal, 220ms) ease,
+    box-shadow var(--ds-duration-normal, 220ms) ease;
+}
+
+.alerts-console .wa-line-card.is-default {
+  border-color: var(--ds-brand-cyan, var(--rm-primary-light, #00d2ff));
+  box-shadow: var(--ds-shadow-glow-sm, 0 0 0 1px rgba(0, 210, 255, 0.25));
+}
+
+.alerts-console .wa-status-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--ds-radius-pill, 999px);
+  border: 1px solid transparent;
+}
+
+.alerts-console .wa-status-pill.connected {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--ds-status-online, #10b981);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.alerts-console .wa-status-pill.qr,
+.alerts-console .wa-status-pill.pairing,
+.alerts-console .wa-status-pill.connecting {
+  background: rgba(0, 210, 255, 0.12);
+  color: var(--ds-brand-cyan, #00d2ff);
+  border-color: rgba(0, 210, 255, 0.25);
+}
+
+.alerts-console .wa-status-pill.disconnected,
+.alerts-console .wa-status-pill.error,
+.alerts-console .wa-status-pill.worker_offline {
+  background: var(--ds-bg-muted, rgba(148, 163, 184, 0.12));
+  color: var(--ds-text-secondary, var(--rm-text-secondary));
+  border-color: var(--ds-border-subtle, transparent);
+}
+
+.alerts-console .wa-qr-box {
+  background: var(--ds-bg-muted, var(--rm-bg-tertiary, #eef1f4));
+  border: 1px solid var(--ds-border-default, var(--rm-border-surface));
+  border-radius: var(--ds-radius-md, 10px);
+  padding: 0.75rem;
+  display: inline-block;
+  min-width: 220px;
+  min-height: 220px;
+}
+
+[data-theme="dark"] .alerts-console .wa-qr-box {
+  background: var(--ds-bg-muted, #132238);
+}
+
+.alerts-console .wa-qr-box img {
+  width: 220px;
+  height: 220px;
+  display: block;
+  border-radius: var(--ds-radius-sm, 6px);
+}
+
+.alerts-console .wa-qr-placeholder {
+  color: var(--ds-text-muted, #64748b);
+  font-size: 0.875rem;
+  padding: 5rem 1rem;
+}
+
+.alerts-console .wa-pairing-code {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  font-family: ui-monospace, monospace;
+  color: var(--ds-brand-cyan, #00d2ff);
+}
+
+.alerts-console .wa-login-option {
+  border: 1px solid var(--ds-border-default, var(--rm-border-surface));
+  border-radius: var(--ds-radius-md, 10px);
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.4rem;
+  transition: border-color var(--ds-duration-fast, 140ms), background var(--ds-duration-fast, 140ms);
+}
+
+.alerts-console .wa-login-option:has(input:checked) {
+  border-color: var(--ds-brand-cyan, var(--rm-primary-light));
+  background: rgba(0, 210, 255, 0.06);
+}
+
+.alerts-console .wa-phone-wrap {
+  display: none;
+}
+
+.alerts-console .wa-phone-wrap.is-visible {
+  display: block;
+}
+
+.alerts-console .wa-filter-rules.is-dimmed {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.alerts-console details summary.wa-edit-toggle {
+  cursor: pointer;
+  list-style: none;
+}
+
+.alerts-console details summary.wa-edit-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.alerts-console .saas-panel,
+.alerts-console .saas-form-card {
+  background: var(--ds-bg-elevated, var(--rm-card-bg));
+  border: 1px solid var(--ds-border-default, var(--rm-card-border));
+  border-radius: var(--ds-radius-lg, 1rem);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--ds-shadow-xs, var(--rm-shadow-sm));
+}
+
+.alerts-console code {
+  background: var(--ds-bg-muted, var(--rm-bg-tertiary));
+  border: 1px solid var(--ds-border-subtle, var(--rm-border-surface));
+  border-radius: var(--ds-radius-xs, 4px);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--ds-text-primary, var(--rm-text-primary));
+}
+
+.alerts-console #wa-worker-banner {
+  border-radius: var(--ds-radius-md, 10px);
+}
+
+.alerts-console .form-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ds-text-secondary, var(--rm-text-secondary));
+}
+
+.alerts-console .form-control,
+.alerts-console .form-select {
+  background: var(--ds-bg-base, var(--rm-bg-primary));
+  border-color: var(--ds-border-default, var(--rm-border-input));
+  border-radius: var(--ds-radius-md, 8px);
+  color: var(--ds-text-primary, var(--rm-text-primary));
+}
+
+[data-theme="dark"] .alerts-console .form-control,
+[data-theme="dark"] .alerts-console .form-select {
+  background: var(--rm-input-bg, var(--ds-bg-muted));
+}
+
+.alerts-console .form-control:focus,
+.alerts-console .form-select:focus {
+  border-color: var(--ds-brand-cyan, #00d2ff);
+  box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.12);
+}

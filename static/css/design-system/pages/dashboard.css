@@ -1,0 +1,73 @@
+/**
+ * RM Systems DS — Dashboard page enhancements (v2 sobre rm-dashboard.css)
+ */
+
+.rm-ui-v2 .rm-dash__stat {
+  border-radius: var(--ds-radius-lg);
+  border-color: var(--ds-border-default);
+  background: var(--ds-bg-elevated);
+  box-shadow: var(--ds-shadow-xs);
+  transition:
+    transform var(--ds-duration-fast) var(--ds-ease-out),
+    box-shadow var(--ds-duration-normal) var(--ds-ease-out),
+    border-color var(--ds-duration-normal);
+}
+
+.rm-ui-v2 .rm-dash__stat:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ds-shadow-md);
+  border-color: var(--ds-border-accent);
+}
+
+.rm-ui-v2 .rm-dash__stat-value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.rm-ui-v2 .rm-dash__stat-icon {
+  background: rgba(0, 210, 255, 0.08);
+  border: 1px solid rgba(0, 210, 255, 0.15);
+  border-radius: var(--ds-radius-md);
+}
+
+.rm-ui-v2 .rm-dash__panel {
+  border-radius: var(--ds-radius-lg);
+  border-color: var(--ds-border-default);
+  box-shadow: var(--ds-shadow-xs);
+}
+
+.rm-ui-v2 .rm-dash__hero {
+  border-bottom-color: var(--ds-border-subtle);
+}
+
+.rm-ui-v2 .rm-dash__status {
+  border-radius: var(--ds-radius-md);
+}
+
+.rm-ui-v2 .rm-dash__activity-item {
+  border-radius: var(--ds-radius-md);
+  transition: background var(--ds-transition-fast);
+}
+
+.rm-ui-v2 .rm-dash__activity-item:hover {
+  background: var(--ds-bg-muted);
+}
+
+.rm-ui-v2 .company-dash__badge {
+  display: inline-flex;
+  margin-bottom: var(--ds-space-2);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ds-text-accent);
+  background: rgba(0, 210, 255, 0.1);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  border-radius: var(--ds-radius-pill);
+}
+
+/* Chart.js dark theme helpers */
+.rm-ui-v2 canvas.chart-dark-ready {
+  border-radius: var(--ds-radius-md);
+}

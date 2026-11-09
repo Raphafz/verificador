@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Página não encontrada - 404{% endblock %}
+
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-actions">
+            <a href="{% url 'rm:admin_dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-home me-2"></i>
+                Ir para o Dashboard
+            </a>
+            <button onclick="history.back()" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Voltar
+            </button>
+        </div>
+        
+        <div class="error-help">
+            <h6>O que você pode fazer:</h6>
+            <ul>
+                <li>Verificar se o endereço está correto</li>
+                <li>Usar o menu de navegação</li>
+                <li>Voltar à página anterior</li>
+                <li>Contatar o suporte se o problema persistir</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.error-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+
+.error-code {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--rm-primary, #003366);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.error-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--rm-text-primary, #1f2937);
+    margin-bottom: 0.5rem;
+}
+
+.error-message {
+    font-size: 1rem;
+    color: var(--rm-text-secondary, #6b7280);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.error-help {
+    text-align: left;
+    background: var(--rm-card-bg, #f8fafc);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--rm-primary, #003366);
+    margin-top: 1rem;
+}
+
+.error-help h6 {
+    color: var(--rm-text-primary, #1f2937);
+    margin-bottom: 1rem;
+}
+
+.error-help ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: var(--rm-text-secondary, #6b7280);
+}
+
+.error-help li {
+    margin-bottom: 0.5rem;
+}
+
+/* Dark mode */
+[data-theme="dark"] .error-help {
+    background: var(--rm-card-bg, #2d3748);
+    color: var(--rm-text-primary, #e2e8f0);
+}
+
+[data-theme="dark"] .error-help h6 {
+    color: var(--rm-text-primary, #e2e8f0);
+}
+
+[data-theme="dark"] .error-help ul {
+    color: var(--rm-text-secondary, #a0aec0);
+}
+
+@media (max-width: 768px) {
+    .error-code {
+        font-size: 4rem;
+    }
+    
+    .error-title {
+        font-size: 1.5rem;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .error-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+{% endblock %}

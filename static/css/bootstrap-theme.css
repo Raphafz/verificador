@@ -1,0 +1,273 @@
+/**
+ * Overrides Bootstrap — carregar APÓS bootstrap.min.css no base.html
+ * Alinha variáveis e superfícies ao design system RM (especialmente dark mode).
+ */
+
+:root,
+[data-theme="light"] {
+  --bs-primary: #003366;
+  --bs-primary-rgb: 0, 51, 102;
+  --bs-link-color: #00d2ff;
+  --bs-link-hover-color: #00a3cc;
+  --bs-success: #28a745;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-info: #17a2b8;
+}
+
+[data-theme="dark"] {
+  --bs-body-bg: var(--rm-bg-primary);
+  --bs-body-color: var(--rm-text-primary);
+  --bs-emphasis-color: var(--rm-text-primary);
+  --bs-secondary-color: var(--rm-text-secondary);
+  --bs-tertiary-color: var(--rm-text-tertiary);
+  --bs-border-color: var(--rm-border-primary);
+  --bs-card-bg: var(--rm-card-bg);
+  --bs-card-color: var(--rm-text-primary);
+  --bs-card-border-color: var(--rm-card-border, var(--rm-border-primary));
+  --bs-list-group-bg: var(--rm-card-bg);
+  --bs-list-group-color: var(--rm-text-primary);
+  --bs-list-group-border-color: var(--rm-border-primary);
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--rm-text-primary);
+  --bs-table-border-color: var(--rm-border-primary);
+  --bs-table-striped-bg: var(--rm-bg-secondary);
+  --bs-table-hover-bg: var(--rm-bg-secondary);
+  --bs-table-hover-color: var(--rm-text-primary);
+  --bs-form-control-bg: var(--rm-input-bg, var(--rm-bg-secondary));
+  --bs-form-control-color: var(--rm-text-primary);
+  --bs-form-control-border-color: var(--rm-input-border, var(--rm-border-primary));
+  --bs-form-select-bg: var(--rm-input-bg, var(--rm-bg-secondary));
+  --bs-form-select-color: var(--rm-text-primary);
+  --bs-form-select-border-color: var(--rm-input-border, var(--rm-border-primary));
+  --bs-secondary-bg: var(--rm-bg-secondary);
+  --bs-secondary-color: var(--rm-text-secondary);
+  --bs-pagination-bg: var(--rm-card-bg);
+  --bs-pagination-color: var(--rm-text-primary);
+  --bs-pagination-border-color: var(--rm-border-primary);
+  --bs-pagination-hover-bg: var(--rm-bg-secondary);
+  --bs-pagination-hover-color: var(--rm-text-primary);
+  --bs-pagination-active-bg: var(--rm-primary);
+  --bs-pagination-active-border-color: var(--rm-primary);
+}
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .card-body {
+  background-color: var(--rm-card-bg) !important;
+  color: var(--rm-text-primary) !important;
+  border-color: var(--rm-card-border, var(--rm-border-primary)) !important;
+}
+
+[data-theme="dark"] .card-title {
+  color: var(--rm-text-primary) !important;
+}
+
+[data-theme="dark"] .card-text {
+  color: var(--rm-text-secondary) !important;
+}
+
+[data-theme="dark"] .list-group-item {
+  background-color: var(--rm-card-bg) !important;
+  color: var(--rm-text-primary) !important;
+  border-color: var(--rm-border-primary) !important;
+}
+
+[data-theme="dark"] .content-card {
+  background: var(--rm-card-bg) !important;
+  color: var(--rm-text-primary) !important;
+  border-color: var(--rm-card-border, var(--rm-border-primary)) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: var(--rm-input-bg, var(--rm-bg-secondary)) !important;
+  color: var(--rm-text-primary) !important;
+  border-color: var(--rm-input-border, var(--rm-border-primary)) !important;
+}
+
+[data-theme="dark"] .form-label {
+  color: var(--rm-text-secondary);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .form-select option {
+  background-color: var(--rm-bg-secondary);
+  color: var(--rm-text-primary);
+}
+
+[data-theme="dark"] .page-link {
+  background-color: var(--rm-card-bg);
+  color: var(--rm-text-primary);
+  border-color: var(--rm-border-primary);
+}
+
+[data-theme="dark"] .page-item.active .page-link {
+  background-color: var(--rm-primary);
+  border-color: var(--rm-primary);
+  color: #fff;
+}
+
+[data-theme="dark"] .page-link:hover {
+  background-color: var(--rm-bg-secondary);
+  color: var(--rm-text-primary);
+}
+
+[data-theme="dark"] .btn-secondary {
+  background-color: var(--rm-bg-tertiary, var(--rm-gray-700));
+  border-color: var(--rm-border-primary);
+  color: var(--rm-text-primary);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: var(--rm-gray-600, #475569);
+  color: var(--rm-text-primary);
+}
+
+[data-theme="dark"] .btn-outline-primary {
+  color: var(--brand-cyan, #00d2ff);
+  border-color: rgba(0, 210, 255, 0.45);
+  background-color: rgba(0, 210, 255, 0.1);
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+  background-color: var(--rm-primary);
+  border-color: var(--rm-primary);
+  color: #fff;
+}
+
+[data-theme="dark"] .btn-outline-success {
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.45);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+[data-theme="dark"] .btn-outline-success:hover {
+  background-color: var(--rm-success);
+  border-color: var(--rm-success);
+  color: #fff;
+}
+
+[data-theme="dark"] .btn-outline-warning {
+  color: #fcd34d;
+  border-color: rgba(252, 211, 77, 0.45);
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+[data-theme="dark"] .btn-outline-warning:hover {
+  background-color: var(--rm-warning);
+  border-color: var(--rm-warning);
+  color: #fff;
+}
+
+[data-theme="dark"] .btn-outline-info {
+  color: #7dd3fc;
+  border-color: rgba(125, 211, 252, 0.45);
+  background-color: rgba(14, 165, 233, 0.1);
+}
+
+[data-theme="dark"] .btn-outline-info:hover {
+  background-color: var(--rm-info);
+  border-color: var(--rm-info);
+  color: #fff;
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+  color: var(--rm-text-secondary);
+  border-color: var(--rm-border-primary);
+  background-color: transparent;
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+  background-color: var(--rm-bg-secondary);
+  color: var(--rm-text-primary);
+}
+
+[data-theme="dark"] .btn-outline-danger {
+  color: #fca5a5;
+  border-color: rgba(252, 165, 165, 0.45);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+[data-theme="dark"] .btn-outline-danger:hover {
+  background-color: var(--rm-error, #dc2626);
+  border-color: var(--rm-error, #dc2626);
+  color: #fff;
+}
+
+[data-theme="dark"] .input-group-text {
+  background-color: var(--rm-bg-secondary);
+  color: var(--rm-text-secondary);
+  border-color: var(--rm-input-border, var(--rm-border-primary));
+}
+
+[data-theme="dark"] .modal-content {
+  background-color: var(--rm-card-bg);
+  color: var(--rm-text-primary);
+  border-color: var(--rm-card-border, var(--rm-border-primary));
+}
+
+[data-theme="dark"] .modal-header {
+  border-bottom-color: var(--rm-border-primary);
+}
+
+[data-theme="dark"] .modal-footer {
+  border-top-color: var(--rm-border-primary);
+  background-color: var(--rm-card-bg);
+}
+
+/* Menu usuário — evita sombra/estilo padrão Bootstrap duplicado */
+.topbar-user-menu__dropdown.dropdown-menu {
+  --bs-dropdown-bg: var(--rm-dropdown-bg);
+  --bs-dropdown-border-color: var(--rm-dropdown-border);
+  --bs-dropdown-box-shadow: var(--rm-dropdown-shadow);
+  --bs-dropdown-link-hover-bg: rgba(0, 210, 255, 0.1);
+  --bs-dropdown-link-hover-color: var(--rm-brand-cyan, #00d2ff);
+  --bs-dropdown-link-active-bg: rgba(0, 210, 255, 0.14);
+  --bs-dropdown-link-active-color: var(--rm-brand-cyan, #00d2ff);
+}
+
+.topbar-user-menu__dropdown .dropdown-item {
+  color: var(--rm-text-primary);
+}
+
+.topbar-user-menu__dropdown .dropdown-item:hover,
+.topbar-user-menu__dropdown .dropdown-item:focus {
+  color: var(--rm-brand-cyan, #00d2ff) !important;
+  background-color: rgba(0, 210, 255, 0.1) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+/* Painéis SaaS — texto legível no dark mode */
+[data-theme="dark"] .saas-panel,
+[data-theme="dark"] .saas-form-card,
+[data-theme="dark"] .ds-card {
+  color: var(--rm-text-primary, #e8eef7);
+}
+
+[data-theme="dark"] .saas-panel strong,
+[data-theme="dark"] .saas-panel .small,
+[data-theme="dark"] .saas-panel .small > span:not(.text-danger):not(.text-warning) {
+  color: inherit;
+}
+
+[data-theme="dark"] .saas-panel .text-muted,
+[data-theme="dark"] .saas-panel .rm-quota-panel__plan-muted,
+[data-theme="dark"] .saas-panel .rm-quota-panel__label {
+  color: var(--rm-text-secondary, #94a3b8) !important;
+}
+
+[data-theme="dark"] .saas-panel .rm-quota-panel__value,
+[data-theme="dark"] .saas-panel .rm-quota-panel__plan-title {
+  color: var(--rm-text-primary, #e8eef7) !important;
+}
+
+[data-theme="dark"] .saas-panel .badge.bg-secondary {
+  background-color: rgba(148, 163, 184, 0.2) !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .progress {
+  background-color: rgba(255, 255, 255, 0.1);
+}

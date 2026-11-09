@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  --color-brand-deep: #003366;
+  --color-brand-cyan: #00d2ff;
+  --color-brand-navy: #003366;
+  --color-brand-anthracite: #2c3e50;
+
+  --color-background: #ffffff;
+  --color-foreground: #2c3e50;
+  --color-card: #ffffff;
+  --color-card-foreground: #2c3e50;
+  --color-muted: #eef1f4;
+  --color-muted-foreground: #64748b;
+  --color-border: #dee2e6;
+  --color-primary: #003366;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #00d2ff;
+  --color-accent-foreground: #003366;
+  --color-destructive: #ef4444;
+  --color-ring: #00d2ff;
+  --color-success: #10b981;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-xs: 0 1px 2px rgba(0, 51, 102, 0.06);
+  --shadow-sm: 0 2px 8px rgba(0, 51, 102, 0.08);
+  --shadow-md: 0 8px 24px rgba(0, 51, 102, 0.12);
+  --shadow-lg: 0 16px 40px rgba(0, 51, 102, 0.14);
+  --shadow-glow: 0 0 0 1px rgba(0, 210, 255, 0.25), 0 4px 20px rgba(0, 210, 255, 0.12);
+}
+
+.dark,
+[data-theme="dark"] {
+  --color-background: #070d18;
+  --color-foreground: #e8eef7;
+  --color-card: #0c1526;
+  --color-card-foreground: #e8eef7;
+  --color-muted: #132238;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #424242;
+  --color-primary: #00d2ff;
+  --color-primary-foreground: #003366;
+  --color-accent: #003366;
+  --color-accent-foreground: #00d2ff;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .ds-mesh-bg {
+    background:
+      radial-gradient(ellipse 80% 50% at 15% -10%, rgba(0, 210, 255, 0.12), transparent 55%),
+      radial-gradient(ellipse 50% 35% at 95% 0%, rgba(0, 51, 102, 0.08), transparent 50%),
+      var(--color-background);
+  }
+
+  .dark .ds-mesh-bg,
+  [data-theme="dark"] .ds-mesh-bg {
+    background:
+      radial-gradient(ellipse 90% 55% at 10% -15%, rgba(0, 210, 255, 0.14), transparent 55%),
+      radial-gradient(ellipse 55% 40% at 98% 0%, rgba(0, 51, 102, 0.35), transparent 50%),
+      var(--color-background);
+  }
+
+  .ds-gradient-brand {
+    background: linear-gradient(135deg, #003366 0%, #004d80 42%, #006699 100%);
+  }
+
+  .dark .ds-gradient-brand,
+  [data-theme="dark"] .ds-gradient-brand {
+    background: linear-gradient(135deg, #003366 0%, #0a2540 45%, #004d66 100%);
+  }
+
+  .ds-glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .dark .ds-glass,
+  [data-theme="dark"] .ds-glass {
+    background: rgba(7, 13, 24, 0.88);
+  }
+
+  .ds-fade-up {
+    animation: dsFadeUp 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes dsFadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ds-pulse-dot {
+    animation: dsPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes dsPulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+}

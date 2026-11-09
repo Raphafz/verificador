@@ -1,0 +1,269 @@
+/* ========================================
+   ESTILOS GLOBAIS - RM SYSTEMS SAAS
+   ======================================== */
+
+/* === RESPONSIVIDADE GLOBAL === */
+.main-container {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  min-height: calc(100vh - 76px);
+}
+
+/* === DARK MODE GLOBAL === */
+body {
+  background-color: var(--rm-bg-primary);
+  color: var(--rm-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* === TOPBAR RESPONSIVA === */
+.topbar {
+  background: var(--rm-gradient-primary);
+  border-bottom: 1px solid var(--rm-primary-dark);
+  box-shadow: var(--rm-header-shadow);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.topbar h1 {
+  color: var(--rm-white);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.topbar nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.topbar nav a:not(.dropdown-item) {
+  color: var(--rm-white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.topbar nav a:not(.dropdown-item):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--rm-white);
+}
+
+/* === FOOTER RESPONSIVO === */
+.footer {
+  background: var(--rm-footer-bg);
+  border-top: 1px solid var(--rm-footer-border);
+  color: var(--rm-footer-text);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.footer a,
+.footer a:link,
+.footer a:visited {
+  color: var(--rm-footer-text) !important;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.footer a:hover,
+.footer a:focus,
+.footer a:active {
+  color: var(--rm-footer-text) !important;
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .footer,
+[data-theme="dark"] .footer__copyright,
+[data-theme="dark"] .footer__meta {
+  color: var(--rm-footer-text, #e8eef7);
+}
+
+[data-theme="dark"] .footer a,
+[data-theme="dark"] .footer a:link,
+[data-theme="dark"] .footer a:visited {
+  color: var(--rm-footer-text, #e8eef7) !important;
+}
+
+[data-theme="dark"] .footer a:hover,
+[data-theme="dark"] .footer a:focus,
+[data-theme="dark"] .footer a:active {
+  color: var(--rm-brand-cyan, #00d2ff) !important;
+  text-decoration: none;
+}
+
+/* === MESSAGES RESPONSIVAS === */
+.messages {
+  padding: 1rem 2rem;
+  margin: 0;
+}
+
+.message {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-card-border);
+  color: var(--rm-text-primary);
+}
+
+.message.success {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--rm-success);
+  color: var(--rm-success);
+}
+
+.message.error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--rm-error);
+  color: var(--rm-error);
+}
+
+.message.warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--rm-warning);
+  color: var(--rm-warning);
+}
+
+/* === RESPONSIVIDADE MOBILE === */
+@media (max-width: 768px) {
+  /* Garantir scroll suave no mobile - REGRAS COM MÁXIMA ESPECIFICIDADE */
+  html,
+  html body,
+  body,
+  body.no-scroll {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+  }
+  
+  /* Remover bloqueio de scroll mesmo com classe no-scroll */
+  body.no-scroll {
+    overflow: auto !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    height: auto !important;
+  }
+  
+  .main-container {
+    min-height: calc(100vh - 76px);
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+    position: relative !important;
+    height: auto !important;
+  }
+  
+  .topbar {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .topbar nav {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .topbar nav a {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .footer {
+    padding: 1rem;
+    font-size: 0.8rem;
+    position: relative;
+  }
+  
+  .messages {
+    padding: 1rem;
+  }
+  
+  /* Garantir que cards e containers permitam scroll */
+  .card,
+  .container,
+  .main-content {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+}
+
+@media (max-width: 480px) {
+  /* MOBILE PEQUENO: Scroll ainda mais suave - REGRAS COM MÁXIMA ESPECIFICIDADE */
+  html,
+  html body,
+  body,
+  body.no-scroll {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+  }
+  
+  /* Remover bloqueio de scroll mesmo com classe no-scroll */
+  body.no-scroll {
+    overflow: auto !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    height: auto !important;
+  }
+  
+  .main-container {
+    min-height: calc(100vh - 76px);
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+    padding: 0.5rem;
+    position: relative !important;
+    height: auto !important;
+  }
+  
+  .topbar h1 {
+    font-size: 1rem;
+  }
+  
+  .topbar nav a {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Garantir que cards e containers permitam scroll */
+  .card,
+  .container,
+  .main-content {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    max-height: none;
+  }
+}

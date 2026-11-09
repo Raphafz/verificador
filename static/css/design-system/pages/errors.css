@@ -1,0 +1,182 @@
+/**
+ * Páginas de erro HTTP — CSP-safe, dark mode explícito.
+ */
+body.error-page {
+  overflow: auto;
+}
+
+body.error-page .error-shell {
+  position: relative;
+  min-height: calc(100vh - var(--rm-topbar-height, 76px));
+  min-height: calc(100dvh - var(--rm-topbar-height, 76px));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0, 210, 255, 0.12), transparent),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(0, 51, 102, 0.08), transparent),
+    #f0f4f8;
+}
+
+[data-theme="dark"] body.error-page .error-shell,
+html.dark-theme body.error-page .error-shell {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0, 210, 255, 0.1), transparent),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(0, 51, 102, 0.35), transparent),
+    #070d18;
+}
+
+.error-card {
+  width: 100%;
+  max-width: 560px;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 51, 102, 0.1);
+  background: #ffffff;
+  box-shadow: 0 20px 50px rgba(0, 51, 102, 0.08);
+  text-align: center;
+  color: #2c3e50;
+}
+
+[data-theme="dark"] .error-card,
+html.dark-theme .error-card {
+  background: #0f1729;
+  border-color: rgba(0, 210, 255, 0.14);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  color: #e2e8f0;
+}
+
+.error-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+[data-theme="dark"] .error-badge,
+html.dark-theme .error-badge {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.error-code {
+  margin: 0 0 0.25rem;
+  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, #003366, #00d2ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.error-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .error-title,
+html.dark-theme .error-title {
+  color: #f1f5f9;
+}
+
+.error-message {
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+[data-theme="dark"] .error-message,
+html.dark-theme .error-message {
+  color: #94a3b8;
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.error-actions .btn {
+  min-width: 160px;
+}
+
+.error-help {
+  text-align: left;
+  padding: 1.25rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="dark"] .error-help,
+html.dark-theme .error-help {
+  background: rgba(15, 23, 42, 0.75);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.error-help h6 {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #334155;
+}
+
+[data-theme="dark"] .error-help h6,
+html.dark-theme .error-help h6 {
+  color: #e2e8f0;
+}
+
+.error-help ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #64748b;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+[data-theme="dark"] .error-help ul,
+html.dark-theme .error-help ul {
+  color: #94a3b8;
+}
+
+.error-help li + li {
+  margin-top: 0.35rem;
+}
+
+.error-help + .error-help {
+  margin-top: 1rem;
+}
+
+@media (max-width: 576px) {
+  .error-card {
+    padding: 1.5rem;
+  }
+
+  .error-actions {
+    flex-direction: column;
+  }
+
+  .error-actions .btn {
+    width: 100%;
+  }
+}

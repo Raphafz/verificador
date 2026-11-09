@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Verificação MFA{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 420px; margin: 2rem auto;">
+  <h1>Verificação em duas etapas</h1>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}"/>
+    <label>Código do aplicativo</label>
+    <input type="text" name="token" class="form-control" inputmode="numeric" autocomplete="one-time-code"/>
+    <label style="margin-top:1rem;">Ou código de backup</label>
+    <input type="text" name="backup_code" class="form-control"/>
+    <label style="display:block;margin-top:1rem;">
+      <input type="checkbox" name="remember" value="1"/> Lembrar este dispositivo por 30 dias
+    </label>
+    <button type="submit" class="btn btn-primary" style="margin-top:1rem;">Verificar</button>
+  </form>
+  <p style="margin-top:1rem;"><a href="{% url 'rm:mfa_recovery' %}">Recuperar códigos de backup</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "core/email/base_transactional.html" %}
+
+{% block email_title %}Ative sua conta — {{ user_type }}{% endblock %}
+
+{% block email_preheader %}
+Ative sua conta {{ user_type }} e defina sua senha. O link expira em {{ expiry_minutes }} minutos.
+{% endblock %}
+
+{% block email_body %}
+<h2 style="margin:0 0 20px;font-family:'Montserrat',Arial,sans-serif;color:#003366;font-size:20px;font-weight:600;">
+  Bem-vindo ao {{ user_type }}
+</h2>
+
+<p style="margin:0 0 15px;font-size:15px;color:#2C3E50;line-height:1.6;">
+  Olá <strong>{{ user.first_name }} {{ user.last_name }}</strong>,
+</p>
+
+<p style="margin:0 0 15px;font-size:15px;color:#2C3E50;line-height:1.6;">
+  Sua conta foi criada. Para sua segurança, <strong>não enviamos senha por e-mail</strong>.
+</p>
+
+<p style="margin:0 0 15px;font-size:15px;color:#2C3E50;line-height:1.6;">
+  Clique no botão abaixo para ativar sua conta e definir sua senha:
+</p>
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:24px auto;">
+  <tr>
+    <td align="center" bgcolor="#003366" style="background-color:#003366;border-radius:8px;">
+      <a href="{{ activation_url }}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">
+        Ativar conta e definir senha
+      </a>
+    </td>
+  </tr>
+</table>
+
+<div style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:16px;margin:20px 0;">
+  <p style="margin:0 0 8px;font-size:14px;color:#2C3E50;"><strong>Usuário:</strong> {{ user.username }}</p>
+  <p style="margin:0 0 8px;font-size:14px;color:#2C3E50;"><strong>E-mail:</strong> {{ user.email }}</p>
+  <p style="margin:0;font-size:14px;color:#2C3E50;"><strong>Após ativar:</strong> <a href="{{ login_url }}" style="color:#00D2FF;">{{ login_url }}</a></p>
+</div>
+
+<div style="background:#fff3cd;border-left:4px solid #ffc107;padding:12px 16px;margin:16px 0;border-radius:4px;">
+  <p style="margin:0;font-size:14px;color:#2C3E50;">
+    <strong>Importante:</strong> este link é de uso único e expira em <strong>{{ expiry_minutes }} minutos</strong>.
+    Se expirar, solicite um novo convite ao administrador.
+  </p>
+</div>
+
+<p style="margin:16px 0 0;font-size:13px;color:#6c757d;line-height:1.5;">
+  Se o botão não funcionar, copie e cole este endereço no navegador:<br>
+  <span style="word-break:break-all;color:#003366;">{{ activation_url }}</span>
+</p>
+{% endblock %}

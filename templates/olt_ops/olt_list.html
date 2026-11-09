@@ -1,0 +1,57 @@
+{% extends "olt_ops/base_olt.html" %}
+
+{% block title %}OLTs — {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="saas-page olt-console rm-v2-route-enter">
+  <header class="saas-page-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+    <div>
+      <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="saas-breadcrumb">
+        <i class="fas fa-arrow-left"></i> OLT / ONU
+      </a>
+      <h2>OLTs cadastradas</h2>
+      <p class="saas-lead mb-0">Equipamentos disponíveis para listagem e exclusão.</p>
+    </div>
+    <a href="{% url 'company:olt_ops:olt_create' company_slug=company.slug %}" class="ds-btn ds-btn--primary">
+      <i class="fas fa-plus"></i> Nova OLT
+    </a>
+  </header>
+
+  <div class="ds-card">
+    {% if olts %}
+    <div class="rm-table-wrap ds-table-wrap">
+      <table class="ds-table table mb-0">
+        <thead>
+          <tr><th>Nome</th><th>Endereço</th><th>Fabricante</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for olt in olts %}
+          <tr>
+            <td class="fw-semibold">{{ olt.name }}</td>
+            <td>{{ olt.host }}:{{ olt.connection_port }}</td>
+            <td>{{ olt.get_vendor_display }}</td>
+            <td>
+              {% if olt.is_active %}
+              <span class="ds-badge ds-badge--done">Ativa</span>
+              {% else %}
+              <span class="ds-badge ds-badge--draft">Inativa</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'company:olt_ops:olt_edit' company_slug=company.slug pk=olt.pk %}" class="ds-btn ds-btn--ghost py-0 px-2">Editar</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="ds-empty">
+      <div class="ds-empty__icon"><i class="fas fa-server"></i></div>
+      <p class="mb-2">Nenhuma OLT cadastrada</p>
+      <a href="{% url 'company:olt_ops:olt_create' company_slug=company.slug %}" class="ds-btn ds-btn--primary">Cadastrar primeira OLT</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

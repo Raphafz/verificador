@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Portal da Empresa - {{ company.name }} - RM Systems{% endblock %}
+{% block body_class %}dashboard-page rm-company-portal-page{% endblock %}
+
+{% block content %}
+<div class="saas-page dashboard-page ds-content-enter rm-company-portal">
+  <header class="saas-page-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+    <div>
+      <h2 class="mb-1">
+        <i class="fas fa-building me-2" style="color: var(--rm-primary);"></i>
+        Portal da Empresa
+      </h2>
+      <p class="saas-lead mb-0">Gestão e visualização de dados da empresa</p>
+    </div>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'rm:company_list' %}">
+      <i class="fas fa-arrow-left me-1"></i>
+      Voltar para Empresas
+    </a>
+  </header>
+
+  <div class="ds-card rm-company-portal__info mb-4">
+    <h3 class="rm-company-portal__info-title">
+      <i class="fas fa-info-circle me-2"></i>
+      {{ company.name }}
+    </h3>
+    <div class="rm-company-portal__meta">
+      <div>
+        <span class="rm-company-portal__meta-label">Slug:</span>
+        <code>{{ company.slug }}</code>
+      </div>
+      {% if company.email %}
+      <div>
+        <span class="rm-company-portal__meta-label">Email:</span>
+        <span>{{ company.email }}</span>
+      </div>
+      {% endif %}
+      {% if company.cnpj %}
+      <div>
+        <span class="rm-company-portal__meta-label">CNPJ:</span>
+        <span>{{ company.cnpj_masked }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-md-4">
+      <div class="ds-card rm-company-portal__action h-100">
+        <div class="rm-company-portal__action-head">
+          <div class="rm-company-portal__action-icon rm-company-portal__action-icon--primary">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3 class="rm-company-portal__action-title">Gerir Membros</h3>
+        </div>
+        <p class="rm-company-portal__action-text">Adicionar, editar e ativar/desativar usuários desta empresa.</p>
+        <a class="btn btn-primary w-100" href="{% url 'company:user_list' company_slug=company.slug %}">
+          <i class="fas fa-user-cog me-2"></i>
+          Abrir gestão de membros
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="ds-card rm-company-portal__action h-100">
+        <div class="rm-company-portal__action-head">
+          <div class="rm-company-portal__action-icon rm-company-portal__action-icon--success">
+            <i class="fas fa-map"></i>
+          </div>
+          <h3 class="rm-company-portal__action-title">Mapas</h3>
+        </div>
+        <p class="rm-company-portal__action-text">Visualizar e baixar mapas CTO desta empresa.</p>
+        <a class="btn btn-primary w-100" href="{% url 'rm:map_list' %}?company={{ company.slug }}">
+          <i class="fas fa-map-marked-alt me-2"></i>
+          Abrir lista de mapas
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="ds-card rm-company-portal__action h-100">
+        <div class="rm-company-portal__action-head">
+          <div class="rm-company-portal__action-icon rm-company-portal__action-icon--info">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h3 class="rm-company-portal__action-title">Verificador</h3>
+        </div>
+        <p class="rm-company-portal__action-text">Fazer upload de novos mapas para verificação.</p>
+        <a class="btn btn-success w-100" href="{% url 'company:ftth_viewer:index' company_slug=company.slug %}">
+          <i class="fas fa-upload me-2"></i>
+          Abrir verificador
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <div class="ds-card h-100">
+        <h3 class="ds-card__title">
+          <span class="ds-card__icon ds-card__icon--primary"><i class="fas fa-chart-pie"></i></span>
+          Resumo
+        </h3>
+        <ul class="list-unstyled mb-0 rm-company-portal__stats">
+          <li>
+            <i class="fas fa-users me-2" style="color: var(--rm-text-secondary);"></i>
+            Total de usuários: <strong>{{ total_users }}</strong>
+          </li>
+          <li>
+            <i class="fas fa-user-check me-2" style="color: var(--rm-success);"></i>
+            Usuários ativos: <strong>{{ active_users }}</strong>
+          </li>
+          <li>
+            <i class="fas fa-map me-2" style="color: var(--rm-info);"></i>
+            Total de mapas: <strong>{{ total_maps }}</strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="ds-card h-100 rm-company-portal__recent">
+        <h3 class="ds-card__title">
+          <span class="ds-card__icon ds-card__icon--primary"><i class="fas fa-clock"></i></span>
+          Mapas Mais Recentes
+        </h3>
+        {% if recent_maps %}
+        <ul class="list-group list-group-flush">
+          {% for m in recent_maps %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1 min-w-0">
+              <i class="fas fa-file-archive me-2" style="color: var(--rm-text-secondary);"></i>
+              <span>{{ m.original_filename|default:m.file_name|default:"Arquivo" }}</span>
+              <br>
+              <small class="text-muted">{{ m.uploaded_at|date:"d/m/Y H:i" }}</small>
+            </div>
+            <a class="btn btn-sm btn-outline-primary ms-2 flex-shrink-0" href="{% url 'rm:map_download' m.pk %}" title="Baixar arquivo">
+              <i class="fas fa-download"></i>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="rm-company-portal__empty text-center">
+          <i class="fas fa-inbox fa-2x mb-3 d-block opacity-50"></i>
+          <p class="mb-0">Sem uploads recentes.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

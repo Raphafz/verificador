@@ -1,0 +1,113 @@
+/**
+ * RM Systems — Utilities (híbrido utility + BEM)
+ */
+
+.rm-text-gradient {
+  background: linear-gradient(135deg, var(--rm-brand-deep), var(--rm-brand-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rm-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.rm-flex { display: flex; }
+.rm-flex-col { flex-direction: column; }
+.rm-items-center { align-items: center; }
+.rm-justify-between { justify-content: space-between; }
+.rm-gap-2 { gap: var(--rm-space-2); }
+.rm-gap-4 { gap: var(--rm-space-4); }
+.rm-gap-6 { gap: var(--rm-space-6); }
+
+.rm-w-full { width: 100%; }
+.rm-max-w-content { max-width: var(--rm-content-max); margin-inline: auto; }
+
+.rm-p-4 { padding: var(--rm-space-4); }
+.rm-p-6 { padding: var(--rm-space-6); }
+.rm-mt-4 { margin-top: var(--rm-space-4); }
+.rm-mb-6 { margin-bottom: var(--rm-space-6); }
+
+.rm-rounded-lg { border-radius: var(--rm-radius-lg); }
+.rm-rounded-xl { border-radius: var(--rm-radius-xl); }
+
+.rm-shadow-sm { box-shadow: var(--rm-elevation-1); }
+.rm-shadow-md { box-shadow: var(--rm-elevation-2); }
+.rm-shadow-lg { box-shadow: var(--rm-elevation-3); }
+
+.rm-hidden { display: none !important; }
+.rm-visible-mobile { display: none; }
+
+@media (max-width: 767.98px) {
+  .rm-visible-mobile { display: block; }
+  .rm-hidden-mobile { display: none !important; }
+}
+
+/* Grid responsivo dashboards */
+.rm-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--rm-space-4);
+}
+
+.rm-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--rm-space-4);
+}
+
+@media (max-width: 575.98px) {
+  .rm-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Focus ring utilitário */
+.rm-focus-ring:focus-visible {
+  outline: 2px solid var(--rm-brand-cyan);
+  outline-offset: 2px;
+}
+
+/* Truncate */
+.rm-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Divider */
+.rm-divider {
+  height: 1px;
+  background: var(--rm-border-primary);
+  margin: var(--rm-space-4) 0;
+}
+
+/* Status dot */
+.rm-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.rm-status-dot--ok {
+  background: var(--rm-success);
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+}
+
+.rm-status-dot--warn {
+  background: var(--rm-warning);
+}
+
+.rm-status-dot--err {
+  background: var(--rm-error);
+}

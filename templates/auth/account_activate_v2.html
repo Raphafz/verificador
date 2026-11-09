@@ -1,0 +1,27 @@
+{% extends "base_auth_v2.html" %}
+{% load static %}
+
+{% block title %}{% if valid %}Ativar conta{% else %}Link inválido{% endif %} — RM Systems{% endblock %}
+{% block auth_title %}{% if valid %}Defina sua senha{% else %}Link inválido ou expirado{% endif %}{% endblock %}
+{% block auth_subtitle %}{% if valid %}Olá, <strong>{{ user.first_name|default:user.username }}</strong>. Este link expira em {{ expiry_minutes }} minutos.{% else %}Peça um novo convite ao administrador da empresa.{% endif %}{% endblock %}
+
+{% block auth_content %}
+{% if valid %}
+<form method="post" action="">
+  {% csrf_token %}
+  <div class="ds-field">
+    <label for="password1">Nova senha</label>
+    <input type="password" class="ds-input" id="password1" name="password1" required minlength="10" autocomplete="new-password">
+    <p class="ds-field-hint">Mínimo 10 caracteres (validadores de segurança do sistema).</p>
+  </div>
+  <div class="ds-field">
+    <label for="password2">Confirmar senha</label>
+    <input type="password" class="ds-input" id="password2" name="password2" required minlength="10" autocomplete="new-password">
+  </div>
+  <button type="submit" class="ds-btn ds-btn--primary w-100">Ativar conta</button>
+</form>
+{% else %}
+<p class="ds-body">O link de ativação não é mais válido (uso único ou prazo de {{ expiry_minutes }} minutos).</p>
+<p class="ds-caption mb-0">Use a opção &quot;Esqueci minha senha&quot; na tela de login, se disponível.</p>
+{% endif %}
+{% endblock %}

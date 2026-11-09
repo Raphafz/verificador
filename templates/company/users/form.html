@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="saas-page ds-content-enter">
+  <div class="container-fluid" style="max-width: 720px; margin: 0 auto;">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="card rm-lift">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-3">
+            <h4 class="mb-0">
+              <i class="fas fa-user-edit me-2"></i>
+              {{ title }}
+            </h4>
+            <span class="text-muted small">Empresa: {{ company.name }}</span>
+          </div>
+          <a href="{% url 'company:user_list' company.slug %}" class="btn btn-back btn-sm">
+            <i class="fas fa-arrow-left me-2"></i>
+            Voltar
+          </a>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group rm-field mb-3">
+                  <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
+                  {{ form.username }}
+                  {% if form.username.errors %}
+                    <div class="text-danger">{{ form.username.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group rm-field mb-3">
+                  <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                  {{ form.email }}
+                  {% if form.email.errors %}
+                    <div class="text-danger">{{ form.email.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group rm-field mb-3">
+                  <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}</label>
+                  {{ form.first_name }}
+                  {% if form.first_name.errors %}
+                    <div class="text-danger">{{ form.first_name.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group rm-field mb-3">
+                  <label for="{{ form.last_name.id_for_label }}" class="form-label">{{ form.last_name.label }}</label>
+                  {{ form.last_name }}
+                  {% if form.last_name.errors %}
+                    <div class="text-danger">{{ form.last_name.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group rm-field mb-3">
+                  <label for="{{ form.phone.id_for_label }}" class="form-label">{{ form.phone.label }}</label>
+                  {{ form.phone }}
+                  {% if form.phone.errors %}
+                    <div class="text-danger">{{ form.phone.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group rm-field mb-3">
+                  <label for="{{ form.role.id_for_label }}" class="form-label">{{ form.role.label }}</label>
+                  {{ form.role }}
+                  {% if form.role.errors %}
+                    <div class="text-danger">{{ form.role.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            {% if form.company and form.company.field.queryset.count > 1 %}
+            <div class="form-group rm-field mb-3">
+              <label for="{{ form.company.id_for_label }}" class="form-label">{{ form.company.label }}</label>
+              {{ form.company }}
+              {% if form.company.errors %}
+                <div class="text-danger">{{ form.company.errors }}</div>
+              {% endif %}
+            </div>
+            {% elif form.company %}
+            <input type="hidden" name="company" value="{{ company.id }}">
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle"></i> O usuário será automaticamente associado à empresa <strong>{{ company.name }}</strong>.
+            </div>
+            {% endif %}
+
+            {% if form.is_active %}
+            <div class="form-group rm-field mb-3">
+              <div class="custom-switch-container">
+                <label for="{{ form.is_active.id_for_label }}" class="custom-switch-label">
+                  {{ form.is_active }}
+                  <span class="custom-switch-slider"></span>
+                  <span class="custom-switch-text">{{ form.is_active.label }}</span>
+                </label>
+              </div>
+              {% if form.is_active.errors %}
+                <div class="text-danger">{{ form.is_active.errors }}</div>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            {% if form.password1 %}
+            <div class="form-group rm-field mb-3">
+              <label for="{{ form.password1.id_for_label }}" class="form-label">{{ form.password1.label }}</label>
+              <div class="input-group">
+                {{ form.password1 }}
+                <button type="button" class="btn btn-outline-primary" id="generatePasswordBtn">
+                  <i class="fas fa-key me-2"></i>Gerar Senha
+                </button>
+              </div>
+              {% if form.password1.help_text %}
+                <div class="form-text">{{ form.password1.help_text }}</div>
+              {% endif %}
+              {% if form.password1.errors %}
+                <div class="text-danger">{{ form.password1.errors }}</div>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-end align-items-center mt-4 pt-3 border-top">
+              <button type="submit" class="btn btn-primary" style="min-width: 120px;">
+                <i class="fas fa-save me-2"></i> Salvar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+  /* Botão Voltar com estilo cinza neutro */
+  .btn-back {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #ffffff !important;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+
+  .btn-back:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-back:active {
+    background-color: #545b62 !important;
+    border-color: #4e555b !important;
+    transform: translateY(0);
+  }
+
+  .btn-back i {
+    color: #ffffff !important;
+  }
+
+  /* Switch toggle customizado para usuário ativo */
+  .custom-switch-container {
+    margin: 0.5rem 0;
+  }
+
+  .custom-switch-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    gap: 0.75rem;
+  }
+
+  .custom-switch-input,
+  .custom-switch-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .custom-switch-slider {
+    position: relative;
+    display: inline-block;
+    width: 3.5rem;
+    height: 1.75rem;
+    background-color: #ccc;
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .custom-switch-slider::before {
+    content: '';
+    position: absolute;
+    width: 1.4rem;
+    height: 1.4rem;
+    left: 0.175rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .custom-switch-input:checked + .custom-switch-slider,
+  .custom-switch-label input[type="checkbox"]:checked + .custom-switch-slider {
+    background-color: #28a745;
+  }
+
+  .custom-switch-input:checked + .custom-switch-slider::before,
+  .custom-switch-label input[type="checkbox"]:checked + .custom-switch-slider::before {
+    transform: translateX(1.75rem) translateY(-50%);
+  }
+
+  .custom-switch-input:focus + .custom-switch-slider,
+  .custom-switch-label input[type="checkbox"]:focus + .custom-switch-slider {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+  }
+
+  .custom-switch-text {
+    font-weight: 500;
+    color: var(--rm-text-primary, #333);
+    font-size: 1rem;
+  }
+
+  .custom-switch-input:checked ~ .custom-switch-text,
+  .custom-switch-label input[type="checkbox"]:checked ~ .custom-switch-text {
+    color: #28a745;
+  }
+
+  /* Hover effect */
+  .custom-switch-label:hover .custom-switch-slider {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+  }
+</style>
+<script nonce="{{ csp_nonce }}">
+  document.addEventListener('DOMContentLoaded', function () {
+    const phoneInput = document.getElementById('id_phone');
+
+    // Máscara de telefone
+    if (phoneInput) {
+      const formatPhone = (raw) => {
+        const digits = (raw || '').replace(/\D/g, '').slice(0, 11);
+        if (!digits) {
+          return '';
+        }
+        if (digits.length <= 2) {
+          return `(${digits}`;
+        }
+        if (digits.length <= 6) {
+          return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+        }
+        if (digits.length <= 10) {
+          return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+        }
+        return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+      };
+
+      const enforcePhoneMask = () => {
+        const formatted = formatPhone(phoneInput.value);
+        phoneInput.value = formatted;
+        const digits = formatted.replace(/\D/g, '');
+        if (digits && ![10, 11].includes(digits.length)) {
+          phoneInput.setCustomValidity('Telefone deve conter DDD + número (10 ou 11 dígitos).');
+        } else {
+          phoneInput.setCustomValidity('');
+        }
+      };
+
+      phoneInput.addEventListener('input', enforcePhoneMask);
+      phoneInput.addEventListener('blur', enforcePhoneMask);
+      enforcePhoneMask();
+    }
+
+    // Gerador de senha (letras e números para novos usuários, apenas números para antigos)
+    const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+    const passwordInput = document.getElementById('id_password1');
+    
+    if (generatePasswordBtn && passwordInput) {
+      generatePasswordBtn.addEventListener('click', function() {
+        // Verificar se é novo usuário ou edição
+        const isNewUser = passwordInput.getAttribute('data-is-new-user') === 'true';
+        let password = '';
+        
+        if (isNewUser) {
+          // Novo usuário: senha alfanumérica (letras e números)
+          const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+          const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+          const digits = '0123456789';
+          const allChars = lowercase + uppercase + digits;
+          
+          // Garantir pelo menos uma letra minúscula, uma maiúscula e um número
+          password = [
+            lowercase[Math.floor(Math.random() * lowercase.length)],
+            uppercase[Math.floor(Math.random() * uppercase.length)],
+            digits[Math.floor(Math.random() * digits.length)]
+          ];
+          
+          // Preencher o resto com caracteres aleatórios
+          for (let i = 0; i < 5; i++) {
+            password.push(allChars[Math.floor(Math.random() * allChars.length)]);
+          }
+          
+          // Embaralhar a senha
+          password = password.sort(() => Math.random() - 0.5).join('');
+        } else {
+          // Usuário antigo ou superusuário: senha apenas números (padrão antigo)
+          for (let i = 0; i < 8; i++) {
+            password += Math.floor(Math.random() * 10).toString();
+          }
+        }
+        
+        // Preencher o campo de senha
+        passwordInput.value = password;
+        passwordInput.removeAttribute('readonly');
+        
+        // Adicionar efeito visual
+        passwordInput.style.background = '#d4edda';
+        setTimeout(() => {
+          passwordInput.style.background = '';
+        }, 500);
+        
+        // Feedback ao usuário
+        const originalText = generatePasswordBtn.innerHTML;
+        generatePasswordBtn.innerHTML = '<i class="fas fa-check me-2"></i>Senha Gerada!';
+        generatePasswordBtn.classList.remove('btn-outline-primary');
+        generatePasswordBtn.classList.add('btn-success');
+        
+        setTimeout(() => {
+          generatePasswordBtn.innerHTML = originalText;
+          generatePasswordBtn.classList.remove('btn-success');
+          generatePasswordBtn.classList.add('btn-outline-primary');
+        }, 1500);
+      });
+    }
+  });
+</script>
+{% endblock %}

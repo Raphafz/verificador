@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Minhas sessões{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 720px; margin: 2rem auto;">
+  <h1>Sessões ativas</h1>
+  <p class="text-muted">Encerre acessos em outros dispositivos.</p>
+  <ul class="list-group mb-3">
+    {% for s in sessions %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{% if s.session_key == current_key %}Esta sessão{% else %}Sessão remota{% endif %}</strong><br>
+        <small>{{ s.ip_address|default:"IP desconhecido" }} — {{ s.last_seen_at|date:"d/m/Y H:i" }}</small>
+      </div>
+      {% if s.session_key != current_key %}
+      <form method="post" action="{% url 'rm:revoke_session' s.id %}">{% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger">Encerrar</button>
+      </form>
+      {% endif %}
+    </li>
+    {% empty %}
+    <li class="list-group-item">Nenhuma sessão registrada.</li>
+    {% endfor %}
+  </ul>
+  <form method="post" action="{% url 'rm:revoke_all_sessions' %}">{% csrf_token %}
+    <button type="submit" class="btn btn-warning">Encerrar todas as outras sessões</button>
+  </form>
+</div>
+{% endblock %}

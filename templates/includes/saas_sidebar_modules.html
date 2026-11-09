@@ -1,0 +1,20 @@
+{% if user.company and saas_module_codes %}
+  <a class="nav-link {% if request.resolver_match.url_name == 'hub' %}active{% endif %}" href="{% url 'company:hub' company_slug=user.company.slug %}">
+    <i class="fas fa-th-large me-2"></i>Hub
+  </a>
+  {% if "verificador" in saas_module_codes %}
+  <a class="nav-link {% if 'verificador' in request.path or 'upload' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'company:ftth_viewer:index' company_slug=user.company.slug %}">
+    <i class="fas fa-search me-2"></i>Verificador
+  </a>
+  {% endif %}
+  {% if "alertas" in saas_module_codes and user.is_company_admin %}
+  <a class="nav-link {% if 'alertas' in request.path %}active{% endif %}" href="{% url 'company:alerts:settings' company_slug=user.company.slug %}">
+    <i class="fas fa-bell me-2"></i>Alertas
+  </a>
+  {% endif %}
+  {% if "olt" in saas_module_codes %}
+  <a class="nav-link {% if '/olt/' in request.path %}active{% endif %}" href="{% url 'company:olt_ops:home' company_slug=user.company.slug %}">
+    <i class="fas fa-server me-2"></i>OLT / ONU
+  </a>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,87 @@
+{% extends ui_shell %}
+{% load static %}
+
+{% block title %}Acesso negado - 403{% endblock %}
+
+{% block body_class %}error-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/design-system/pages/errors.css' %}?v=20260614b">
+{% endblock %}
+
+{% block content %}
+<div class="error-shell">
+  <div class="error-card ds-fade-up">
+    <span class="error-badge">
+      <i class="fas fa-shield-alt" aria-hidden="true"></i>
+      Acesso negado
+    </span>
+
+    <p class="error-code" aria-hidden="true">403</p>
+    <h1 class="error-title">
+      {% if is_csrf_error %}
+        Sessão expirada ou inválida
+      {% else %}
+        Você não pode acessar esta página
+      {% endif %}
+    </h1>
+
+    <p class="error-message">
+      {% if error_message %}
+        {{ error_message }}
+      {% elif is_csrf_error %}
+        A verificação de segurança falhou. Atualize a página e tente de novo.
+      {% else %}
+        Não foi possível abrir este recurso com sua conta atual.
+      {% endif %}
+    </p>
+
+    <div class="error-actions">
+      {% if hub_url %}
+        <a href="{{ hub_url }}" class="btn btn-primary">
+          <i class="fas fa-th-large me-2" aria-hidden="true"></i>
+          Voltar ao Hub
+        </a>
+      {% elif home_url %}
+        <a href="{{ home_url }}" class="btn btn-primary">
+          <i class="fas fa-home me-2" aria-hidden="true"></i>
+          Ir para o início
+        </a>
+      {% endif %}
+      {% if login_url %}
+        <a href="{{ login_url }}" class="btn btn-outline-secondary">
+          <i class="fas fa-sign-in-alt me-2" aria-hidden="true"></i>
+          Fazer login
+        </a>
+      {% endif %}
+      <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+        <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>
+        Voltar
+      </button>
+    </div>
+
+    <div class="error-help">
+      <h6>Possíveis causas</h6>
+      <ul>
+        {% if is_csrf_error %}
+          <li>A sessão expirou ou o cookie de segurança não foi enviado</li>
+          <li>Você abriu o link em outra aba ou após muito tempo parado</li>
+        {% else %}
+          <li>Sua sessão expirou ou foi encerrada em outro dispositivo</li>
+          <li>O módulo não está habilitado no plano da empresa</li>
+          <li>Sua conta não tem permissão para esta área</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="error-help">
+      <h6>O que fazer</h6>
+      <ul>
+        <li>Volte ao Hub e abra o módulo novamente</li>
+        <li>Se persistir, faça logout e login de novo</li>
+        <li>Contate o administrador RM Systems se precisar de acesso</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

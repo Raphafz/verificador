@@ -1,0 +1,41 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}RM Systems{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/theme_colors.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/theme_rm.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/platform.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/ds/variables.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/ds/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/ds/animations.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/ds/components.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/ds/layout.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/ds/utilities.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/base-layout.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app-responsive.css' %}" />
+    {% include "includes/cdn_bootstrap_5_3_css.html" %}
+    {% include "includes/cdn_fontawesome_6_0_css.html" %}
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    {% if messages %}
+      <div class="messages" style="max-width:500px;margin:1rem auto;">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/dark-mode.js' %}"></script>
+    {% include "includes/cdn_bootstrap_5_3_js.html" %}
+    {% block extra_scripts %}{% endblock %}
+  </body>
+</html>

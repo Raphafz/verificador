@@ -1,0 +1,1 @@
+Bem-vindo à {{ brand_name }} — seus dados de acesso

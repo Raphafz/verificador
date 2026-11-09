@@ -1,0 +1,67 @@
+{% extends 'docs_base.html' %}
+
+{% block title %}Política de Cookies - RM Systems{% endblock %}
+{% block docs_nav_cookies %} is-active{% endblock %}
+{% block docs_icon %}fa-cookie-bite{% endblock %}
+{% block docs_title %}Política de Cookies{% endblock %}
+{% block docs_lead %}Entenda como utilizamos cookies e tecnologias similares na plataforma RM Systems.{% endblock %}
+{% block docs_meta %}
+<p class="docs-hero__meta"><i class="far fa-calendar-alt" aria-hidden="true"></i> Última atualização: {% now "d/m/Y" %}</p>
+{% endblock %}
+
+{% block docs_body %}
+<section class="docs-section">
+  <h2 class="docs-section__title">1. O que são Cookies?</h2>
+  <p>Cookies são pequenos arquivos de texto armazenados no seu dispositivo quando você visita um site. Eles ajudam o site a funcionar de forma mais eficiente e a lembrar suas preferências.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">2. Como Utilizamos Cookies</h2>
+  <ul class="docs-list">
+    <li>Manter você conectado ao Sistema</li>
+    <li>Lembrar suas preferências e configurações</li>
+    <li>Melhorar a segurança do Sistema</li>
+    <li>Analisar como o Sistema é utilizado</li>
+    <li>Personalizar sua experiência</li>
+  </ul>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">3. Tipos de Cookies</h2>
+  <h3 class="docs-subsection__title">3.1. Cookies Essenciais</h3>
+  <p>Necessários para o funcionamento do Sistema. Sem eles, áreas seguras e a autenticação não funcionam corretamente.</p>
+  <ul class="docs-list">
+    <li><strong>Sessão:</strong> Mantêm sua sessão ativa</li>
+    <li><strong>CSRF:</strong> Protegem contra ataques de falsificação</li>
+    <li><strong>Autenticação:</strong> Mantêm você autenticado</li>
+  </ul>
+  <h3 class="docs-subsection__title">3.2. Cookies de Preferências</h3>
+  <ul class="docs-list">
+    <li><strong>Tema:</strong> Lembram sua escolha de tema claro/escuro</li>
+    <li><strong>Interface:</strong> Lembram configurações de visualização</li>
+  </ul>
+  <h3 class="docs-subsection__title">3.3. Cookies Analíticos</h3>
+  <p>Ajudam a entender como os visitantes interagem com o Sistema para melhorar desempenho e usabilidade.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">4. Cookies de Terceiros</h2>
+  <p>Alguns serviços de terceiros podem definir cookies, como provedores de fontes e ícones. Recomendamos verificar as políticas de privacidade desses serviços.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">5. Como Gerenciar Cookies</h2>
+  <p>Você pode controlar e excluir cookies nas configurações do seu navegador. Desabilitar cookies essenciais pode afetar o funcionamento do Sistema.</p>
+  <ul class="docs-list">
+    <li><strong>Google Chrome:</strong> Configurações &gt; Privacidade e segurança &gt; Cookies</li>
+    <li><strong>Mozilla Firefox:</strong> Opções &gt; Privacidade e Segurança</li>
+    <li><strong>Safari:</strong> Preferências &gt; Privacidade</li>
+    <li><strong>Microsoft Edge:</strong> Configurações &gt; Privacidade</li>
+  </ul>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">6. Contato</h2>
+  <p>Dúvidas sobre cookies? Acesse a <a href="{% url 'ajuda' %}">página de Ajuda</a> ou consulte a <a href="{% url 'politica_privacidade' %}">Política de Privacidade</a>.</p>
+</section>
+{% endblock %}

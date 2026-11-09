@@ -1,0 +1,22 @@
+# Redis — cache + rate limit + MFA remember + bridge nonce
+# Copiar para /etc/redis/saas-viabilidade.conf
+
+bind 127.0.0.1 ::1
+port 6379
+protected-mode yes
+# requirepass STRONG_REDIS_PASSWORD
+
+maxmemory 256mb
+maxmemory-policy allkeys-lru
+
+timeout 300
+tcp-keepalive 60
+
+# Persistência mínima (cache efêmero)
+save ""
+appendonly no
+
+# Renomear comandos perigosos (opcional)
+# rename-command FLUSHDB ""
+# rename-command FLUSHALL ""
+# rename-command CONFIG ""

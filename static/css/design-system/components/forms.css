@@ -1,0 +1,63 @@
+/**
+ * RM Systems DS — Forms
+ */
+
+.rm-ui-v2 .ds-field {
+  margin-bottom: var(--ds-space-5);
+}
+
+.rm-ui-v2 .ds-field label,
+.rm-ui-v2 .ds-field .form-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ds-text-secondary);
+  margin-bottom: var(--ds-space-2);
+}
+
+.rm-ui-v2 .ds-field input[type="text"],
+.rm-ui-v2 .ds-field input[type="email"],
+.rm-ui-v2 .ds-field input[type="password"],
+.rm-ui-v2 .ds-field input[type="number"],
+.rm-ui-v2 .ds-field input[type="search"],
+.rm-ui-v2 .ds-field input[type="tel"],
+.rm-ui-v2 .ds-field select,
+.rm-ui-v2 .ds-field textarea,
+.rm-ui-v2 .ds-input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.9375rem;
+  color: var(--ds-text-primary);
+  background: var(--ds-bg-base);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-md);
+  transition: border-color var(--ds-transition-fast), box-shadow var(--ds-transition-fast);
+}
+
+[data-theme="dark"] .rm-ui-v2 .ds-field input,
+[data-theme="dark"] .rm-ui-v2 .ds-field select,
+[data-theme="dark"] .rm-ui-v2 .ds-field textarea,
+[data-theme="dark"] .rm-ui-v2 .ds-input {
+  background: var(--rm-input-bg, var(--ds-bg-muted));
+}
+
+.rm-ui-v2 .ds-field input:focus,
+.rm-ui-v2 .ds-field select:focus,
+.rm-ui-v2 .ds-field textarea:focus,
+.rm-ui-v2 .ds-input:focus {
+  outline: none;
+  border-color: var(--ds-brand-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.15);
+}
+
+.rm-ui-v2 .ds-field-hint {
+  font-size: 0.75rem;
+  color: var(--ds-text-muted);
+  margin-top: var(--ds-space-2);
+}
+
+.rm-ui-v2 .ds-field-error {
+  font-size: 0.8125rem;
+  color: var(--ds-status-offline);
+  margin-top: var(--ds-space-2);
+}

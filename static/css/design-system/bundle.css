@@ -1,0 +1,34 @@
+/**
+ * RM Systems Design System — Bundle Fase 2
+ * Entry point único para shell v2. Legado permanece intacto.
+ */
+
+@import url('./tokens.css');
+@import url('./typography.css');
+@import url('./elevation.css');
+@import url('./gradients.css');
+@import url('./glass.css');
+@import url('./themes/light.css');
+@import url('./themes/dark.css');
+@import url('./motion/transitions.css');
+@import url('./motion/reduced-motion.css');
+@import url('./animations.css');
+@import url('./components/buttons.css');
+@import url('./components/cards.css');
+@import url('./components/forms.css');
+@import url('./components/tables.css');
+@import url('./components/badges.css');
+@import url('./components/sidebar.css');
+@import url('./components/topbar.css');
+@import url('./components/modals.css');
+@import url('./components/toasts.css');
+@import url('./components/dropdowns.css');
+@import url('./layouts/shell-app.css');
+@import url('./layouts/shell-auth.css');
+@import url('./layouts/shell-dashboard.css');
+@import url('./pages/dashboard.css');
+@import url('./pages/hub.css');
+@import url('./pages/ftth.css');
+@import url('./pages/alerts.css');
+@import url('./pages/olt.css');
+@import url('./pages/legal.css');

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mapas CTO (RM){% endblock %}
+
+{% block body_class %}dashboard-page rm-list-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/rm-panel.css' %}">
+{% include "includes/cdn_fontawesome_6_0_css.html" %}
+{% endblock %}
+
+{% block content %}
+{% url 'rm:map_by_company' as map_upload_url %}
+<div class="saas-page rm-panel ds-content-enter">
+    <header class="rm-panel__hero">
+        <div>
+            <h2><i class="fas fa-map" aria-hidden="true"></i> Mapas CTO (Visão RM)</h2>
+            <p class="rm-panel__lead">Mapas enviados por empresa — expanda para ver detalhes, download e exclusão.</p>
+        </div>
+        <a href="{% url 'rm:map_by_company' %}" class="rm-panel__btn-primary">
+            <i class="fas fa-upload" aria-hidden="true"></i>
+            Upload de mapa
+        </a>
+    </header>
+
+    {% if companies_with_maps %}
+    <div class="rm-accordion" id="mapsAccordion">
+        {% for item in companies_with_maps %}
+        <div class="rm-accordion__item {% if forloop.first %}is-open{% endif %}" data-accordion-item>
+            <button type="button" class="rm-accordion__trigger" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+                <div class="rm-accordion__company">
+                    <span class="rm-accordion__company-icon" aria-hidden="true">
+                        <i class="fas fa-building"></i>
+                    </span>
+                    <span class="rm-accordion__name">{{ item.company.name }}</span>
+                    <span class="rm-accordion__count">{{ item.count }} mapa{{ item.count|pluralize }}</span>
+                </div>
+                <svg class="rm-accordion__chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <path d="M7 10l5 5 5-5z" fill="currentColor"></path>
+                </svg>
+            </button>
+            <div class="rm-accordion__panel">
+                <div class="rm-table-wrap">
+                    <table class="rm-table">
+                        <thead>
+                            <tr>
+                                <th>Arquivo</th>
+                                <th>Descrição</th>
+                                <th>Enviado por</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for map in item.maps %}
+                            <tr>
+                                <td><strong>{{ map.file_name }}</strong></td>
+                                <td>{{ map.description|default:"—" }}</td>
+                                <td>{{ map.uploaded_by.get_full_name|default:map.uploaded_by.username }}</td>
+                                <td>{{ map.uploaded_at|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if map.is_processed %}
+                                    <span class="rm-badge-processed">Processado</span>
+                                    {% else %}
+                                    <span class="rm-badge-pending">Pendente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="rm-actions">
+                                        <a href="{% url 'rm:map_download' map.id %}" class="btn btn-sm btn-outline-primary" title="Download">
+                                            <i class="fas fa-download" aria-hidden="true"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger js-delete-map" data-map-id="{{ map.id }}" title="Excluir">
+                                            <i class="fas fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="rm-panel__body">
+        {% include "includes/rm_empty_state.html" with empty_icon="fa-map-marked-alt" empty_title="Nenhum mapa encontrado" empty_text="Nenhum mapa CTO foi enviado ainda." empty_action_url=map_upload_url empty_action_label="Fazer primeiro upload" empty_action_icon="fa-upload" %}
+    </div>
+    {% endif %}
+</div>
+
+<script nonce="{{ csp_nonce }}">
+(function () {
+  document.querySelectorAll('[data-accordion-item]').forEach(function (item) {
+    var trigger = item.querySelector('.rm-accordion__trigger');
+    if (!trigger) return;
+    trigger.addEventListener('click', function (e) {
+      e.preventDefault();
+      var wasOpen = item.classList.contains('is-open');
+      document.querySelectorAll('[data-accordion-item]').forEach(function (other) {
+        other.classList.remove('is-open');
+        var t = other.querySelector('.rm-accordion__trigger');
+        if (t) t.setAttribute('aria-expanded', 'false');
+      });
+      if (!wasOpen) {
+        item.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  function getCookie(name) {
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  var csrftoken = getCookie('csrftoken');
+
+  document.querySelectorAll('.js-delete-map').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-map-id');
+      if (!confirm('Tem certeza que deseja excluir este arquivo?')) return;
+      fetch("{% url 'rm:map_delete' 0 %}".replace('/0/', '/' + id + '/'), {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken },
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.success) {
+            if (window.showSuccess) window.showSuccess('Mapa excluído com sucesso!');
+            else alert('Mapa excluído com sucesso!');
+            setTimeout(function () { location.reload(); }, 500);
+          } else {
+            var msg = data.message || 'Erro ao excluir mapa.';
+            if (window.showError) window.showError(msg);
+            else alert(msg);
+          }
+        })
+        .catch(function () {
+          if (window.showError) window.showError('Erro ao excluir mapa.');
+          else alert('Erro ao excluir mapa.');
+        });
+    });
+  });
+})();
+</script>
+{% endblock %}

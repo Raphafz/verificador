@@ -1,0 +1,57 @@
+{% load static ui_tags %}
+<!-- Sidebar nav links com tooltip (modo compacto) -->
+{% if user.is_rm_admin %}
+  <a class="nav-link {% if 'company' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'rm:company_list' %}" data-tooltip="Empresas">
+    <i class="fas fa-building" aria-hidden="true"></i><span class="nav-label">Empresas</span>
+  </a>
+  <a class="nav-link {% if 'user' in request.resolver_match.url_name and 'rm' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'rm:user_list' %}" data-tooltip="Usuários RM">
+    <i class="fas fa-users" aria-hidden="true"></i><span class="nav-label">Usuários RM</span>
+  </a>
+  <a class="nav-link {% if 'map' in request.resolver_match.url_name and 'rm' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'rm:map_list' %}" data-tooltip="Mapas">
+    <i class="fas fa-map" aria-hidden="true"></i><span class="nav-label">Mapas</span>
+  </a>
+  <a class="nav-link {% if 'ticket' in request.resolver_match.url_name and 'rm' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'rm:ticket_list' %}" data-tooltip="Tickets">
+    <i class="fas fa-ticket-alt" aria-hidden="true"></i><span class="nav-label">Tickets</span>
+  </a>
+  <a class="nav-link" href="/admin/" data-tooltip="Admin Django">
+    <i class="fas fa-cog" aria-hidden="true"></i><span class="nav-label">Admin Django</span>
+  </a>
+{% elif user.company %}
+  <a class="nav-link {% if request.resolver_match.url_name == 'hub' %}active{% endif %}" href="{% url 'company:hub' company_slug=user.company.slug %}" data-tooltip="Hub">
+    <i class="fas fa-th-large" aria-hidden="true"></i><span class="nav-label">Hub</span>
+  </a>
+  {% if "verificador" in saas_module_codes %}
+  <a class="nav-link {% if 'verificador' in request.path or 'upload' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'company:ftth_viewer:index' company_slug=user.company.slug %}" data-tooltip="Verificador">
+    <i class="fas fa-search" aria-hidden="true"></i><span class="nav-label">Verificador</span>
+  </a>
+  {% if user.is_company_admin %}
+  <a class="nav-link {% if 'user' in request.resolver_match.url_name and 'company' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'company:user_list' company_slug=user.company.slug %}" data-tooltip="Usuários">
+    <i class="fas fa-users" aria-hidden="true"></i><span class="nav-label">Usuários</span>
+  </a>
+  {% endif %}
+  <a class="nav-link {% if 'upload' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'company:upload' company_slug=user.company.slug %}" data-tooltip="Upload">
+    <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i><span class="nav-label">Upload</span>
+  </a>
+  {% if not user.is_company_user %}
+  <a class="nav-link {% if 'map_history' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'company:map_history' company_slug=user.company.slug %}" data-tooltip="Histórico">
+    <i class="fas fa-history" aria-hidden="true"></i><span class="nav-label">Histórico</span>
+  </a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}" href="{% url 'company:reports' company_slug=user.company.slug %}" data-tooltip="Relatórios">
+    <i class="fas fa-chart-bar" aria-hidden="true"></i><span class="nav-label">Relatórios</span>
+  </a>
+  {% endif %}
+  {% endif %}
+  {% if "alertas" in saas_module_codes and user.is_company_admin %}
+  <a class="nav-link {% if 'alertas' in request.path %}active{% endif %}" href="{% url 'company:alerts:settings' company_slug=user.company.slug %}" data-tooltip="Alertas">
+    <i class="fas fa-bell" aria-hidden="true"></i><span class="nav-label">Alertas</span>
+  </a>
+  {% endif %}
+  {% if "olt" in saas_module_codes %}
+  <a class="nav-link {% if '/olt/' in request.path %}active{% endif %}" href="{% url 'company:olt_ops:home' company_slug=user.company.slug %}" data-tooltip="OLT / ONU">
+    <i class="fas fa-server" aria-hidden="true"></i><span class="nav-label">OLT / ONU</span>
+  </a>
+  {% endif %}
+  <a class="nav-link {% if 'ticket' in request.resolver_match.url_name and 'company' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'company:ticket_list' company_slug=user.company.slug %}" data-tooltip="Tickets">
+    <i class="fas fa-ticket-alt" aria-hidden="true"></i><span class="nav-label">Tickets</span>
+  </a>
+{% endif %}

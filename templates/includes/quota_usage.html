@@ -1,0 +1,44 @@
+{% if quota_summary %}
+{% if user.is_company_admin or user.is_rm_admin %}
+<div class="saas-panel rm-quota-panel mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+    <div>
+      <strong class="rm-quota-panel__plan-title">Plano {{ quota_summary.plan_code }}</strong>
+      <span class="rm-quota-panel__plan-muted small"> — {{ quota_summary.plan_label }}</span>
+    </div>
+    {% if not quota_summary.enforcement %}
+    <span class="badge rm-quota-panel__badge-off">Limites desativados (acordo RM)</span>
+    {% endif %}
+  </div>
+  <div class="row g-2">
+    {% for item in quota_summary.items %}
+    <div class="col-md-6 col-lg-4">
+      <div class="rm-quota-panel__row small mb-1 d-flex justify-content-between gap-2">
+        <span class="rm-quota-panel__label">{{ item.label }}</span>
+        <span class="rm-quota-panel__value {% if item.at_limit %}text-danger fw-semibold{% elif item.near_limit %}text-warning fw-semibold{% endif %}">
+          {{ item.used }}{% if item.limit > 0 %}/{{ item.limit }}{% else %} (n/a){% endif %}
+        </span>
+      </div>
+      {% if item.limit > 0 %}
+      <div
+        class="rm-quota-panel__progress"
+        role="progressbar"
+        aria-valuenow="{{ item.used }}"
+        aria-valuemin="0"
+        aria-valuemax="{{ item.limit }}"
+        aria-label="{{ item.label }}: {{ item.used }} de {{ item.limit }} ({{ item.percent }}%)"
+        title="{{ item.percent }}% utilizado"
+      >
+        <div
+          class="rm-quota-panel__progress-fill{% if item.at_limit %} is-danger{% elif item.near_limit %} is-warning{% else %} is-ok{% endif %}{% if item.used > 0 %} has-use{% endif %}"
+          data-pct="{{ item.percent }}"
+          data-used="{{ item.used }}"
+        ></div>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endif %}

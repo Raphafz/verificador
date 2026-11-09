@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Tickets - RM Systems{% endblock %}
+{% block body_class %}dashboard-page rm-tickets-page{% endblock %}
+
+{% block content %}
+<div class="saas-page dashboard-page ds-content-enter rm-tickets">
+  <header class="saas-page-header d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h2 class="mb-1">
+        <i class="fas fa-ticket-alt me-2"></i>
+        Tickets de Suporte
+      </h2>
+      <p class="saas-lead mb-0">Acompanhe e filtre chamados de todas as empresas.</p>
+    </div>
+  </header>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="ds-card rm-tickets__filters mb-4">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-3 rm-field">
+        <label class="form-label" for="ticket-status">Status</label>
+        <select id="ticket-status" name="status" class="form-select">
+          <option value="">Todos</option>
+          <option value="aberto" {% if status_filter == 'aberto' %}selected{% endif %}>Aberto</option>
+          <option value="em_andamento" {% if status_filter == 'em_andamento' %}selected{% endif %}>Em Andamento</option>
+          <option value="aguardando_cliente" {% if status_filter == 'aguardando_cliente' %}selected{% endif %}>Aguardando Cliente</option>
+          <option value="resolvido" {% if status_filter == 'resolvido' %}selected{% endif %}>Resolvido</option>
+          <option value="fechado" {% if status_filter == 'fechado' %}selected{% endif %}>Fechado</option>
+        </select>
+      </div>
+      <div class="col-md-3 rm-field">
+        <label class="form-label" for="ticket-company">Empresa</label>
+        <select id="ticket-company" name="company" class="form-select">
+          <option value="">Todas</option>
+          {% for comp in companies %}
+            <option value="{{ comp.id }}" {% if company_filter == comp.id|stringformat:"s" %}selected{% endif %}>{{ comp.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 rm-field">
+        <label class="form-label" for="ticket-assigned">Atribuído a mim</label>
+        <select id="ticket-assigned" name="assigned_to_me" class="form-select">
+          <option value="">Todos</option>
+          <option value="true" {% if assigned_to_me == 'true' %}selected{% endif %}>Sim</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-primary flex-grow-1">
+          <i class="fas fa-filter me-1"></i> Filtrar
+        </button>
+        <a href="{% url 'rm:ticket_list' %}" class="btn btn-outline-secondary flex-grow-1">
+          <i class="fas fa-times me-1"></i> Limpar
+        </a>
+      </div>
+    </form>
+  </div>
+
+  {% if tickets %}
+  <div class="ds-card rm-tickets__table-card">
+    <div class="rm-table-wrap ds-table-wrap rm-tickets__table-wrap">
+      <table class="table table-hover align-middle mb-0 rm-tickets__table">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Título</th>
+            <th>Empresa</th>
+            <th>Criado por</th>
+            <th>Status</th>
+            <th>Prioridade</th>
+            <th>Atendido por</th>
+            <th>Criado em</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ticket in tickets %}
+            <tr>
+              <td><strong>{{ ticket.ticket_number }}</strong></td>
+              <td>{{ ticket.title|truncatewords:10 }}</td>
+              <td>{{ ticket.company.name }}</td>
+              <td>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</td>
+              <td>
+                <span class="badge" style="background-color: {{ ticket.get_status_color }}; color: white;">
+                  {{ ticket.get_status_display }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" style="background-color: {{ ticket.get_priority_color }}; color: white;">
+                  {{ ticket.get_priority_display }}
+                </span>
+              </td>
+              <td>{% if ticket.assigned_to %}{{ ticket.assigned_to.get_full_name|default:ticket.assigned_to.username }}{% else %}-{% endif %}</td>
+              <td>{{ ticket.created_at|date:"d/m/Y H:i" }}</td>
+              <td class="text-end">
+                <a href="{% url 'rm:ticket_detail' ticket.id %}" class="btn btn-sm btn-primary">
+                  <i class="fas fa-eye me-1"></i> Ver
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if tickets.has_other_pages %}
+    <nav class="p-3 border-top" style="border-color: var(--rm-border-surface) !important;" aria-label="Paginação">
+      <ul class="pagination justify-content-center mb-0">
+        {% if tickets.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ tickets.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if company_filter %}&company={{ company_filter }}{% endif %}">Anterior</a>
+          </li>
+        {% endif %}
+        <li class="page-item active">
+          <span class="page-link">Página {{ tickets.number }} de {{ tickets.paginator.num_pages }}</span>
+        </li>
+        {% if tickets.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ tickets.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if company_filter %}&company={{ company_filter }}{% endif %}">Próxima</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+  {% else %}
+  {% include "includes/rm_empty_state.html" with empty_icon="fa-ticket-alt" empty_title="Nenhum ticket encontrado" empty_text="Não há tickets correspondentes aos filtros selecionados." %}
+  {% endif %}
+</div>
+{% endblock %}

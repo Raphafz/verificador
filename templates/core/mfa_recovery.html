@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Recuperação MFA{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 480px; margin: 2rem auto;">
+  <h1>Códigos de backup</h1>
+  {% if done and backup_codes %}
+  <pre style="background:#f1f5f9;padding:1rem;">{% for c in backup_codes %}{{ c }}
+{% endfor %}</pre>
+  {% else %}
+  <form method="post">
+    {% csrf_token %}
+    <label>Código TOTP atual</label>
+    <input type="text" name="token" class="form-control" required/>
+    <button type="submit" class="btn btn-warning" style="margin-top:1rem;">Gerar novos códigos</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

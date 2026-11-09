@@ -1,0 +1,145 @@
+/* ========================================
+   FIX GLOBAL DE SCROLL PARA MOBILE
+   Garante que o scroll funcione em TODAS as páginas no mobile
+   ======================================== */
+
+/* === REGRAS GLOBAIS PARA MOBILE === */
+/* Aplicar em TODAS as páginas quando em mobile */
+@media (max-width: 768px) {
+  /* FORÇAR scroll no html e body - máxima especificidade */
+  html,
+  html body,
+  body,
+  body.no-scroll,
+  html.no-scroll,
+  html body.no-scroll {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+  }
+  
+  /* Remover qualquer bloqueio de scroll */
+  body.no-scroll,
+  html.no-scroll {
+    overflow: auto !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+  
+  /* Garantir que todos os containers principais permitam scroll */
+  .main-container,
+  .container,
+  .container-fluid,
+  .main-content,
+  .content-wrapper,
+  .content,
+  .page-content,
+  .wrapper {
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    position: relative !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
+  
+  /* Garantir que cards não bloqueiem scroll */
+  .card,
+  .card-body,
+  .card-header,
+  .card-footer,
+  .card-content {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  
+  /* Garantir que formulários permitam scroll */
+  .form,
+  .form-container,
+  form,
+  .login-form,
+  .login-card {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  
+  /* Garantir que tabelas sejam scrolláveis */
+  .table-responsive,
+  .table-wrapper,
+  .table-container {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Garantir que divs de layout permitam scroll */
+  .side-by-side-layout,
+  .info-side,
+  .info-content,
+  .login-side {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+  
+  /* Fix específico para iOS Safari */
+  @supports (-webkit-touch-callout: none) {
+    html,
+    body {
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      position: relative !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      max-height: none !important;
+    }
+    
+    .side-by-side-layout,
+    .info-side,
+    .login-side,
+    .login-card,
+    .form {
+      overflow: visible !important;
+      max-height: none !important;
+      height: auto !important;
+    }
+  }
+}
+
+/* Regras adicionais para mobile pequeno */
+@media (max-width: 480px) {
+  html,
+  html body,
+  body,
+  body.no-scroll,
+  html.no-scroll,
+  html body.no-scroll {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+  }
+  
+  body.no-scroll,
+  html.no-scroll {
+    overflow: auto !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    height: auto !important;
+  }
+}
+

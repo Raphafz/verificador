@@ -1,0 +1,83 @@
+{% extends 'docs_base.html' %}
+
+{% block title %}Ajuda e Suporte - RM Systems{% endblock %}
+{% block docs_nav_ajuda %} is-active{% endblock %}
+{% block docs_icon %}fa-life-ring{% endblock %}
+{% block docs_title %}Ajuda e Suporte{% endblock %}
+{% block docs_lead %}Central de recursos, contato e orientações para aproveitar ao máximo o verificador de viabilidade.{% endblock %}
+
+{% block docs_body %}
+<div class="docs-callout">
+  <h2><i class="fas fa-info-circle me-2" aria-hidden="true"></i>Bem-vindo ao Centro de Ajuda</h2>
+  <p>Encontre respostas rápidas, acesse documentação e saiba como obter suporte da equipe RM Systems ou do administrador da sua empresa.</p>
+</div>
+
+<section class="docs-section">
+  <h2 class="docs-section__title"><i class="fas fa-book" aria-hidden="true"></i> Recursos</h2>
+  <div class="docs-cards">
+    <div class="docs-card">
+      <div class="docs-card__icon"><i class="fas fa-question-circle" aria-hidden="true"></i></div>
+      <h3>FAQ</h3>
+      <p>Perguntas frequentes sobre conta, upload, viabilidade e segurança.</p>
+      <a href="{% url 'faq' %}" class="docs-card__link">Ver FAQ <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="docs-card">
+      <div class="docs-card__icon docs-card__icon--success"><i class="fas fa-book-open" aria-hidden="true"></i></div>
+      <h3>Manual do Usuário</h3>
+      <p>Guia completo com passo a passo das funcionalidades do sistema.</p>
+      <a href="{% url 'manual_usuario' %}" class="docs-card__link">Abrir manual <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="docs-card">
+      <div class="docs-card__icon"><i class="fas fa-key" aria-hidden="true"></i></div>
+      <h3>Recuperar senha</h3>
+      <p>Na tela de login, use &quot;Esqueci minha senha&quot; para receber o link por e-mail.</p>
+      <a href="{% url 'home_redirect' %}" class="docs-card__link">Ir para login <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </div>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title"><i class="fas fa-headset" aria-hidden="true"></i> Contato e Suporte</h2>
+  <h3 class="docs-subsection__title"><i class="fas fa-user-shield" aria-hidden="true"></i> Administrador do sistema</h3>
+  <p>Para permissões, criação de conta ou configurações da empresa, fale com o administrador RM Systems ou o administrador da sua operadora.</p>
+  <h3 class="docs-subsection__title"><i class="fas fa-envelope" aria-hidden="true"></i> Suporte técnico</h3>
+  <p>Para erros, dúvidas sobre funcionalidades ou problemas com upload de mapas, entre em contato:</p>
+  <div class="docs-contact-box">
+    <p class="mb-0"><strong>Suporte:</strong> <a href="mailto:{{ site_support_email }}">{{ site_support_email }}</a></p>
+    <p class="mb-0"><strong>Privacidade / LGPD:</strong> <a href="mailto:{{ site_dpo_email }}">{{ site_dpo_email }}</a></p>
+    <p class="mb-0"><strong>Comercial:</strong> <a href="mailto:{{ site_comercial_email }}">{{ site_comercial_email }}</a></p>
+  </div>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title"><i class="fas fa-lightbulb" aria-hidden="true"></i> Dicas de uso</h2>
+  <div class="docs-callout docs-callout--success">
+    <ul class="docs-list">
+      <li>Use formatos suportados: .xlsx, .xls, .csv, .kml, .kmz</li>
+      <li>Mantenha arquivos abaixo de 5 MB</li>
+      <li>Selecione múltiplos mapas no verificador para comparar localizações</li>
+      <li>Consulte relatórios para acompanhar estatísticas da operação</li>
+      <li>Não compartilhe suas credenciais de acesso</li>
+    </ul>
+  </div>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title"><i class="fas fa-balance-scale" aria-hidden="true"></i> Documentos legais</h2>
+  <div class="docs-pills">
+    <a href="{% url 'termos_uso' %}" class="docs-pill"><i class="fas fa-file-contract" aria-hidden="true"></i> Termos de Uso</a>
+    <a href="{% url 'politica_privacidade' %}" class="docs-pill"><i class="fas fa-shield-alt" aria-hidden="true"></i> Privacidade</a>
+    <a href="{% url 'politica_cookies' %}" class="docs-pill"><i class="fas fa-cookie-bite" aria-hidden="true"></i> Cookies</a>
+    <a href="{% url 'lgpd' %}" class="docs-pill"><i class="fas fa-gavel" aria-hidden="true"></i> LGPD</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block docs_actions_extra %}
+<a href="{% url 'faq' %}" class="docs-btn docs-btn--primary">
+  <i class="fas fa-question-circle" aria-hidden="true"></i> FAQ
+</a>
+<a href="{% url 'dpo_contact' %}" class="docs-btn">
+  <i class="fas fa-user-shield" aria-hidden="true"></i> DPO
+</a>
+{% endblock %}

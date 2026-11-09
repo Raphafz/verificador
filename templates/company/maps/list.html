@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mapas CTO - {{ company.name }}{% endblock %}
+
+{% block body_class %}dashboard-page rm-list-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/rm-panel.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'company:upload' company_slug=company.slug as upload_url %}
+<div class="saas-page rm-panel ds-content-enter">
+    <header class="rm-panel__hero">
+        <div>
+            <h2><i class="fas fa-map" aria-hidden="true"></i> Mapas CTO</h2>
+            <p class="rm-panel__lead">{{ company.name }}</p>
+        </div>
+        <a href="{% url 'company:ftth_viewer:index' company_slug=company.slug %}" class="rm-panel__btn-primary">
+            <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+            Abrir verificador
+        </a>
+    </header>
+
+    {% if maps %}
+    <div class="rm-panel__body">
+        <div class="rm-table-wrap">
+            <table class="rm-table">
+                <thead>
+                    <tr>
+                        <th>Arquivo</th>
+                        <th>Descrição</th>
+                        <th>Enviado por</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for map in maps %}
+                    <tr>
+                        <td><strong>{{ map.file_name }}</strong></td>
+                        <td>{{ map.description|default:"—" }}</td>
+                        <td>{{ map.uploaded_by.get_full_name|default:map.uploaded_by.username }}</td>
+                        <td>{{ map.uploaded_at|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if map.is_processed %}
+                            <span class="rm-badge-processed">Processado</span>
+                            {% else %}
+                            <span class="rm-badge-pending">Pendente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="rm-actions">
+                                <a href="{% url 'company:map_download' company.slug map.id %}" class="btn btn-sm btn-outline-primary" title="Download">
+                                    <i class="fas fa-download" aria-hidden="true"></i>
+                                </a>
+                                {% if user.is_company_admin %}
+                                <button type="button" class="btn btn-sm btn-outline-danger js-delete-map" data-map-id="{{ map.id }}" data-delete-url="{% url 'company:map_delete' company.slug 0 %}" title="Excluir">
+                                    <i class="fas fa-trash" aria-hidden="true"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="rm-panel__body">
+        {% include "includes/rm_empty_state.html" with empty_icon="fa-map" empty_title="Nenhum mapa cadastrado" empty_text="Envie o primeiro arquivo CTO para começar." empty_action_url=upload_url empty_action_label="Fazer upload" empty_action_icon="fa-cloud-upload-alt" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

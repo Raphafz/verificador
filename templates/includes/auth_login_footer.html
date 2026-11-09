@@ -1,0 +1,15 @@
+<footer class="login-footer" role="contentinfo">
+    <div class="login-footer__inner">
+        <p class="login-footer__copyright">&copy; {% now "Y" %} RM Systems. Todos os direitos reservados.</p>
+        <nav class="login-footer__links" aria-label="Links legais e ajuda">
+            <a href="{% url 'termos_uso' %}">Termos de Uso</a>
+            <a href="{% url 'politica_privacidade' %}">Privacidade</a>
+            <a href="{% url 'politica_cookies' %}">Cookies</a>
+            <a href="{% url 'faq' %}">FAQ</a>
+            <a href="{% url 'ajuda' %}">Ajuda</a>
+        </nav>
+        <p class="login-footer__meta">
+            {% if footer_meta %}{{ footer_meta }}{% else %}RM Systems Tecnologia &bull; Segurança e inovação em viabilidade.{% endif %}
+        </p>
+    </div>
+</footer>

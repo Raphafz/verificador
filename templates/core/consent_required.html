@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Aceite de termos — RM Systems{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 720px; margin: 2rem auto;">
+  <div class="card" style="padding: 2rem;">
+    <h1 style="margin-bottom: 1rem;">Confirmação legal (LGPD)</h1>
+    <p>Para continuar, confirme que leu e aceita os documentos abaixo (versão <strong>{{ version }}</strong>):</p>
+    <ul style="margin: 1rem 0 1.5rem 1.5rem;">
+      <li><a href="{% url 'termos_uso' %}" target="_blank" rel="noopener">Termos de Uso</a></li>
+      <li><a href="{% url 'politica_privacidade' %}" target="_blank" rel="noopener">Política de Privacidade</a></li>
+      <li><a href="{% url 'politica_cookies' %}" target="_blank" rel="noopener">Política de Cookies</a></li>
+    </ul>
+    <form method="post">
+      {% csrf_token %}
+      <label style="display: flex; gap: 0.5rem; align-items: flex-start; margin-bottom: 1.5rem;">
+        <input type="checkbox" name="accept" value="yes" required>
+        <span>Li e aceito os documentos acima. Autorizo o tratamento dos meus dados conforme a Política de Privacidade.</span>
+      </label>
+      <button type="submit" class="btn primary">Continuar</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

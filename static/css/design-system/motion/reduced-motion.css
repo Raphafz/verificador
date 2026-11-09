@@ -1,0 +1,29 @@
+/**
+ * RM Systems DS — Reduced motion (global)
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-ui-v2 *,
+  .rm-ui-v2 *::before,
+  .rm-ui-v2 *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .rm-ui-v2 .ds-skeleton::after {
+    animation: none !important;
+  }
+
+  .rm-ui-v2 .rm-v2-hover-lift:hover {
+    transform: none;
+  }
+}
+
+.rm-ui-v2.rm-reduced-motion *,
+.rm-ui-v2.rm-reduced-motion *::before,
+.rm-ui-v2.rm-reduced-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}

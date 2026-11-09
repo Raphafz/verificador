@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatórios (RM){% endblock %}
+
+{% block extra_head %}
+{% include "includes/cdn_fontawesome_6_5_2_css.html" %}
+<style>
+  body { background-color: var(--rm-bg-primary); color: var(--rm-text-primary); }
+  .sidebar { background: var(--rm-sidebar-bg); min-height: calc(100vh - 76px); box-shadow: var(--rm-shadow); border-right: 1px solid var(--rm-sidebar-border); }
+  .sidebar .nav-link { color: var(--rm-text-primary); padding: 15px 20px; border-bottom: 1px solid var(--rm-border-primary); transition: all 0.3s; }
+  .sidebar .nav-link:hover { background-color: var(--rm-bg-secondary); color: var(--rm-primary); transform: translateX(5px); }
+  .sidebar .nav-link.active { background-color: var(--rm-primary); color: var(--rm-white); }
+  .main-content { padding: 30px; background-color: var(--rm-bg-primary); }
+  .card { background: var(--rm-card-bg); border-radius: 15px; border: 1px solid var(--rm-card-border); box-shadow: var(--rm-card-shadow); color: var(--rm-text-primary); }
+  .card h5 { font-weight: 600; }
+  .stats-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
+  .icon-companies { background: var(--rm-primary); }
+  .icon-users { background: var(--rm-info); }
+  .icon-maps { background: var(--rm-success); }
+  canvas { width: 100% !important; }
+  @media (max-width: 768px) { .main-content { padding: 20px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-chart-bar me-2"></i>Relatórios e Estatísticas</h2>
+        <div class="btn-group">
+          <a href="{% url 'rm:map_by_company' %}" class="btn btn-outline-primary">
+            <i class="fas fa-map me-2"></i> Mapas por Empresa
+          </a>
+          <a href="{% url 'rm:admin_dashboard' %}" class="btn btn-outline-primary">
+            <i class="fas fa-home me-2"></i> Dashboard RM
+          </a>
+        </div>
+      </div>
+
+      <!-- Cards de resumo -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4 col-lg-3">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="stats-icon icon-companies me-3">
+                  <i class="fas fa-building"></i>
+                </div>
+                <div>
+                  <h6 class="text-muted mb-1">Empresas</h6>
+                  <h3 class="mb-0">{{ total_companies }}</h3>
+                  <small class="text-muted">Ativas: {{ active_companies }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-lg-3">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="stats-icon icon-users me-3">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div>
+                  <h6 class="text-muted mb-1">Usuários</h6>
+                  <h3 class="mb-0">{{ total_users }}</h3>
+                  <small class="text-muted">Ativos: {{ active_users }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-lg-3">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="stats-icon icon-maps me-3">
+                  <i class="fas fa-map"></i>
+                </div>
+                <div>
+                  <h6 class="text-muted mb-1">Mapas CTO</h6>
+                  <h3 class="mb-0">{{ total_maps }}</h3>
+                  <small class="text-muted">Empresas com mapas: {{ companies_with_maps }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-lg-3">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="stats-icon icon-maps me-3">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                  <h6 class="text-muted mb-1">Processamento</h6>
+                  <div class="small">Processados: <strong>{{ overall_processed }}</strong></div>
+                  <div class="small">Pendentes: <strong>{{ overall_pending }}</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráficos -->
+      <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Mapas por Empresa</h5>
+              <canvas id="chartMapsByCompany" height="120"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="mb-3"><i class="fas fa-chart-pie me-2"></i>Status Geral</h5>
+              <canvas id="chartStatus" height="120"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="mb-3"><i class="fas fa-table me-2"></i>Exportação</h5>
+          <p class="text-muted">Baixe o CSV com o total de mapas por empresa.</p>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'rm:reports_export_csv' %}">
+              <i class="fas fa-file-csv me-2"></i>Exportar CSV
+            </a>
+            <button class="btn btn-outline-primary" disabled>
+              <i class="fas fa-file-excel me-2"></i>Exportar Excel
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+{% include "includes/cdn_chartjs_4_4_1_js.html" %}
+<script nonce="{{ csp_nonce }}">
+  // Dados serializados com segurança (fallback para arrays vazios)
+  const labels = JSON.parse("{{ chart_labels|default:'[]'|escapejs }}");
+  const totals = JSON.parse("{{ chart_totals|default:'[]'|escapejs }}");
+  const processed = JSON.parse("{{ chart_processed|default:'[]'|escapejs }}");
+  const pending = JSON.parse("{{ chart_pending|default:'[]'|escapejs }}");
+
+  // Bar: total por empresa
+  new Chart(document.getElementById('chartMapsByCompany'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {label: 'Total', data: totals, backgroundColor: 'rgba(0,51,102,0.65)'},
+        {label: 'Processados', data: processed, backgroundColor: 'rgba(40,167,69,0.65)'},
+        {label: 'Pendentes', data: pending, backgroundColor: 'rgba(220,53,69,0.65)'}
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+  });
+
+  // Pie: status geral (com defaults de segurança)
+  const overallProcessed = Number("{{ overall_processed|default:'0' }}");
+  const overallPending = Number("{{ overall_pending|default:'0' }}");
+  new Chart(document.getElementById('chartStatus'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Processados', 'Pendentes'],
+      datasets: [{
+        data: [overallProcessed, overallPending],
+        backgroundColor: ['rgba(0,210,255,0.7)', 'rgba(220,53,69,0.7)']
+      }]
+    },
+    options: { responsive: true }
+  });
+</script>
+{% endblock %}

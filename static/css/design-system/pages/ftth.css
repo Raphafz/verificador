@@ -1,0 +1,15 @@
+/**
+ * RM Systems DS — FTTH token bridge (não sobrescreve style.css do viewer)
+ * Carregado apenas quando FTTH opt-in ao DS v2
+ */
+
+.rm-ui-v2-ftth-bridge {
+  --ftth-accent: var(--ds-brand-cyan, #00d2ff);
+  --ftth-bg: var(--ds-bg-base, #070d18);
+  --ftth-surface: var(--ds-bg-elevated, rgba(12, 21, 38, 0.92));
+  --ftth-border: var(--ds-border-default, rgba(0, 210, 255, 0.1));
+  --ftth-text: var(--ds-text-primary, #e8eef7);
+  --ftth-text-muted: var(--ds-text-secondary, #94a3b8);
+  --ftth-ease: var(--ds-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+  --ftth-duration: var(--ds-duration-normal, 220ms);
+}

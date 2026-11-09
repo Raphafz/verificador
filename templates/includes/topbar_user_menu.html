@@ -1,0 +1,75 @@
+{% load static %}
+<div class="dropdown topbar-user-menu">
+  <button
+    class="topbar-user-menu__toggle dropdown-toggle"
+    type="button"
+    id="topbarUserMenu"
+    data-bs-toggle="dropdown"
+    data-bs-auto-close="true"
+    data-bs-offset="0,8"
+    aria-expanded="false"
+    aria-label="Menu da conta"
+  >
+    <span class="topbar__user-avatar" aria-hidden="true">
+      {% if user.get_full_name %}
+        {{ user.get_full_name|slice:":1"|upper }}
+      {% else %}
+        {{ user.username|slice:":1"|upper }}
+      {% endif %}
+    </span>
+    <span class="topbar-user-menu__name d-none d-md-inline">
+      {{ user.get_full_name|default:user.username }}
+    </span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end topbar-user-menu__dropdown" aria-labelledby="topbarUserMenu" role="menu">
+    <li class="topbar-user-menu__meta" role="presentation">
+      <span class="topbar-user-menu__email">{{ user.email }}</span>
+      {% if user.company %}
+      <span class="topbar-user-menu__company">{{ user.company.name }}</span>
+      {% elif user.is_rm_admin %}
+      <span class="topbar-user-menu__company">Administrador RM</span>
+      {% endif %}
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    {% if user.is_rm_admin %}
+    <li>
+      <a class="dropdown-item" href="{% url 'rm:admin_dashboard' %}">
+        <i class="fas fa-chart-line me-2" aria-hidden="true"></i>Dashboard
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="{% url 'rm:company_list' %}">
+        <i class="fas fa-building me-2" aria-hidden="true"></i>Empresas
+      </a>
+    </li>
+    {% elif user.company %}
+    <li>
+      <a class="dropdown-item" href="{% url 'company:hub' company_slug=user.company.slug %}">
+        <i class="fas fa-th-large me-2" aria-hidden="true"></i>Hub
+      </a>
+    </li>
+    {% endif %}
+    <li>
+      <a class="dropdown-item" href="{% url 'my_data_portal' %}">
+        <i class="fas fa-user-shield me-2" aria-hidden="true"></i>Meus dados
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="{% url 'ajuda' %}">
+        <i class="fas fa-circle-question me-2" aria-hidden="true"></i>Ajuda
+      </a>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li>
+      {% if user.is_rm_admin %}
+      <a class="dropdown-item topbar-user-menu__logout" href="{% url 'rm:logout' %}">
+        <i class="fas fa-right-from-bracket me-2" aria-hidden="true"></i>Sair
+      </a>
+      {% elif user.company %}
+      <a class="dropdown-item topbar-user-menu__logout" href="{% url 'company:logout' company_slug=user.company.slug %}">
+        <i class="fas fa-right-from-bracket me-2" aria-hidden="true"></i>Sair
+      </a>
+      {% endif %}
+    </li>
+  </ul>
+</div>

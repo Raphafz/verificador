@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if valid %}Ativar conta{% else %}Link inválido{% endif %} — RM Systems</title>
+    {% include "includes/cdn_bootstrap_5_1_css.html" %}
+    <style>
+        body { background: #121212; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { max-width: 480px; width: 100%; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.3); }
+    </style>
+</head>
+<body>
+    <div class="card bg-white p-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if valid %}
+            <h1 class="h4 mb-3">Defina sua senha</h1>
+            <p class="text-muted small">Olá, <strong>{{ user.first_name|default:user.username }}</strong>. Este link expira em {{ expiry_minutes }} minutos e só pode ser usado uma vez.</p>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="password1" class="form-label">Nova senha</label>
+                    <input type="password" class="form-control" id="password1" name="password1" required minlength="10" autocomplete="new-password">
+                    <div class="form-text">Mínimo 10 caracteres (validadores de segurança do sistema).</div>
+                </div>
+                <div class="mb-3">
+                    <label for="password2" class="form-label">Confirmar senha</label>
+                    <input type="password" class="form-control" id="password2" name="password2" required minlength="10" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Ativar conta</button>
+            </form>
+        {% else %}
+            <h1 class="h4 mb-3 text-danger">Link inválido ou expirado</h1>
+            <p class="text-muted">O link de ativação não é mais válido (uso único ou prazo de {{ expiry_minutes }} minutos).</p>
+            <p class="text-muted small">Peça ao administrador da sua empresa um novo convite ou use a opção &quot;Esqueci minha senha&quot; na tela de login.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

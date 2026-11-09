@@ -1,0 +1,142 @@
+{% extends "olt_ops/base_olt.html" %}
+
+{% block title %}VPN — {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="saas-page olt-console olt-console--medium rm-v2-route-enter">
+  <header class="saas-page-header">
+    <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="saas-breadcrumb">
+      <i class="fas fa-arrow-left"></i> OLT / ONU
+    </a>
+    <h2>VPN da empresa</h2>
+    <p class="saas-lead">O servidor do SaaS usa esta VPN para alcançar OLTs na rede interna.</p>
+  </header>
+
+  <div class="ds-help-panel">
+    <h6>Como funciona</h6>
+    <ul>
+      <li><strong>L2TP/IPsec</strong> — mesmo tipo do Windows (“chave pré-compartilhada”): servidor, chave, usuário e senha.</li>
+      <li><strong>OpenVPN</strong> — arquivo <code>.ovpn</code> fornecido pela TI (cole o texto completo).</li>
+      <li>No Windows, rode o servidor Django <strong>como administrador</strong> para testes locais.</li>
+    </ul>
+  </div>
+
+  <form method="post" class="ds-card ds-form" id="vpnForm" data-loading-message="Salvando…">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <div class="form-check form-switch">
+        {{ form.is_enabled }}
+        <label class="form-check-label" for="{{ form.is_enabled.id_for_label }}">{{ form.is_enabled.label }}</label>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+      {{ form.name }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.vpn_type.id_for_label }}">{{ form.vpn_type.label }}</label>
+      {{ form.vpn_type }}
+      <div class="form-text">Use L2TP/IPsec se no Windows aparece “IPsec com chave pré-compartilhada”.</div>
+    </div>
+
+    <div class="vpn-block vpn-block-l2tp">
+      <h6 class="fw-bold mb-3 text-muted text-uppercase small">L2TP/IPsec</h6>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.ipsec_server.id_for_label }}">{{ form.ipsec_server.label }}</label>
+        {{ form.ipsec_server }}
+        {% if form.ipsec_server.errors %}<div class="text-danger small">{{ form.ipsec_server.errors }}</div>{% endif %}
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.ipsec_psk.id_for_label }}">{{ form.ipsec_psk.label }}</label>
+        {{ form.ipsec_psk }}
+        {% if form.ipsec_psk.errors %}<div class="text-danger small">{{ form.ipsec_psk.errors }}</div>{% endif %}
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.vpn_username.id_for_label }}">{{ form.vpn_username.label }}</label>
+        {{ form.vpn_username }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.vpn_password.id_for_label }}">{{ form.vpn_password.label }}</label>
+        {{ form.vpn_password }}
+      </div>
+    </div>
+
+    <div class="vpn-block vpn-block-openvpn">
+      <h6 class="fw-bold mb-3 text-muted text-uppercase small">OpenVPN</h6>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.ovpn_content.id_for_label }}">{{ form.ovpn_content.label }}</label>
+        {{ form.ovpn_content }}
+        {% if form.ovpn_content.errors %}<div class="text-danger small">{{ form.ovpn_content.errors }}</div>{% endif %}
+      </div>
+      <p class="form-text">Abra o <code>.ovpn</code> no Bloco de notas e cole aqui o conteúdo inteiro.</p>
+    </div>
+
+    <div class="mb-3 mt-3">
+      <label class="form-label" for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
+      {{ form.notes }}
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="submit" class="ds-btn ds-btn--primary">Salvar</button>
+      <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="ds-btn ds-btn--outline">Cancelar</a>
+    </div>
+  </form>
+
+  {% if test_olt %}
+  <div class="ds-card mt-4">
+    <h3 class="ds-card__title">Testar conexão</h3>
+    <p class="text-muted small mb-3">
+      Verifica VPN + acesso à OLT <strong>{{ test_olt.name }}</strong> ({{ test_olt.host }}).
+      Pode levar até 90 segundos.
+    </p>
+    <form method="post" action="{% url 'company:olt_ops:vpn_test' company_slug=company.slug %}"
+          data-loading-message="Testando VPN…" data-overlay-message="Conectando na VPN e na OLT…">
+      {% csrf_token %}
+      <button type="submit" class="ds-btn ds-btn--outline">
+        <i class="fas fa-plug"></i> Testar VPN + OLT
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if vpn_test_ok is not None %}
+  <div class="ds-alert ds-alert--{% if vpn_test_ok %}success{% else %}danger{% endif %} mt-4">
+    <span class="ds-alert__icon">
+      <i class="fas fa-{% if vpn_test_ok %}check-circle{% else %}times-circle{% endif %}"></i>
+    </span>
+    <div class="ds-alert__body">
+      <strong>{% if vpn_test_ok %}Teste aprovado{% else %}Teste não passou{% endif %}</strong>
+      {% if vpn_test_ok %}A VPN e a OLT responderam.{% else %}Revise os dados ou permissões do servidor.{% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if vpn_test_log %}
+  <details class="ds-card mt-3">
+    <summary class="fw-semibold cursor-pointer" style="cursor:pointer">Detalhes técnicos do último teste</summary>
+    <pre class="olt-live-log mt-3 mb-0" style="min-height:120px;max-height:240px;">{{ vpn_test_log }}</pre>
+  </details>
+  {% endif %}
+</div>
+
+<script nonce="{{ csp_nonce }}">
+(function () {
+  var sel = document.getElementById("{{ form.vpn_type.id_for_label }}");
+  if (!sel) return;
+  function toggle() {
+    var t = sel.value;
+    document.querySelectorAll(".vpn-block-l2tp").forEach(function (el) {
+      el.style.display = t === "l2tp_ipsec" ? "" : "none";
+    });
+    document.querySelectorAll(".vpn-block-openvpn").forEach(function (el) {
+      el.style.display = t === "openvpn" ? "" : "none";
+    });
+  }
+  sel.addEventListener("change", toggle);
+  toggle();
+})();
+</script>
+{% endblock %}

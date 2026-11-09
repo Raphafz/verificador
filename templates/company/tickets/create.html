@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Novo ticket — {{ company.name }}{% endblock %}
+{% block body_class %}dashboard-page company-tickets-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/tickets-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="saas-page company-tickets ds-content-enter">
+  <header class="company-tickets__hero mb-3">
+    <div>
+      <span class="company-tickets__badge"><i class="fas fa-headset" aria-hidden="true"></i> Suporte</span>
+      <h2>Novo ticket de suporte</h2>
+      <p class="company-tickets__hero-lead">Conte o que aconteceu com o máximo de detalhes — isso acelera o atendimento.</p>
+    </div>
+    <div class="company-tickets__hero-actions">
+      <a href="{% url 'company:ticket_list' company.slug %}" class="company-tickets__btn-clear btn">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar à lista
+      </a>
+    </div>
+  </header>
+
+  <div class="company-tickets-form">
+    <form method="post" class="company-tickets-form__card" novalidate>
+      {% csrf_token %}
+
+      <div class="company-tickets-form__head">
+        <h2><i class="fas fa-pen-to-square me-2" aria-hidden="true"></i>Dados do chamado</h2>
+      </div>
+
+      <div class="company-tickets-form__body">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if error %}
+          <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <strong>Erro:</strong> {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+          </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+          </div>
+        {% endif %}
+
+        <div class="mb-4">
+          <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+          {% else %}
+            <span class="company-tickets-form__hint">Ex.: &quot;Erro ao processar mapa CTO&quot; ou &quot;Não consigo fazer upload&quot;</span>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label for="{{ form.priority.id_for_label }}" class="form-label">{{ form.priority.label }}</label>
+          {{ form.priority }}
+          {% if form.priority.errors %}
+            <div class="text-danger small mt-1">{{ form.priority.errors }}</div>
+          {% else %}
+            <span class="company-tickets-form__hint">Escolha conforme o impacto no seu trabalho.</span>
+            <div class="company-tickets-form__priorities" aria-hidden="true">
+              <span class="company-tickets-form__priority-tag company-tickets-form__priority-tag--baixa">Baixa — dúvida ou melhoria</span>
+              <span class="company-tickets-form__priority-tag company-tickets-form__priority-tag--normal">Normal — uso com contorno</span>
+              <span class="company-tickets-form__priority-tag company-tickets-form__priority-tag--alta">Alta — sistema parado</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-0">
+          <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+          {% else %}
+            <span class="company-tickets-form__hint">Passos para reproduzir, horário do erro, navegador e prints em texto ajudam muito.</span>
+          {% endif %}
+        </div>
+
+        <aside class="company-tickets-form__tips">
+          <p class="company-tickets-form__tips-title"><i class="fas fa-lightbulb me-1" aria-hidden="true"></i> Dicas para um atendimento mais rápido</p>
+          <ul>
+            <li>Informe a URL ou tela onde o problema ocorre.</li>
+            <li>Se for sobre mapas, cite o nome do arquivo enviado.</li>
+            <li>Após criar, você pode continuar a conversa no chat do ticket.</li>
+          </ul>
+        </aside>
+      </div>
+
+      <div class="company-tickets-form__footer">
+        <a href="{% url 'company:ticket_list' company.slug %}" class="company-tickets__btn-clear btn">
+          <i class="fas fa-times" aria-hidden="true"></i> Cancelar
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-paper-plane me-1" aria-hidden="true"></i> Criar ticket
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

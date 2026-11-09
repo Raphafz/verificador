@@ -1,0 +1,46 @@
+/**
+ * RM Systems DS — Docs / Legal pages (v2 polish)
+ */
+
+.rm-ui-v2.docs-page-layout .main-container {
+  background:
+    var(--ds-gradient-mesh),
+    var(--ds-gradient-mesh-secondary),
+    var(--ds-bg-base) !important;
+}
+
+.rm-ui-v2 .docs-sidebar {
+  background: var(--ds-bg-elevated);
+  border-color: var(--ds-border-default);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.rm-ui-v2 .docs-sidebar__link.is-active,
+.rm-ui-v2 .docs-sidebar__link:hover {
+  background: var(--ds-bg-muted);
+  color: var(--ds-text-primary) !important;
+}
+
+.rm-ui-v2 .docs-sidebar__link.is-active {
+  box-shadow: inset 0 0 0 1px var(--ds-border-accent);
+}
+
+.rm-ui-v2 .docs-hero {
+  border-color: var(--ds-border-subtle);
+}
+
+.rm-ui-v2 .docs-article {
+  background: var(--ds-bg-elevated);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-xs);
+}
+
+.rm-ui-v2 .docs-section__title {
+  color: var(--ds-text-primary);
+}
+
+.rm-ui-v2 .docs-btn--ghost {
+  border-radius: var(--ds-radius-md);
+}

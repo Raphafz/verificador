@@ -1,0 +1,23 @@
+# Cópia de referência — perfil ativo em tools/Cascavel/profiles/rmsys.yaml
+name: "RM Systems Hardening"
+description: "Headers, CSP, auth, CORS, CSRF — sem fuzzing SSRF/SSTI massivo"
+category: "web"
+
+plugins:
+  - security_headers
+  - csp_bypass
+  - csrf_detector
+  - cors_checker
+  - clickjacking_check
+  - http_methods
+  - ssl_check
+  - info_disclosure
+  - password_policy
+  - rate_limit_check
+  - crlf_scanner
+  - session_fixation
+  - admin_finder
+  - open_redirect
+  - path_traversal
+  - waf_detec
+  - tech_fingerprint

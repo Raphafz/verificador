@@ -1,0 +1,85 @@
+/**
+ * RM Systems DS — Badges e status
+ */
+
+.rm-ui-v2 .ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: var(--ds-radius-pill);
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+
+.rm-ui-v2 .ds-badge--cyan {
+  background: rgba(0, 210, 255, 0.12);
+  color: var(--ds-text-accent);
+  border-color: rgba(0, 210, 255, 0.25);
+}
+
+.rm-ui-v2 .ds-badge--success {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--ds-status-online);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.rm-ui-v2 .ds-badge--warn {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--ds-status-degraded);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.rm-ui-v2 .ds-badge--danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--ds-status-offline);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.rm-ui-v2 .ds-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ds-status-idle);
+}
+
+.rm-ui-v2 .ds-status-dot--online {
+  background: var(--ds-status-online);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.rm-ui-v2 .ds-status-dot--degraded {
+  background: var(--ds-status-degraded);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.rm-ui-v2 .ds-status-dot--offline {
+  background: var(--ds-status-offline);
+}
+
+.rm-ui-v2 .rm-v2-tenant-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-secondary);
+  background: var(--ds-bg-muted);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-pill);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rm-ui-v2 .rm-v2-tenant-badge i {
+  color: var(--ds-text-accent);
+  font-size: 0.7rem;
+}

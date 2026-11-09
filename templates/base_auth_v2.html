@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#070d18">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>{% block title %}RM Systems{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/theme_colors.css' %}">
+    {% include "includes/cdn_bootstrap_5_3_css.html" %}
+    {% include "includes/ui_v2_styles.html" %}
+    <script nonce="{{ csp_nonce }}">
+      (function(){var k='rm-theme';try{var t=localStorage.getItem(k)||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+    </script>
+    {% include "includes/cdn_fontawesome_6_0_css.html" %}
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="rm-ui-v2 rm-ui-v2-auth" data-login-scope="{% block auth_scope %}rm{% endblock %}">
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-card__brand">
+                {% block auth_brand %}
+                <img src="{% static 'img/letreiro-rm.png' %}" alt="RM Systems" width="200" height="40">
+                {% endblock %}
+                {% block auth_heading %}
+                <h1 class="auth-card__title">{% block auth_title %}Entrar{% endblock %}</h1>
+                <p class="auth-card__subtitle">{% block auth_subtitle %}Acesso seguro à plataforma operacional{% endblock %}</p>
+                {% endblock %}
+            </div>
+
+            {% if messages %}
+            <div class="messages" role="alert">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block auth_content %}{% endblock %}
+
+            <p class="auth-trust">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+                Conexão criptografada · MFA disponível
+            </p>
+        </div>
+    </div>
+
+    <footer class="auth-footer">
+        &copy; {% now "Y" %} RM Systems · {% block auth_footer_extra %}{% endblock %}
+    </footer>
+
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/dark-mode.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/rm-motion.js' %}" defer></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

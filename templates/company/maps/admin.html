@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Administração de Mapas - {{ company.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% include "includes/cdn_fontawesome_6_0_css.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho da Administração -->
+    <div class="admin-header text-center">
+        <h1><i class="fas fa-cogs"></i> Administração de Mapas</h1>
+        <p>Painel avançado para gerenciamento de mapas da {{ company.name }}</p>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_maps }}</div>
+            <div class="stat-label">Total de Mapas</div>
+        </div>
+        <div class="stat-card processed">
+            <div class="stat-number">{{ processed_maps }}</div>
+            <div class="stat-label">Mapas Processados</div>
+        </div>
+        <div class="stat-card pending">
+            <div class="stat-number">{{ pending_maps }}</div>
+            <div class="stat-label">Mapas Pendentes</div>
+        </div>
+        <div class="stat-card storage">
+            <div class="stat-number">{{ total_size_mb }}MB</div>
+            <div class="stat-label">Espaço Utilizado</div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="quick-actions">
+        <h3><i class="fas fa-bolt"></i> Ações Rápidas</h3>
+        <div class="action-buttons">
+            <a href="{% url 'company:ftth_viewer:index' company_slug=company.slug %}" class="action-btn primary">
+                <i class="fas fa-upload"></i> Novo Upload
+            </a>
+            <a href="{% url 'company:map_list' company.slug %}" class="action-btn success">
+                <i class="fas fa-chart-bar"></i> Relatórios
+            </a>
+            <a href="{% url 'company:ftth_viewer:index' company_slug=company.slug %}" class="action-btn info">
+                <i class="fas fa-search"></i> Verificador
+            </a>
+            <button onclick="exportData('csv')" class="action-btn success">
+                <i class="fas fa-file-csv"></i> Exportar CSV
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabela de Mapas -->
+    <div class="maps-section">
+        <h3><i class="fas fa-map"></i> Gerenciamento de Mapas</h3>
+        
+        {% if maps %}
+            <!-- Controles da Tabela -->
+            <div class="table-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchMaps" placeholder="Buscar mapas...">
+                </div>
+                
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">Todos os Status</option>
+                    <option value="processed">Processados</option>
+                    <option value="pending">Pendentes</option>
+                </select>
+                
+                <div class="bulk-actions">
+                    <select id="bulkAction">
+                        <option value="">Ações em lote</option>
+                        <option value="download">Baixar selecionados</option>
+                        <option value="delete">Excluir selecionados</option>
+                    </select>
+                    <button id="applyBulk" disabled>Aplicar</button>
+                </div>
+            </div>
+            
+            <div id="resultsCount" class="text-muted mb-2">
+                Mostrando {{ maps.count }} de {{ total_maps }} mapas
+            </div>
+
+            <div class="rm-table-wrap table-responsive">
+                <table class="maps-table table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" id="selectAll">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                            <th class="sortable" data-column="name">
+                                Nome do Arquivo <i class="fas fa-sort"></i>
+                            </th>
+                            <th>Descrição</th>
+                            <th class="sortable" data-column="size">
+                                Tamanho <i class="fas fa-sort"></i>
+                            </th>
+                            <th class="sortable" data-column="status">
+                                Status <i class="fas fa-sort"></i>
+                            </th>
+                            <th class="sortable" data-column="date">
+                                Data Upload <i class="fas fa-sort"></i>
+                            </th>
+                            <th>Enviado Por</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for map in maps %}
+                        <tr>
+                            <td>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" class="row-checkbox" value="{{ map.id }}">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td class="file-name">{{ map.file.name|default:"Sem nome" }}</td>
+                            <td class="file-description">{{ map.description|default:"Sem descrição" }}</td>
+                            <td class="file-size">
+                                {% if map.file.size %}
+                                    {{ map.file.size|filesizeformat }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if map.is_processed %}
+                                    <span class="status-badge processed">Processado</span>
+                                {% else %}
+                                    <span class="status-badge pending">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td class="upload-date">{{ map.uploaded_at|date:"d/m/Y H:i" }}</td>
+                            <td class="uploader-name">{{ map.uploaded_by.get_full_name|default:map.uploaded_by.username }}</td>
+                            <td>
+                                <div class="action-buttons-table">
+                                    <a href="#" class="btn btn-view" title="Visualizar">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'company:map_download' company.slug map.pk %}" class="btn btn-download" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <a href="{% url 'company:map_delete' company.slug map.pk %}" class="btn btn-delete" title="Excluir">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-map fa-3x text-muted mb-3"></i>
+                <h4>Nenhum mapa encontrado</h4>
+                <p class="text-muted">Comece fazendo o upload do primeiro mapa da empresa.</p>
+                <a href="{% url 'company:ftth_viewer:index' company_slug=company.slug %}" class="action-btn primary">
+                    <i class="fas fa-upload"></i> Fazer Upload
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}" src="{% static 'js/admin.js' %}"></script>
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('status-filter');
+    const dateFilter = document.getElementById('date-filter');
+    const searchInput = document.getElementById('search-input');
+    const selectAllBtn = document.getElementById('select-all');
+    const bulkActions = document.getElementById('bulk-actions');
+    const selectedCount = document.getElementById('selected-count');
+    const mapRows = document.querySelectorAll('.map-row');
+    const checkboxes = document.querySelectorAll('.map-checkbox');
+
+    // Filter functionality
+    function filterMaps() {
+        const statusValue = statusFilter.value;
+        const dateValue = dateFilter.value;
+        const searchValue = searchInput.value.toLowerCase();
+        
+        mapRows.forEach(row => {
+            let show = true;
+            
+            // Status filter
+            if (statusValue && !row.dataset.status.includes(statusValue)) {
+                show = false;
+            }
+            
+            // Date filter
+            if (dateValue) {
+                const rowDate = new Date(row.dataset.date);
+                const today = new Date();
+                
+                switch(dateValue) {
+                    case 'today':
+                        show = show && rowDate.toDateString() === today.toDateString();
+                        break;
+                    case 'week':
+                        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        show = show && rowDate >= weekAgo;
+                        break;
+                    case 'month':
+                        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+                        show = show && rowDate >= monthAgo;
+                        break;
+                }
+            }
+            
+            // Search filter
+            if (searchValue) {
+                const mapName = row.querySelector('.map-name').textContent.toLowerCase();
+                const mapDesc = row.querySelector('.map-description').textContent.toLowerCase();
+                show = show && (mapName.includes(searchValue) || mapDesc.includes(searchValue));
+            }
+            
+            row.style.display = show ? 'grid' : 'none';
+        });
+    }
+
+    statusFilter.addEventListener('change', filterMaps);
+    dateFilter.addEventListener('change', filterMaps);
+    searchInput.addEventListener('input', filterMaps);
+
+    // Checkbox functionality
+    function updateBulkActions() {
+        const checkedBoxes = document.querySelectorAll('.map-checkbox:checked');
+        const count = checkedBoxes.length;
+        
+        selectedCount.textContent = `${count} itens selecionados`;
+        bulkActions.classList.toggle('show', count > 0);
+    }
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateBulkActions);
+    });
+
+    selectAllBtn.addEventListener('click', function() {
+        const visibleCheckboxes = Array.from(checkboxes).filter(cb => 
+            cb.closest('.map-row').style.display !== 'none'
+        );
+        const allChecked = visibleCheckboxes.every(cb => cb.checked);
+        
+        visibleCheckboxes.forEach(cb => {
+            cb.checked = !allChecked;
+        });
+        
+        updateBulkActions();
+        selectAllBtn.innerHTML = allChecked ? 
+            '<i class="fas fa-check-square"></i> Selecionar Todos' : 
+            '<i class="fas fa-square"></i> Desmarcar Todos';
+    });
+});
+
+function viewMap(mapId) {
+    // Implementar visualização do mapa
+    alert('Funcionalidade de visualização em desenvolvimento');
+}
+
+function deleteMap(mapId) {
+    if (confirm('Tem certeza que deseja excluir este mapa?')) {
+        // Implementar exclusão
+        fetch(`{% url 'company:map_delete' company.slug 0 %}`.replace('0', mapId), {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Erro ao excluir o mapa');
+            }
+        });
+    }
+}
+
+function downloadSelected() {
+    const selected = Array.from(document.querySelectorAll('.map-checkbox:checked'))
+        .map(cb => cb.dataset.mapId);
+    
+    if (selected.length === 0) {
+        alert('Selecione pelo menos um mapa');
+        return;
+    }
+    
+    // Implementar download em lote
+    alert('Download em lote em desenvolvimento');
+}
+
+function deleteSelected() {
+    const selected = Array.from(document.querySelectorAll('.map-checkbox:checked'))
+        .map(cb => cb.dataset.mapId);
+    
+    if (selected.length === 0) {
+        alert('Selecione pelo menos um mapa');
+        return;
+    }
+    
+    if (confirm(`Tem certeza que deseja excluir ${selected.length} mapas?`)) {
+        // Implementar exclusão em lote
+        alert('Exclusão em lote em desenvolvimento');
+    }
+}
+</script>
+{% endblock %}

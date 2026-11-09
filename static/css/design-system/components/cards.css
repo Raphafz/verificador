@@ -1,0 +1,71 @@
+/**
+ * RM Systems DS — Cards
+ */
+
+.rm-ui-v2 .ds-card {
+  background: var(--ds-bg-elevated);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-xs);
+  overflow: hidden;
+}
+
+.rm-ui-v2 .ds-card--interactive {
+  cursor: pointer;
+}
+
+.rm-ui-v2 .ds-card--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow-md);
+  border-color: var(--ds-border-accent);
+}
+
+.rm-ui-v2 .ds-card__header {
+  padding: var(--ds-space-5) var(--ds-space-6);
+  border-bottom: 1px solid var(--ds-border-subtle);
+}
+
+.rm-ui-v2 .ds-card__body {
+  padding: var(--ds-space-6);
+}
+
+.rm-ui-v2 .ds-card__footer {
+  padding: var(--ds-space-4) var(--ds-space-6);
+  border-top: 1px solid var(--ds-border-subtle);
+  background: var(--ds-bg-subtle);
+}
+
+.rm-ui-v2 .ds-kpi-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-5);
+  background: var(--ds-bg-elevated);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-xs);
+  position: relative;
+  overflow: hidden;
+}
+
+.rm-ui-v2 .ds-kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--ds-gradient-brand);
+  opacity: 0;
+  transition: opacity var(--ds-transition-normal);
+}
+
+.rm-ui-v2 .ds-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow-md);
+  border-color: var(--ds-border-accent);
+}
+
+.rm-ui-v2 .ds-kpi-card:hover::after {
+  opacity: 1;
+}

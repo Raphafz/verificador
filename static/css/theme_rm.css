@@ -1,0 +1,171 @@
+/* RM Systems Theme Components: buttons, badges, tables, alerts, forms */
+:root {
+  --rm-blue-600: var(--rm-primary);
+  --rm-blue-700: var(--rm-primary-dark);
+  --rm-blue-100: var(--rm-primary-100);
+  --rm-green-500: var(--rm-success);
+  --rm-green-600: var(--rm-success-dark);
+  --rm-red-500: var(--rm-error);
+  --rm-red-600: var(--rm-error-dark);
+  --rm-amber-500: var(--rm-warning);
+  --rm-slate-900: var(--rm-text-primary);
+  --rm-slate-600: var(--rm-text-secondary);
+  --rm-slate-50: var(--rm-bg-secondary);
+}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1rem;border-radius:10px;border:1px solid transparent;font-weight:600;font-size:.9rem;cursor:pointer;text-decoration:none;transition:all .2s ease;box-shadow:var(--shadow)}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+.btn .fas,.btn .fa{font-size:.9rem}
+
+.btn.primary,.btn-primary{background:var(--primary, var(--rm-blue-600));color:#fff;border-color:var(--primary, var(--rm-blue-600))}
+.btn.primary:hover,.btn-primary:hover{background:var(--primary-hover, var(--rm-blue-700));border-color:var(--primary-hover, var(--rm-blue-700))}
+
+.btn-secondary{background:var(--rm-bg-secondary);color:var(--rm-primary);border:1px solid var(--rm-primary);box-shadow:0 2px 4px rgba(0,51,102,0.08)}
+.btn-secondary:hover{background:var(--rm-primary);border-color:var(--rm-primary);color:#fff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,210,255,0.25)}
+
+.btn-outline,.btn-outline-primary{background:transparent;color:var(--primary, var(--rm-blue-600));border-color:var(--primary, var(--rm-blue-600))}
+.btn-outline:hover,.btn-outline-primary:hover{background:rgba(0,210,255,0.1);color:var(--primary-hover, var(--rm-blue-700));border-color:var(--primary-hover, var(--rm-blue-700))}
+
+.btn-danger{background:var(--rm-red-500);color:#fff;border-color:var(--rm-red-500)}
+.btn-danger:hover{background:var(--rm-red-600);border-color:var(--rm-red-600)}
+.btn-outline-danger{background:transparent;color:var(--rm-red-500);border-color:var(--rm-red-500)}
+.btn-outline-danger:hover{background:rgba(239,68,68,.08);color:var(--rm-red-600);border-color:var(--rm-red-600)}
+
+.btn-success{background:var(--rm-green-500);color:#fff;border-color:var(--rm-green-500)}
+.btn-success:hover{background:var(--rm-green-600);border-color:var(--rm-green-600)}
+.btn-outline-success{background:transparent;color:var(--rm-green-500);border-color:var(--rm-green-500)}
+.btn-outline-success:hover{background:rgba(16,185,129,.08);color:var(--rm-green-600);border-color:var(--rm-green-600)}
+
+.btn-sm{padding:.4rem .7rem;border-radius:8px;font-size:.82rem}
+.btn-icon{display:inline-block}
+
+/* Badges */
+.badge{display:inline-block;padding:.25rem .5rem;border-radius:999px;font-weight:700;font-size:.75rem}
+.badge-success{background:#dcfce7;color:#166534}
+.badge-danger{background:#fee2e2;color:#7f1d1d}
+.badge-warning{background:#fef3c7;color:#92400e}
+.badge-info{background:var(--rm-primary-50);color:var(--rm-primary)}
+.badge-secondary{background:#e5e7eb;color:#374151}
+
+/* Cards */
+.card{background:var(--rm-card-bg);border:1px solid var(--rm-card-border);border-radius:16px;box-shadow:var(--rm-card-shadow);color:var(--rm-text-primary)}
+.card-body{padding:1rem 1.25rem;color:var(--rm-text-primary)}
+
+/* Tables */
+.table{width:100%;border-collapse:separate;border-spacing:0;background:var(--rm-card-bg);border:1px solid var(--rm-card-border);border-radius:12px;overflow:hidden;color:var(--rm-text-primary)}
+.table th,.table td{padding:.75rem 1rem;border-bottom:1px solid var(--rm-border-primary);text-align:left;color:var(--rm-text-primary)}
+.table thead th{background:var(--rm-bg-secondary);color:var(--rm-text-primary);font-weight:700;border-bottom:1px solid var(--rm-border-primary)}
+.table-striped tbody tr:nth-child(odd){background:var(--rm-bg-secondary)}
+.table-responsive{width:100%;overflow:auto}
+
+/* Alerts — detalhes finos em platform.css (.saas-page) */
+.alert{border-radius:var(--rm-border-radius-lg, 12px);padding:.8rem 1rem;border:1px solid var(--rm-border-surface, var(--rm-card-border));background:var(--rm-card-bg);color:var(--rm-text-primary)}
+
+/* Forms */
+.input, input[type="text"], input[type="email"], input[type="password"], select, textarea{width:100%;padding:.6rem .8rem;border-radius:10px;border:1px solid var(--rm-input-border) !important;background:var(--rm-input-bg) !important;color:var(--rm-text-primary) !important;outline:none;transition:border-color .2s ease, box-shadow .2s ease}
+.input:focus, input:focus, select:focus, textarea:focus{border-color:var(--rm-input-focus) !important;box-shadow:0 0 0 3px rgba(0,210,255,0.2);background:var(--rm-input-bg) !important;color:var(--rm-text-primary) !important}
+
+/* Form selection styling */
+.input::selection, input::selection, textarea::selection{background:var(--rm-primary-100);color:var(--rm-text-primary)}
+.input::-moz-selection, input::-moz-selection, textarea::-moz-selection{background:var(--rm-primary-100);color:var(--rm-text-primary)}
+
+/* Form hover effects */
+.input:hover, input:hover, select:hover, textarea:hover{border-color:var(--rm-primary-light);box-shadow:0 0 0 2px rgba(0, 210, 255, 0.15)}
+
+/* Placeholder styling */
+.input::placeholder, input::placeholder, textarea::placeholder{color:var(--rm-text-secondary);opacity:0.7}
+
+/* Bootstrap override for form controls (páginas .saas-page usam regras mais específicas) */
+.form-control, .form-select {
+    background: var(--rm-input-bg) !important;
+    border: 1px solid var(--rm-border-input, var(--rm-input-border)) !important;
+    color: var(--rm-text-primary) !important;
+    border-radius: 12px !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--rm-input-bg) !important;
+    border-color: var(--rm-input-focus) !important;
+    color: var(--rm-text-primary) !important;
+    box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.25) !important;
+    outline: none !important;
+}
+
+/* Layout helpers — largura total; limite só no conteúdo interno */
+.container-fluid{
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding-left:clamp(1rem,3vw,2rem);
+  padding-right:clamp(1rem,3vw,2rem);
+  background:transparent;
+  box-sizing:border-box;
+}
+body.hub-page .container-fluid.hub-shell{
+  max-width:none;
+  margin:0;
+  padding:0;
+}
+.row{display:block}
+.col-12{width:100%}
+
+/* Topbar subtle override */
+.topbar a:not(.dropdown-item){color:var(--rm-white);transition:all 0.3s ease}
+.topbar a:not(.dropdown-item):hover{color:var(--rm-white) !important;background:rgba(255, 255, 255, 0.1) !important;transform:translateY(-1px);box-shadow:var(--rm-shadow)}
+
+/* Navigation links hover fix */
+.nav-link{color:var(--rm-text-primary);transition:all 0.3s ease}
+.nav-link:hover{color:var(--rm-white) !important;background:var(--rm-primary) !important;transform:translateY(-1px);box-shadow:var(--rm-shadow)}
+
+/* Dropdown and form elements hover */
+.dropdown-toggle{color:var(--rm-text-primary);transition:all 0.3s ease}
+.dropdown-toggle:hover{color:var(--rm-white) !important;background:var(--rm-primary) !important}
+.dropdown-item{color:var(--rm-text-primary);transition:all 0.3s ease}
+.dropdown-item:hover{color:var(--rm-white) !important;background:var(--rm-primary) !important}
+/* Menu usuário topbar — não herdar hover global (evita “caixa” desalinhada) */
+.topbar-user-menu__dropdown .dropdown-item{
+  margin-left:0 !important;
+  transform:none !important;
+  box-shadow:none !important;
+  background:transparent !important;
+  color:var(--rm-text-primary) !important;
+}
+.topbar-user-menu__dropdown .dropdown-item:not(.topbar-user-menu__logout):hover,
+.topbar-user-menu__dropdown .dropdown-item:not(.topbar-user-menu__logout):focus,
+.topbar-user-menu__dropdown .dropdown-item:not(.topbar-user-menu__logout):active{
+  margin-left:0 !important;
+  transform:none !important;
+  box-shadow:none !important;
+  color:var(--rm-brand-cyan,#00d2ff) !important;
+  background:rgba(0,210,255,0.1) !important;
+}
+
+/* Button hover improvements */
+.btn{transition:all 0.3s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--rm-shadow-lg)}
+.btn-primary:hover{color:var(--rm-white) !important;background:var(--rm-primary-dark) !important}
+.btn-outline:hover{color:var(--rm-white) !important;background:var(--rm-primary) !important}
+
+/* Table row hover effects */
+.table tbody tr{transition:all 0.3s ease}
+.table tbody tr:hover{background:var(--rm-bg-secondary) !important;transform:translateY(-1px);box-shadow:var(--rm-shadow)}
+.table tbody tr:hover td{color:var(--rm-text-primary) !important}
+
+/* Card hover effects */
+.card{transition:all 0.3s ease}
+.card:hover{transform:translateY(-2px);box-shadow:var(--rm-shadow-lg)}
+
+/* Badge hover effects */
+.badge{transition:all 0.3s ease}
+.badge:hover{transform:scale(1.05);box-shadow:var(--rm-shadow)}
+
+/* Ícones em botões/links — sem hover global (quebrava sidebar) */
+.btn .fas:hover,
+.btn .fa:hover,
+.nav-link.active .fas,
+.nav-link.active .fa {
+  transform: none;
+  color: inherit;
+}

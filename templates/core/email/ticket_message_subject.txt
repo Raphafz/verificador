@@ -1,0 +1,2 @@
+Nova Mensagem no Ticket {{ ticket.ticket_number }} - {{ ticket.title }}
+

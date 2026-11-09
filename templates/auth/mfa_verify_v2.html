@@ -1,0 +1,30 @@
+{% extends "base_auth_v2.html" %}
+
+{% block title %}Verificação MFA — RM Systems{% endblock %}
+{% block auth_title %}Verificação em duas etapas{% endblock %}
+{% block auth_subtitle %}Digite o código do aplicativo autenticador{% endblock %}
+
+{% block auth_content %}
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}"/>
+    <div class="ds-field">
+        <label for="mfa-token">Código do aplicativo</label>
+        <input type="text" name="token" id="mfa-token" class="ds-input" inputmode="numeric" autocomplete="one-time-code" placeholder="000000">
+    </div>
+    <div class="ds-field">
+        <label for="mfa-backup">Ou código de backup</label>
+        <input type="text" name="backup_code" id="mfa-backup" class="ds-input" autocomplete="off">
+    </div>
+    <div class="ds-field">
+        <label class="ds-remember-label" for="mfa-remember">
+            <input type="checkbox" name="remember" value="1" id="mfa-remember">
+            <span class="ds-caption">Lembrar este dispositivo por 30 dias</span>
+        </label>
+    </div>
+    <button type="submit" class="ds-btn ds-btn--primary w-100">Verificar</button>
+</form>
+<p class="ds-caption text-center mt-3 mb-0">
+    <a href="{% url 'rm:mfa_recovery' %}">Recuperar códigos de backup</a>
+</p>
+{% endblock %}

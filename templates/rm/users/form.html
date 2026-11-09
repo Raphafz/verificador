@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ action }} Usuário - RM Systems{% endblock %}
+
+{% block extra_head %}
+{% include "includes/cdn_fontawesome_6_0_css.html" %}
+<style>
+    body { background-color: var(--rm-bg-primary); color: var(--rm-text-primary); }
+        /* Ocultar coluna de sidebar e centralizar conteúdo */
+    .sidebar-col { display: none; }
+    .main-content { 
+        padding: 30px; 
+        background-color: var(--rm-bg-primary);
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: calc(100vh - 76px);
+    }
+    .content-card { 
+        background: var(--rm-card-bg); 
+        border-radius: 15px; 
+        padding: 25px; 
+        box-shadow: var(--rm-card-shadow); 
+        border: 1px solid var(--rm-card-border); 
+        color: var(--rm-text-primary);
+        width: 100%; 
+        max-width: 1200px; 
+        margin: 0 auto; 
+    }
+    .sidebar { background: var(--rm-sidebar-bg); min-height: calc(100vh - 76px); box-shadow: var(--rm-shadow); border-right: 1px solid var(--rm-sidebar-border); }
+    .sidebar .nav-link { color: var(--rm-text-primary); padding: 15px 20px; border-bottom: 1px solid var(--rm-border-primary); transition: all 0.3s; }
+    .sidebar .nav-link:hover { background-color: var(--rm-bg-secondary); color: var(--rm-primary); transform: translateX(5px); }
+    .sidebar .nav-link.active { background-color: var(--rm-primary); color: var(--rm-white); }
+    .btn-primary { background: var(--rm-primary); border: none; border-radius: 10px; color: var(--rm-white); }
+    .btn-primary:hover { background: var(--rm-primary-dark); transform: translateY(-2px); box-shadow: var(--rm-shadow-lg); }
+    .form-label { font-weight: 600; color: var(--rm-text-primary); }
+    .required::after { content: ' *'; color: var(--rm-error); }
+    .form-control { 
+        background: var(--rm-input-bg) !important; 
+        border: 1px solid var(--rm-input-border) !important; 
+        color: var(--rm-text-primary) !important; 
+        transition: all 0.3s ease;
+    }
+    .form-control:focus { 
+        border-color: var(--rm-input-focus) !important; 
+        box-shadow: 0 0 0 3px rgba(29,78,216,0.15); 
+        background: var(--rm-input-bg) !important; 
+        color: var(--rm-text-primary) !important; 
+    }
+    .form-control::selection {
+        background: var(--rm-primary-100);
+        color: var(--rm-text-primary);
+    }
+    .form-control::-moz-selection {
+        background: var(--rm-primary-100);
+        color: var(--rm-text-primary);
+    }
+    .form-select { 
+        background: var(--rm-input-bg) !important; 
+        border: 1px solid var(--rm-input-border) !important; 
+        color: var(--rm-text-primary) !important; 
+        transition: all 0.3s ease;
+    }
+    .form-select:focus { 
+        border-color: var(--rm-input-focus) !important; 
+        box-shadow: 0 0 0 3px rgba(29,78,216,0.15); 
+        background: var(--rm-input-bg) !important;
+        color: var(--rm-text-primary) !important;
+    }
+    .form-check-input:checked { 
+        background-color: var(--rm-primary); 
+        border-color: var(--rm-primary); 
+    }
+    .form-check-label { 
+        color: var(--rm-text-primary); 
+    }
+    /* Placeholder styling */
+    .form-control::placeholder {
+        color: var(--rm-text-secondary);
+        opacity: 0.7;
+    }
+    /* Input hover effects */
+    .form-control:hover {
+        border-color: var(--rm-primary-light);
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar-col">
+                <div class="sidebar">
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="{% url 'rm:admin_dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a class="nav-link" href="{% url 'rm:company_list' %}">
+                            <i class="fas fa-building me-2"></i>Empresas
+                        </a>
+                        <a class="nav-link active" href="{% url 'rm:user_list' %}">
+                            <i class="fas fa-users me-2"></i>Usuários
+                        </a>
+                        <a class="nav-link" href="{% url 'rm:map_list' %}">
+                            <i class="fas fa-map me-2"></i>Mapas
+                        </a>
+                        <a class="nav-link" href="{% url 'rm:reports' %}">
+                            <i class="fas fa-chart-bar me-2"></i>Relatórios
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-12 col-lg-12">
+                <div class="main-content">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3>
+                                <i class="fas fa-user-edit me-2"></i>
+                                {{ action }} Usuário
+                            </h3>
+                            <div class="d-flex gap-2 flex-wrap">
+                            {% if user_obj and user_obj.email %}
+                            {% include "includes/rm_activation_email_button.html" with target_user=user_obj btn_class="btn btn-info" show_label=True %}
+                            {% endif %}
+                            <a href="{% url 'rm:user_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Voltar
+                            </a>
+                            </div>
+                        </div>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Erros no formulário:</strong>
+                                <ul class="mb-0">
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+
+                        {% if form.errors %}
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Atenção:</strong> Verifique os campos abaixo para mais detalhes sobre os erros.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required">Usuário</label>
+                                    {{ form.username }}
+                                    {% for error in form.username.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">E-mail</label>
+                                    {{ form.email }}
+                                    {% for error in form.email.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Nome</label>
+                                    {{ form.first_name }}
+                                    {% for error in form.first_name.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Sobrenome</label>
+                                    {{ form.last_name }}
+                                    {% for error in form.last_name.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Telefone</label>
+                                    {{ form.phone }}
+                                    {% for error in form.phone.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Função</label>
+                                    {{ form.role }}
+                                    {% for error in form.role.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                    <div class="form-text">Selecione RM, Administrador da Empresa ou Usuário da Empresa.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Empresa</label>
+                                    {{ form.company }}
+                                    {% for error in form.company.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                    <div class="form-text">Obrigatório para Administrador da Empresa ou Usuário da Empresa e vazio para RM.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Ativo</label>
+                                    <div class="form-check">
+                                        {{ form.is_active }}
+                                        <label class="form-check-label">Usuário ativo</label>
+                                    </div>
+                                </div>
+                                {% if form.password1 %}
+                                <div class="col-md-12">
+                                    <label class="form-label">Senha</label>
+                                    <div class="input-group">
+                                        {{ form.password1 }}
+                                        <button type="button" class="btn btn-outline-primary" id="generatePasswordBtn">
+                                            <i class="fas fa-key me-2"></i>Gerar Senha
+                                        </button>
+                                    </div>
+                                    {% if form.password1.help_text %}
+                                        <div class="form-text">{{ form.password1.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.password1.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mt-4 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    {{ action }}
+                                </button>
+                                <a href="{% url 'rm:user_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include "includes/rm_activation_email_toast.html" %}
+    {% include "includes/rm_activation_email_script.html" %}
+    <script nonce="{{ csp_nonce }}">
+      document.addEventListener('DOMContentLoaded', function () {
+        const phoneInput = document.getElementById('id_phone');
+
+        if (phoneInput) {
+          const formatPhone = (raw) => {
+            const digits = (raw || '').replace(/\D/g, '').slice(0, 11);
+            if (!digits) {
+              return '';
+            }
+            if (digits.length <= 2) {
+              return `(${digits}`;
+            }
+            if (digits.length <= 6) {
+              return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+            }
+            if (digits.length <= 10) {
+              return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+            }
+            return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+          };
+
+          const enforcePhoneMask = () => {
+            const formatted = formatPhone(phoneInput.value);
+            phoneInput.value = formatted;
+            const digits = formatted.replace(/\D/g, '');
+            if (digits && ![10, 11].includes(digits.length)) {
+              phoneInput.setCustomValidity('Telefone deve conter DDD + número (10 ou 11 dígitos).');
+            } else {
+              phoneInput.setCustomValidity('');
+            }
+          };
+
+          phoneInput.addEventListener('input', enforcePhoneMask);
+          phoneInput.addEventListener('blur', enforcePhoneMask);
+          enforcePhoneMask();
+        }
+
+        // Gerador de senha (letras e números para novos usuários, apenas números para antigos)
+        const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+        const passwordInput = document.getElementById('id_password1');
+        
+        if (generatePasswordBtn && passwordInput) {
+          generatePasswordBtn.addEventListener('click', function() {
+            // Verificar se é novo usuário ou edição
+            const isNewUser = passwordInput.getAttribute('data-is-new-user') === 'true';
+            let password = '';
+            
+            if (isNewUser) {
+              // Novo usuário: senha alfanumérica (letras e números)
+              const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+              const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+              const digits = '0123456789';
+              const allChars = lowercase + uppercase + digits;
+              
+              // Garantir pelo menos uma letra minúscula, uma maiúscula e um número
+              password = [
+                lowercase[Math.floor(Math.random() * lowercase.length)],
+                uppercase[Math.floor(Math.random() * uppercase.length)],
+                digits[Math.floor(Math.random() * digits.length)]
+              ];
+              
+              // Preencher o resto com caracteres aleatórios
+              for (let i = 0; i < 5; i++) {
+                password.push(allChars[Math.floor(Math.random() * allChars.length)]);
+              }
+              
+              // Embaralhar a senha
+              password = password.sort(() => Math.random() - 0.5).join('');
+            } else {
+              // Usuário antigo ou superusuário: senha apenas números (padrão antigo)
+              for (let i = 0; i < 8; i++) {
+                password += Math.floor(Math.random() * 10).toString();
+              }
+            }
+            
+            // Preencher o campo de senha
+            passwordInput.value = password;
+            passwordInput.removeAttribute('readonly');
+            
+            // Adicionar efeito visual
+            passwordInput.style.background = 'var(--rm-success-light, #d4edda)';
+            setTimeout(() => {
+              passwordInput.style.background = '';
+            }, 500);
+            
+            // Feedback ao usuário
+            const originalText = generatePasswordBtn.innerHTML;
+            generatePasswordBtn.innerHTML = '<i class="fas fa-check me-2"></i>Senha Gerada!';
+            generatePasswordBtn.classList.remove('btn-outline-primary');
+            generatePasswordBtn.classList.add('btn-success');
+            
+            setTimeout(() => {
+              generatePasswordBtn.innerHTML = originalText;
+              generatePasswordBtn.classList.remove('btn-success');
+              generatePasswordBtn.classList.add('btn-outline-primary');
+            }, 1500);
+          });
+        }
+      });
+    </script>
+{% endblock %}

@@ -1,0 +1,13 @@
+/**
+ * RM Systems DS — Animações (re-export + utilitários)
+ */
+
+@import url('./motion/animations.css');
+
+.rm-ui-v2 .ds-animate-in {
+  animation: dsFadeUp var(--ds-duration-slow) var(--ds-ease-out) both;
+}
+
+.rm-ui-v2 .ds-animate-delay-1 { animation-delay: 80ms; }
+.rm-ui-v2 .ds-animate-delay-2 { animation-delay: 160ms; }
+.rm-ui-v2 .ds-animate-delay-3 { animation-delay: 240ms; }

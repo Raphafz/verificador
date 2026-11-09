@@ -1,0 +1,437 @@
+/* ============================================
+   Overlay de loading global — RM Systems
+   Transições enter/leave completas
+   ============================================ */
+
+#global-loading-overlay.global-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  background: rgba(0, 51, 102, 0.45);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 0.42s ease;
+}
+
+#global-loading-overlay.global-loading-overlay.gl-open,
+#global-loading-overlay.global-loading-overlay.gl-leaving {
+  visibility: visible;
+}
+
+#global-loading-overlay.global-loading-overlay.gl-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#global-loading-overlay.global-loading-overlay.gl-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Garante que o painel não apareça solto se o overlay estiver fechado */
+#global-loading-overlay.global-loading-overlay:not(.gl-open):not(.gl-leaving) .global-loading-content {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Card central */
+.global-loading-content {
+  text-align: center;
+  color: var(--rm-text-inverse, #fff);
+  padding: 2rem 2.25rem 1.75rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--rm-border-accent, rgba(0, 210, 255, 0.35));
+  box-shadow:
+    0 24px 48px rgba(0, 51, 102, 0.18),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  max-width: min(380px, calc(100vw - 2rem));
+  width: 100%;
+  transform: translateY(20px) scale(0.94);
+  opacity: 0;
+  transition:
+    transform 0.48s cubic-bezier(0.34, 1.2, 0.64, 1),
+    opacity 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.global-loading-overlay.gl-open .global-loading-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  transition-delay: 0.05s;
+  animation: gl-card-glow 2.6s ease-in-out infinite;
+}
+
+@keyframes gl-card-glow {
+  0%, 100% {
+    box-shadow:
+      0 24px 48px rgba(0, 51, 102, 0.18),
+      0 8px 24px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  50% {
+    box-shadow:
+      0 28px 56px rgba(0, 51, 102, 0.22),
+      0 10px 28px rgba(0, 210, 255, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+.global-loading-overlay.gl-leaving .global-loading-content {
+  transform: translateY(-12px) scale(0.97);
+  opacity: 0;
+  transition-duration: 0.32s;
+  transition-delay: 0s;
+}
+
+/* Spinner — sempre animado (prioridade sobre resets globais) */
+.global-loading-brand {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1.35rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.global-loading-spinner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4px solid rgba(0, 210, 255, 0.18);
+  border-top-color: var(--rm-primary-light, #00d2ff);
+  border-right-color: var(--rm-primary, #003366);
+  box-sizing: border-box;
+  transform-origin: 50% 50%;
+  animation: gl-spin 0.75s linear infinite !important;
+}
+
+.global-loading-rings {
+  position: absolute;
+  inset: 6px;
+  animation: gl-spin-reverse 1.15s linear infinite !important;
+  transform-origin: 50% 50%;
+}
+
+.global-loading-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  box-sizing: border-box;
+}
+
+.global-loading-ring--outer {
+  border-top-color: var(--rm-primary-light, #00d2ff);
+  border-right-color: rgba(0, 210, 255, 0.35);
+}
+
+.global-loading-ring--inner {
+  inset: 8px;
+  border-bottom-color: var(--rm-primary, #003366);
+  border-left-color: rgba(0, 51, 102, 0.4);
+}
+
+.global-loading-core {
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 210, 255, 0.3), rgba(0, 51, 102, 0.1));
+}
+
+.global-loading-core i,
+.global-loading-pulse {
+  font-size: 1.15rem;
+  color: var(--rm-primary, #003366);
+}
+
+.global-loading-core i.fa-spin {
+  animation-duration: 0.85s !important;
+  animation-iteration-count: infinite !important;
+}
+
+/* Compat: markup antigo .global-loading-pulse */
+.global-loading-pulse {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 210, 255, 0.2);
+  border-top-color: var(--rm-primary-light, #00d2ff);
+  animation: gl-spin 0.9s linear infinite;
+  position: relative;
+}
+
+.global-loading-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.3) 0%, transparent 72%);
+  animation: gl-core-pulse 1.8s ease-in-out infinite;
+}
+
+.global-loading-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.02em;
+  color: var(--rm-text-primary, #2c3e50);
+  animation: gl-text-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.12s both;
+}
+
+.global-loading-sub {
+  font-size: 0.875rem;
+  color: var(--rm-text-secondary, #6c757d);
+  margin: 0 0 1.35rem;
+  min-height: 1.25em;
+  animation: gl-text-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+.global-loading-dots {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 2px;
+  vertical-align: baseline;
+}
+
+.global-loading-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rm-primary-light, #00d2ff);
+  animation: gl-dot-bounce 1.2s ease-in-out infinite !important;
+}
+
+.global-loading-dots span:nth-child(2) {
+  animation-delay: 0.15s !important;
+}
+
+.global-loading-dots span:nth-child(3) {
+  animation-delay: 0.3s !important;
+}
+
+@keyframes gl-dot-bounce {
+  0%, 80%, 100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+.global-loading-progress {
+  width: min(220px, 100%);
+  height: 5px;
+  margin: 0 auto;
+  background: var(--rm-bg-tertiary, #e9ecef);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.global-loading-progress-bar {
+  height: 100%;
+  width: 40%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--rm-primary, #003366) 0%,
+    var(--rm-primary-light, #00d2ff) 50%,
+    var(--rm-primary, #003366) 100%
+  );
+  background-size: 200% 100%;
+  transform-origin: left center;
+  animation: gl-progress-slide 1.6s ease-in-out infinite !important;
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.45);
+}
+
+.global-loading-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: gl-progress-shimmer 1.4s ease-in-out infinite !important;
+}
+
+.global-loading-dismiss {
+  margin-top: 1.35rem;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--rm-border-primary, #dee2e6);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--rm-text-secondary, #6c757d);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.global-loading-overlay.gl-open .global-loading-dismiss {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.35s;
+}
+
+.global-loading-dismiss:hover {
+  background: var(--rm-bg-secondary, #f8f9fa);
+  color: var(--rm-primary, #003366);
+}
+
+/* Dark mode */
+[data-theme="dark"] .global-loading-overlay {
+  background: rgba(0, 0, 0, 0.72);
+}
+
+[data-theme="dark"] .global-loading-content {
+  background: rgba(30, 30, 30, 0.96);
+  border-color: var(--rm-border-accent, rgba(0, 210, 255, 0.35));
+  box-shadow:
+    0 28px 56px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+[data-theme="dark"] .global-loading-text {
+  color: var(--rm-text-primary, #e0e0e0);
+}
+
+[data-theme="dark"] .global-loading-sub {
+  color: var(--rm-text-secondary, #b0b0b0);
+}
+
+[data-theme="dark"] .global-loading-progress {
+  background: var(--rm-bg-tertiary, #2c2c2c);
+}
+
+[data-theme="dark"] .global-loading-ring--outer {
+  border-top-color: var(--rm-primary-light, #00d2ff);
+}
+
+[data-theme="dark"] .global-loading-core i {
+  color: var(--rm-primary-light, #00d2ff);
+}
+
+/* Keyframes */
+@keyframes gl-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gl-spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes gl-core-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes gl-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gl-progress-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+@keyframes gl-progress-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@media (max-width: 768px) {
+  .global-loading-content {
+    padding: 1.5rem 1.35rem 1.35rem;
+  }
+
+  .global-loading-text {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .global-loading-overlay,
+  .global-loading-content,
+  .global-loading-dismiss {
+    transition-duration: 0.01ms !important;
+  }
+
+  .global-loading-overlay.gl-open .global-loading-content {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  /* Spinner e barra continuam em movimento (feedback de carregamento) */
+  .global-loading-spinner,
+  .global-loading-rings,
+  .global-loading-progress-bar,
+  .global-loading-progress::after,
+  .global-loading-dots span,
+  .global-loading-core i.fa-spin {
+    animation-duration: 0.75s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

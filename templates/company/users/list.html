@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Usuários - {{ company.name }}{% endblock %}
+
+{% block body_class %}dashboard-page rm-list-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/rm-panel.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'company:user_create' company.slug as create_user_url %}
+<div class="saas-page rm-panel ds-content-enter">
+  <header class="rm-panel__hero">
+    <div>
+      <h2><i class="fas fa-users" aria-hidden="true"></i> Usuários da Empresa</h2>
+      <p class="rm-panel__lead">Gerencie acessos e permissões de {{ company.name }}.</p>
+    </div>
+    <a href="{{ create_user_url }}" class="rm-panel__btn-primary">
+      <i class="fas fa-user-plus" aria-hidden="true"></i>
+      Novo Usuário
+    </a>
+  </header>
+
+  {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if users %}
+  <div class="rm-panel__body">
+    <div class="rm-table-wrap">
+      <table class="rm-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>Função</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>
+              <div class="rm-table__company">
+                <span class="rm-table__company-icon" aria-hidden="true">
+                  <i class="fas fa-user"></i>
+                </span>
+                <strong>{{ u.get_full_name|default:u.username }}</strong>
+              </div>
+            </td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.phone|default:'—' }}</td>
+            <td><span class="rm-role-pill">{{ u.get_role_display }}</span></td>
+            <td>
+              {% if u.is_active %}
+              <span class="rm-pill rm-pill--success"><i class="fas fa-check-circle" aria-hidden="true"></i> Ativo</span>
+              {% else %}
+              <span class="rm-pill rm-pill--muted"><i class="fas fa-times-circle" aria-hidden="true"></i> Inativo</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="rm-actions">
+                <a href="{% url 'company:user_edit' company.slug u.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                  <i class="fas fa-edit" aria-hidden="true"></i>
+                </a>
+                {% if not u.is_superuser and u.id != user.id %}
+                <button type="button"
+                        class="btn btn-sm btn-outline-{% if u.is_active %}warning{% else %}success{% endif %} js-toggle-user"
+                        data-user-id="{{ u.id }}"
+                        title="{% if u.is_active %}Desativar{% else %}Ativar{% endif %}">
+                  <i class="fas fa-{% if u.is_active %}pause{% else %}play{% endif %}" aria-hidden="true"></i>
+                </button>
+                <button type="button"
+                        class="btn btn-sm btn-outline-danger js-delete-user"
+                        data-user-id="{{ u.id }}"
+                        data-user-name="{{ u.get_full_name|default:u.username }}"
+                        title="Remover">
+                  <i class="fas fa-trash" aria-hidden="true"></i>
+                </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="rm-panel__body">
+    {% include "includes/rm_empty_state.html" with empty_icon="fa-users" empty_title="Nenhum usuário cadastrado" empty_text="Crie o primeiro usuário da empresa." empty_action_url=create_user_url empty_action_label="Novo usuário" empty_action_icon="fa-user-plus" %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block page_modals %}
+<div id="delete-user-modal"
+     class="ds-confirm-modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="delete-modal-title"
+     aria-hidden="true">
+  <div class="ds-confirm-modal__dialog">
+    <div class="ds-confirm-modal__header">
+      <div class="ds-confirm-modal__title" id="delete-modal-title">
+        <span class="ds-confirm-modal__icon" aria-hidden="true">
+          <i class="fas fa-exclamation-triangle"></i>
+        </span>
+        <h5>Confirmar Remoção</h5>
+      </div>
+      <button type="button" class="ds-confirm-modal__close" id="close-delete-modal-btn" aria-label="Fechar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="ds-confirm-modal__body">
+      <p class="ds-confirm-modal__message">
+        Tem certeza que deseja <strong>remover</strong> o usuário
+        <strong id="delete-modal-user-name"></strong>?
+      </p>
+      <div class="ds-confirm-modal__warn" role="note">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        <span><strong>Atenção:</strong> Esta ação não pode ser desfeita.</span>
+      </div>
+    </div>
+    <div class="ds-confirm-modal__footer">
+      <button type="button" class="btn btn-secondary btn-cancel" id="cancel-delete-btn">
+        <i class="fas fa-times me-2"></i>
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-danger" id="confirm-delete-btn">
+        <i class="fas fa-trash me-2"></i>
+        Remover Usuário
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ csp_nonce }}">
+let deleteForm = null;
+let deleteUserName = null;
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+window.showDeleteModal = function(userName) {
+  const modal = document.getElementById('delete-user-modal');
+  const modalUserName = document.getElementById('delete-modal-user-name');
+  if (modalUserName) modalUserName.textContent = userName;
+  if (modal) {
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('ds-modal-open');
+  }
+};
+
+window.closeDeleteModal = function() {
+  const modal = document.getElementById('delete-user-modal');
+  if (modal) {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('ds-modal-open');
+  }
+  deleteForm = null;
+  deleteUserName = null;
+};
+
+window.confirmDelete = function() {
+  if (!deleteForm) return;
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = deleteForm.action;
+  const csrfInput = document.createElement('input');
+  csrfInput.type = 'hidden';
+  csrfInput.name = 'csrfmiddlewaretoken';
+  csrfInput.value = deleteForm.csrfToken;
+  form.appendChild(csrfInput);
+  window.closeDeleteModal();
+  document.body.appendChild(form);
+  form.submit();
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  const modalRoot = document.getElementById('delete-user-modal');
+  if (modalRoot && modalRoot.parentElement !== document.body) {
+    document.body.appendChild(modalRoot);
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  document.querySelectorAll('.js-toggle-user').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-user-id');
+      if (!confirm('Tem certeza que deseja alterar o status deste usuário?')) return;
+      try {
+        const url = `{% url 'company:user_toggle' company.slug 0 %}`.replace('/0/', `/${id}/`);
+        const resp = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': csrftoken }, credentials: 'same-origin' });
+        const data = await resp.json();
+        if (data.success) location.reload();
+        else alert(data.message || 'Erro ao alterar status do usuário');
+      } catch (e) {}
+    });
+  });
+
+  document.querySelectorAll('.js-delete-user').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-user-id');
+      const userName = btn.getAttribute('data-user-name');
+      deleteForm = {
+        method: 'POST',
+        action: `{% url 'company:user_delete' company.slug 0 %}`.replace('/0/', `/${id}/`),
+        csrfToken: csrftoken
+      };
+      window.showDeleteModal(userName);
+    });
+  });
+
+  document.getElementById('close-delete-modal-btn')?.addEventListener('click', window.closeDeleteModal);
+  document.getElementById('cancel-delete-btn')?.addEventListener('click', window.closeDeleteModal);
+  document.getElementById('confirm-delete-btn')?.addEventListener('click', window.confirmDelete);
+  window.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('delete-user-modal')) window.closeDeleteModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('delete-user-modal')?.classList.contains('is-open')) {
+      window.closeDeleteModal();
+    }
+  });
+});
+</script>
+{% endblock %}

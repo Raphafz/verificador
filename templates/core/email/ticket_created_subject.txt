@@ -1,0 +1,2 @@
+Ticket {{ ticket.ticket_number }} Criado - {{ ticket.title }}
+

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Verificador De Viabilidade</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Sistema de verificação de viabilidade FTTH com mapas interativos">
+    <meta name="theme-color" content="#003366">
+    
+    {% load static %}
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <!-- Preconnect hints para reduzir DNS/TLS e acelerar requisições -->
+    <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+    <link rel="preconnect" href="https://a.tile.openstreetmap.org" crossorigin>
+    <link rel="preconnect" href="https://b.tile.openstreetmap.org" crossorigin>
+    <link rel="preconnect" href="https://c.tile.openstreetmap.org" crossorigin>
+    <link rel="preconnect" href="https://viacep.com.br" crossorigin>
+    <link rel="preconnect" href="https://brasilapi.com.br" crossorigin>
+    <link rel="preconnect" href="https://nominatim.openstreetmap.org" crossorigin>
+
+    <link rel="stylesheet" href="{% static 'vendor/leaflet/1.7.1/leaflet.css' %}" />
+    {% include "includes/cdn_fontawesome_6_0_css.html" %}
+    <!-- Tema SaaS compartilhado -->
+    <link rel="stylesheet" href="{% static 'css/theme_colors.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme_rm.css' %}">
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+    <link rel="stylesheet" href="{% static 'ftth_viewer/style.css' %}?v=20260608">
+    <link rel="stylesheet" href="{% static 'ftth_viewer/mobile.css' %}">
+
+    <script src="{% static 'vendor/leaflet/1.7.1/leaflet.js' %}" nonce="{{ csp_nonce }}" defer></script>
+    <script nonce="{{ csp_nonce }}">
+      (function() {
+        var themeKey = 'rm-theme';
+        function getSystemTheme() {
+          return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function getInitialTheme() {
+          try {
+            var saved = localStorage.getItem(themeKey);
+            return saved || getSystemTheme();
+          } catch (e) { return getSystemTheme(); }
+        }
+        var theme = getInitialTheme();
+        var html = document.documentElement;
+        if (theme === 'dark') {
+          html.setAttribute('data-theme', 'dark');
+          html.classList.add('dark-theme');
+        } else {
+          html.setAttribute('data-theme', 'light');
+          html.classList.remove('dark-theme');
+        }
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = theme === 'dark' ? '#121212' : '#003366';
+      })();
+    </script>
+</head>
+<body class="ftth-viewer-page" data-no-global-loading="1">
+    <!-- Cabeçalho -->
+    <header class="header">
+        <div class="header-content">
+            <h1>RM Systems</h1>
+        </div>
+    </header>
+
+    <!-- Barra superior com pesquisa e controles -->
+    <div class="top-bar">
+        <!-- Botão de menu hambúrguer -->
+        <button id="menu-toggle" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        {% if user.is_authenticated and user.is_company_admin or user.is_authenticated and user.is_rm_admin or user.is_authenticated and user.is_superuser %}
+        <a class="menu-admin-link" href="{% if user.is_rm_admin or user.is_superuser %}/rm/admin/{% else %}/{{ company_slug }}/painel/{% endif %}">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Ir para o Painel</span>
+        </a>
+        {% endif %}
+        
+        <!-- Barra de pesquisa principal -->
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <input type="text" id="search-input" class="search-input" placeholder="Pesquisar endereço, CEP ou coordenadas...">
+                <div class="search-actions">
+                    <button id="history-btn" class="history-btn" type="button" title="Histórico de pesquisas" hidden>
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button id="filter-btn" class="filter-btn" type="button" title="Filtros de pesquisa" hidden>
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <button id="search-btn" class="search-btn" type="button" title="Pesquisar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Dropdown de sugestões -->
+            <div class="search-suggestions-dropdown" style="display: none;"></div>
+            
+            <!-- Dropdown de histórico -->
+            <div class="history-dropdown" style="display: none;"></div>
+            
+            <!-- Dropdown de filtros -->
+            <div class="filter-dropdown" style="display: none;"></div>
+            
+            <div id="search-results" class="search-results" style="display: none;"></div>
+        </div>
+        
+        <!-- Botão de alternância do cursor -->
+        <div class="cursor-toggle-container">
+            <button id="cursor-toggle-btn" class="cursor-toggle-btn" title="Alternar para modo de marcação">
+                <i class="fas fa-hand-pointer"></i>
+                <span class="cursor-mode-text">Navegar</span>
+            </button>
+        </div>
+
+        <!-- Botão de Adicionar CTO (apenas para admins) -->
+        {% if user.is_authenticated and user.is_company_admin or user.is_authenticated and user.is_rm_admin %}
+        <div class="add-cto-toggle-container">
+            <button id="add-cto-toggle-btn" class="add-cto-toggle-btn" title="Adicionar CTO no mapa">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="add-cto-mode-text">Adicionar CTO</span>
+            </button>
+        </div>
+        {% endif %}
+
+        <!-- Botão de Dark Mode -->
+        <div class="theme-toggle-container">
+            <button id="theme-toggle-btn" class="theme-toggle-btn" title="Alternar tema">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Sidebar Profissional -->
+    <div id="sidebar" class="sidebar">
+        <!-- Header da Sidebar -->
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <div class="brand-icon-sidebar">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <div class="brand-text">
+                    <h1 class="sidebar-title">FTTH Viewer</h1>
+                    <p class="sidebar-subtitle">Verificador De Viabilidade</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Sidebar -->
+        <div class="sidebar-content">
+            <!-- Menu de Ações (apenas mobile) -->
+            <section class="sidebar-section sidebar-mobile-actions" style="display: none;">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h2 class="section-title">Ações</h2>
+                </div>
+                <div class="mobile-actions-grid">
+                    {% if user.is_authenticated and user.is_company_admin or user.is_authenticated and user.is_rm_admin or user.is_authenticated and user.is_superuser %}
+                    <a class="mobile-action-btn menu-admin-link-mobile" href="{% if user.is_rm_admin or user.is_superuser %}/rm/admin/{% else %}/{{ company_slug }}/painel/{% endif %}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Ir para o Painel</span>
+                    </a>
+                    {% endif %}
+                    <button class="mobile-action-btn cursor-toggle-btn-mobile" id="cursor-toggle-btn-mobile" title="Alternar para modo de marcação">
+                        <i class="fas fa-hand-pointer"></i>
+                        <span class="cursor-mode-text-mobile">Navegar</span>
+                    </button>
+                    {% if user.is_authenticated and user.is_company_admin or user.is_authenticated and user.is_rm_admin %}
+                    <button class="mobile-action-btn add-cto-toggle-btn-mobile" id="add-cto-toggle-btn-mobile" title="Adicionar CTO no mapa">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="add-cto-mode-text-mobile">Adicionar CTO</span>
+                    </button>
+                    {% endif %}
+                    <button class="mobile-action-btn theme-toggle-btn-mobile" id="theme-toggle-btn-mobile" title="Alternar tema">
+                        <i class="fas fa-moon"></i>
+                        <span>Tema</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- CTOs Disponíveis -->
+            <section class="sidebar-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h2 class="section-title">CTOs Disponíveis</h2>
+                    <button type="button" id="refresh-maps-btn" class="refresh-maps-btn" title="Atualizar lista de mapas">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="cto-grid" id="cto-grid" aria-live="polite" aria-busy="true">
+                    <label class="cto-card ds-skeleton-cto-card" aria-hidden="true"><div class="ds-skeleton ds-skeleton-cto-icon"></div><div class="ds-skeleton ds-skeleton-line ds-skeleton-line--med"></div></label>
+                    <label class="cto-card ds-skeleton-cto-card" aria-hidden="true"><div class="ds-skeleton ds-skeleton-cto-icon"></div><div class="ds-skeleton ds-skeleton-line ds-skeleton-line--med"></div></label>
+                    <label class="cto-card ds-skeleton-cto-card" aria-hidden="true"><div class="ds-skeleton ds-skeleton-cto-icon"></div><div class="ds-skeleton ds-skeleton-line ds-skeleton-line--med"></div></label>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Overlay para mobile -->
+    <div id="overlay" class="overlay" aria-hidden="true"></div>
+
+    <!-- Mapa em tela cheia -->
+    <div id="map"></div>
+
+    <!-- Loading ao carregar camada de mapa CTO -->
+    <div id="map-loading-overlay" class="map-loading-overlay" aria-hidden="true" aria-busy="false" role="status" aria-live="polite" aria-labelledby="map-loading-title" aria-describedby="map-loading-desc">
+        <div class="loading-content map-loading-content">
+            <div class="loading-brand" aria-hidden="true">
+                <span class="loading-brand__glow"></span>
+                <div class="loading-brand__spinner"></div>
+                <div class="loading-brand__rings">
+                    <span class="loading-brand__ring loading-brand__ring--outer"></span>
+                    <span class="loading-brand__ring loading-brand__ring--inner"></span>
+                </div>
+                <div class="loading-brand__core">
+                    <i class="fas fa-map loading-brand__icon" id="map-loading-icon"></i>
+                </div>
+            </div>
+            <div class="loading-text" id="map-loading-title">Carregando mapa<span class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></span></div>
+            <div class="loading-progress" aria-hidden="true">
+                <div class="loading-progress-bar"></div>
+            </div>
+            <p class="loading-subtext" id="map-loading-desc">Processando coordenadas e desenhando na malha</p>
+        </div>
+    </div>
+
+    <!-- Popup de Adicionar CTO (apenas para admins) -->
+    {% if user.is_authenticated and user.is_company_admin or user.is_authenticated and user.is_rm_admin %}
+    <div id="add-cto-popup" class="add-cto-popup" aria-hidden="true">
+        <div class="add-cto-popup-content">
+            <div class="add-cto-popup-header">
+                <h3>Adicionar CTO</h3>
+                <button id="close-add-cto-popup" class="close-add-cto-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="add-cto-form" class="add-cto-form">
+                <div class="form-group">
+                    <label for="cto-name">Nome do CTO *</label>
+                    <input type="text" id="cto-name" name="nome_cto" required placeholder="Ex: CTO Centro">
+                </div>
+                <div class="form-group">
+                    <label for="cto-map">Selecione o Mapa *</label>
+                    <select id="cto-map" name="map_id" required>
+                        <option value="">Carregando mapas...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Coordenadas</label>
+                    <div class="coords-display">
+                        <span id="cto-lat-display">-</span>, <span id="cto-lon-display">-</span>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancel-add-cto" class="btn-cancel">Cancelar</button>
+                    <button type="submit" id="save-cto" class="btn-save">Salvar CTO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Loading Screen -->
+    <div id="loading-overlay" class="loading-overlay ds-viabilidade-loading" aria-hidden="true" aria-busy="false" role="dialog" aria-modal="true" aria-labelledby="ftth-loading-title" aria-describedby="ftth-loading-desc">
+        <div class="loading-content" role="status" aria-live="polite">
+            <div class="loading-brand" aria-hidden="true">
+                <span class="loading-brand__glow"></span>
+                <div class="loading-brand__spinner"></div>
+                <div class="loading-brand__rings">
+                    <span class="loading-brand__ring loading-brand__ring--outer"></span>
+                    <span class="loading-brand__ring loading-brand__ring--inner"></span>
+                </div>
+                <div class="loading-brand__core">
+                    <i class="fas fa-network-wired loading-brand__icon" id="ftth-loading-icon"></i>
+                </div>
+            </div>
+            <div class="loading-text" id="ftth-loading-title">Verificando viabilidade<span class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></span></div>
+            <div class="loading-progress" aria-hidden="true">
+                <div class="loading-progress-bar"></div>
+            </div>
+            <p class="loading-subtext" id="ftth-loading-desc">Analisando CTOs próximos e calculando rotas</p>
+        </div>
+    </div>
+
+    <!-- Configuração inicial (nonce obrigatório para CSP) -->
+    <script nonce="{{ csp_nonce }}">
+        window.csrfToken = '{{ csrf_token }}';
+        window.IS_ADMIN = {% if user.is_authenticated and user.is_company_admin or user.is_authenticated and user.is_rm_admin or user.is_authenticated and user.is_superuser %}true{% else %}false{% endif %};
+        window.COMPANY_SLUG = '{{ company_slug|default_if_none:"" }}';
+        window.FTTH_SEARCH_HISTORY_ENABLED = {{ ftth_search_history_enabled|yesno:"true,false" }};
+        window.FTTH_SEARCH_HISTORY_MAX_ITEMS = {{ ftth_search_history_max_items }};
+        window.FTTH_SEARCH_HISTORY_TTL_MINUTES = {{ ftth_search_history_ttl_minutes }};
+    </script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/toast.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/skeleton.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/search-history-safe.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/dark-mode.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'ftth_viewer/js/app.js' %}?v=20260608b" defer></script>
+</body>
+</html>
+

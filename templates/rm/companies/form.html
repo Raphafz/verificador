@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if company %}Editar{% else %}Nova{% endif %} Empresa - RM Systems{% endblock %}
+{% block body_class %}dashboard-page rm-list-page rm-form-page{% endblock %}
+
+{% block extra_head %}
+{% include "includes/cdn_fontawesome_6_0_css.html" %}
+<link rel="stylesheet" href="{% static 'css/rm-panel.css' %}">
+<link rel="stylesheet" href="{% static 'css/rm-form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="saas-page rm-panel ds-content-enter">
+    <header class="rm-panel__hero">
+        <div>
+            <h2>
+                <i class="fas fa-building" aria-hidden="true"></i>
+                {% if company %}Editar empresa{% else %}Nova empresa{% endif %}
+            </h2>
+            <p class="rm-panel__lead">
+                {% if company %}
+                    Atualize dados cadastrais, plano comercial e módulos habilitados.
+                {% else %}
+                    Cadastre uma nova empresa cliente na plataforma multi-tenant.
+                {% endif %}
+            </p>
+            {% if company %}
+            <span class="rm-form-badge">
+                <i class="fas fa-tag" aria-hidden="true"></i> {{ company.name }}
+            </span>
+            {% endif %}
+        </div>
+        <a href="{% url 'rm:company_list' %}" class="rm-panel__btn-secondary">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar
+        </a>
+    </header>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" class="rm-form" novalidate>
+        {% csrf_token %}
+
+        <section class="rm-form-section" aria-labelledby="section-dados">
+            <header class="rm-form-section__head">
+                <div class="rm-form-section__icon" aria-hidden="true"><i class="fas fa-id-card"></i></div>
+                <div>
+                    <h3 id="section-dados">Dados da empresa</h3>
+                    <p>Identificação, contato e status de acesso</p>
+                </div>
+            </header>
+
+            <div class="rm-form-grid">
+                <div class="rm-form-field">
+                    <label class="rm-form-label required" for="id_name">Nome</label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}<span class="text-danger">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="rm-form-field">
+                    <label class="rm-form-label required" for="id_cnpj">CNPJ</label>
+                    {{ form.cnpj }}
+                    {% for error in form.cnpj.errors %}<span class="text-danger">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="rm-form-field">
+                    <label class="rm-form-label" for="id_email">E-mail</label>
+                    {{ form.email }}
+                    {% for error in form.email.errors %}<span class="text-danger">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="rm-form-field">
+                    <label class="rm-form-label" for="id_phone">Telefone</label>
+                    {{ form.phone }}
+                    {% for error in form.phone.errors %}<span class="text-danger">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="rm-form-field rm-form-field--full">
+                    <label class="rm-form-label" for="id_address">Endereço</label>
+                    {{ form.address }}
+                    {% for error in form.address.errors %}<span class="text-danger">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="rm-form-switch">
+                    {{ form.is_active }}
+                    <label class="form-check-label" for="id_is_active">
+                        Empresa ativa
+                        <span class="rm-form-switch__hint">Empresas inativas não podem acessar o portal</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section class="rm-form-section" aria-labelledby="section-plano">
+            <header class="rm-form-section__head">
+                <div class="rm-form-section__icon" aria-hidden="true"><i class="fas fa-layer-group"></i></div>
+                <div>
+                    <h3 id="section-plano">Plano comercial</h3>
+                    <p>Limites de usuários, mapas e viabilidade conforme o plano</p>
+                </div>
+            </header>
+
+            <div class="rm-form-grid">
+                <div class="rm-form-field rm-form-plan-box">
+                    <label class="rm-form-label" for="id_plan_code">Plano (P / M / G / XL)</label>
+                    {{ form.plan_code }}
+                    <p class="rm-form-hint">Ao salvar, o plano pode redefinir os módulos automaticamente.</p>
+                    <div class="rm-form-plan-limits" id="planLimitsHint" aria-live="polite"></div>
+                    {% for error in form.plan_code.errors %}<span class="text-danger">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="rm-form-switch align-self-end">
+                    {{ form.quota_enforcement }}
+                    <label class="form-check-label" for="id_quota_enforcement">
+                        Aplicar limites do plano
+                        <span class="rm-form-switch__hint">Bloqueia ações quando a cota do plano for atingida</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section class="rm-form-section" aria-labelledby="section-modulos">
+            <header class="rm-form-section__head">
+                <div class="rm-form-section__icon" aria-hidden="true"><i class="fas fa-puzzle-piece"></i></div>
+                <div>
+                    <h3 id="section-modulos">Módulos da plataforma</h3>
+                    <p>Selecione pelo menos um módulo habilitado para esta empresa</p>
+                </div>
+            </header>
+
+            <div class="rm-module-grid">
+                <label class="rm-module-card{% if form.module_verificador.value %} is-checked{% endif %}" data-module="verificador" role="checkbox" tabindex="0" aria-checked="{% if form.module_verificador.value %}true{% else %}false{% endif %}">
+                    {{ form.module_verificador }}
+                    <span class="rm-module-card__check" aria-hidden="true"><i class="fas fa-check"></i></span>
+                    <span class="rm-module-card__icon"><i class="fas fa-map-marked-alt" aria-hidden="true"></i></span>
+                    <span class="rm-module-card__title">Verificador FTTH</span>
+                    <span class="rm-module-card__desc">Mapas CTO e análise de viabilidade</span>
+                </label>
+                <label class="rm-module-card{% if form.module_alertas.value %} is-checked{% endif %}" data-module="alertas" role="checkbox" tabindex="0" aria-checked="{% if form.module_alertas.value %}true{% else %}false{% endif %}">
+                    {{ form.module_alertas }}
+                    <span class="rm-module-card__check" aria-hidden="true"><i class="fas fa-check"></i></span>
+                    <span class="rm-module-card__icon"><i class="fas fa-bell" aria-hidden="true"></i></span>
+                    <span class="rm-module-card__title">Alertas</span>
+                    <span class="rm-module-card__desc">Telegram e WhatsApp</span>
+                </label>
+                <label class="rm-module-card{% if form.module_olt.value %} is-checked{% endif %}" data-module="olt" role="checkbox" tabindex="0" aria-checked="{% if form.module_olt.value %}true{% else %}false{% endif %}">
+                    {{ form.module_olt }}
+                    <span class="rm-module-card__check" aria-hidden="true"><i class="fas fa-check"></i></span>
+                    <span class="rm-module-card__icon"><i class="fas fa-server" aria-hidden="true"></i></span>
+                    <span class="rm-module-card__title">OLT / ONU</span>
+                    <span class="rm-module-card__desc">Operações e provisionamento</span>
+                </label>
+            </div>
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                <p class="text-danger mt-2 mb-0">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+        </section>
+
+        <footer class="rm-form-actions">
+            <button type="submit" class="rm-panel__btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i>
+                {% if company %}Salvar alterações{% else %}Criar empresa{% endif %}
+            </button>
+            <a href="{% url 'rm:company_list' %}" class="rm-panel__btn-secondary">Cancelar</a>
+            {% if company %}
+            <a href="{% url 'rm:company_portal' company.slug %}" class="rm-panel__btn-secondary ms-auto">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i> Portal da empresa
+            </a>
+            {% endif %}
+        </footer>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/rm-company-form.js' %}" nonce="{{ csp_nonce }}" defer></script>
+{% endblock %}

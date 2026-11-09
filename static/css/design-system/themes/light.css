@@ -1,0 +1,22 @@
+/**
+ * RM Systems DS — Tema light refinado
+ */
+
+[data-theme="light"] .rm-ui-v2 {
+  --rm-bg-primary: var(--ds-bg-base);
+  --rm-bg-secondary: var(--ds-bg-subtle);
+  --rm-card-bg: var(--ds-bg-elevated);
+  --rm-card-border: var(--ds-border-default);
+  --rm-text-primary: var(--ds-text-primary);
+  --rm-text-secondary: var(--ds-text-secondary);
+  --rm-sidebar-bg: rgba(248, 249, 250, 0.95);
+  --rm-sidebar-border: var(--ds-border-subtle);
+}
+
+[data-theme="light"] .rm-ui-v2 .main-container,
+[data-theme="light"] .rm-ui-v2 #main-content.main-container {
+  background:
+    var(--ds-gradient-mesh),
+    var(--ds-gradient-mesh-secondary),
+    var(--ds-bg-base) !important;
+}

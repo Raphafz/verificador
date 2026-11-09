@@ -1,0 +1,34 @@
+/**
+ * RM Systems DS — Tema dark enterprise (#070d18)
+ */
+
+[data-theme="dark"] .rm-ui-v2 {
+  --rm-bg-primary: var(--ds-bg-base);
+  --rm-bg-secondary: var(--ds-bg-subtle);
+  --rm-bg-tertiary: var(--ds-bg-muted);
+  --rm-card-bg: var(--ds-bg-elevated);
+  --rm-card-border: var(--ds-border-default);
+  --rm-text-primary: var(--ds-text-primary);
+  --rm-text-secondary: var(--ds-text-secondary);
+  --rm-sidebar-bg: rgba(8, 14, 28, 0.96);
+  --rm-sidebar-border: var(--ds-border-subtle);
+  --rm-input-bg: rgba(19, 34, 56, 0.9);
+}
+
+[data-theme="dark"] .rm-ui-v2 .main-container,
+[data-theme="dark"] .rm-ui-v2 #main-content.main-container {
+  background:
+    var(--ds-gradient-mesh),
+    var(--ds-gradient-mesh-secondary),
+    var(--ds-bg-base) !important;
+}
+
+[data-theme="dark"] .rm-ui-v2 .rm-v2-topbar {
+  background: rgba(7, 13, 24, 0.88) !important;
+  border-bottom-color: var(--ds-border-default) !important;
+}
+
+[data-theme="dark"] .rm-ui-v2 .rm-v2-sidebar {
+  background: var(--rm-sidebar-bg) !important;
+  border-right-color: var(--ds-border-default) !important;
+}

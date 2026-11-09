@@ -1,0 +1,16 @@
+{% extends ui_shell %}
+{% load static %}
+
+{% block body_class %}olt-console-page{% endblock %}
+
+{% block extra_head %}
+{% if not ui_v2 %}<link rel="stylesheet" href="{% static 'css/design-system.css' %}">{% endif %}
+<link rel="stylesheet" href="{% static 'css/design-system/pages/olt.css' %}?v=20260525b">
+{% block olt_extra_head %}{% endblock %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ csp_nonce }}" src="{% static 'js/ux-forms.js' %}" defer></script>
+<script nonce="{{ csp_nonce }}" src="{% static 'js/olt-live.js' %}" defer></script>
+{% block olt_extra_scripts %}{% endblock %}
+{% endblock %}

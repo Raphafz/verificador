@@ -1,0 +1,46 @@
+Django
+python-dotenv
+cryptography>=42.0.0
+django-otp>=1.5.0
+pyotp>=2.9.0
+qrcode[pil]>=7.4.0
+argon2-cffi>=23.1.0
+djangorestframework
+djangorestframework-simplejwt>=5.3.0
+django-cors-headers>=4.3.0
+django-crispy-forms
+crispy-bootstrap5
+Pillow
+
+# Dependências do verificador (migrado do Flask)
+pandas>=2.0.0
+openpyxl>=3.0.0
+requests>=2.28.0
+
+# Dependências adicionais do Verificador-De-Viabilidade-main
+lxml>=6.0.0      # Para parsing XML/KML
+xlrd>=2.0.0      # Para ler arquivos XLS antigos
+
+# Cache e performance (opcional)
+django-redis>=5.2.0  # Para cache Redis (opcional)
+dj-database-url
+psycopg[binary]>=3.2.10
+
+# Servidor WSGI para produção
+gunicorn>=21.2.0  # Linux/Mac
+waitress>=2.1.2  # Windows (alternativa ao gunicorn)
+
+# Servir arquivos estáticos em produção
+whitenoise>=6.5.0
+
+# OLT / ONU (SSH na OLT)
+paramiko>=3.4.0
+
+# Monitoramento (Sentry — Error Monitoring)
+sentry-sdk>=2.0.0
+
+# E-mail transacional (Resend)
+resend>=2.0.0
+
+# OpenAPI / Swagger (API interna)
+drf-spectacular>=0.27.0

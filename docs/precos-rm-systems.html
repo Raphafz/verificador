@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RM Systems — Tabela de preços</title>
+  <style>
+    :root {
+      --primary: #003366;
+      --primary-dark: #001a33;
+      --bg: #121212;
+      --card: #1e1e1e;
+      --card-border: #424242;
+      --text: #e0e0e0;
+      --muted: #b0b0b0;
+      --accent: #00d2ff;
+      --success: #28a745;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+    header h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.75rem;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(0, 210, 255, 0.12);
+      border: 1px solid rgba(0, 210, 255, 0.35);
+      color: var(--accent);
+    }
+    section {
+      margin-bottom: 2.25rem;
+    }
+    h2 {
+      font-size: 1.15rem;
+      margin: 0 0 1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2::before {
+      content: "";
+      width: 4px;
+      height: 1.1rem;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    th, td {
+      padding: 0.65rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+    th {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      background: rgba(0, 51, 102, 0.35);
+    }
+    tr:last-child td { border-bottom: none; }
+    .price { font-weight: 700; color: var(--success); white-space: nowrap; }
+    .plan-p { color: #94a3b8; }
+    .plan-m { color: #00d2ff; }
+    .plan-g { color: #fbbf24; }
+    .plan-xl { color: #a78bfa; }
+    .highlight-row td {
+      background: rgba(0, 210, 255, 0.08);
+      font-weight: 600;
+    }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .plan-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+    }
+    .plan-card.featured {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .plan-card .code {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .plan-card h3 {
+      margin: 0.25rem 0 0.5rem;
+      font-size: 1.1rem;
+    }
+    .plan-card .amount {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--success);
+      margin-bottom: 0.75rem;
+    }
+    .plan-card .amount small {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .plan-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .plan-card li {
+      padding: 0.2rem 0;
+      border-top: 1px solid var(--card-border);
+    }
+    .plan-card li:first-child { border-top: none; }
+    .formula {
+      font-family: ui-monospace, monospace;
+      font-size: 0.8rem;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 1rem;
+      border-radius: 8px;
+      color: var(--muted);
+      white-space: pre-wrap;
+      margin: 0;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+    }
+    footer {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: #fff; color: #111; }
+      .card, .plan-card { border-color: #ccc; background: #f8fafc; }
+      th { color: #555; }
+      .price { color: #059669; }
+      header h1 { -webkit-text-fill-color: #0891b2; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>RM Systems — Tabela de preços</h1>
+      <p>Plataforma ISP · Verificador FTTH · Alertas · OLT/ONU · Valores em BRL/mês por empresa</p>
+      <div class="badge-row">
+        <span class="badge">B2B ISP</span>
+        <span class="badge">Multi-tenant</span>
+        <span class="badge">Maio/2026</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>Como o preço é formado</h2>
+      <div class="card">
+        <pre class="formula">Mensalidade = Plano base (ou módulos à la carte)
+          + Excedentes do mês anterior
+          + Setup (pagamento único, na entrada)</pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>Planos fechados (visão rápida)</h2>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="code">Plano P</div>
+          <h3>Essencial</h3>
+          <div class="amount">R$ 297<small>/mês</small></div>
+          <ul>
+            <li>3 usuários · 15 mapas</li>
+            <li>500 consultas viabilidade</li>
+            <li>Só Verificador FTTH</li>
+          </ul>
+        </div>
+        <div class="plan-card">
+          <div class="code">Plano M</div>
+          <h3>Comercial</h3>
+          <div class="amount">R$ 497<small>/mês</small></div>
+          <ul>
+            <li>8 usuários · 40 mapas</li>
+            <li>2.000 consultas</li>
+            <li>Só Verificador FTTH</li>
+          </ul>
+        </div>
+        <div class="plan-card featured">
+          <div class="code">Plano G</div>
+          <h3>Operação</h3>
+          <div class="amount">R$ 797<small>/mês</small></div>
+          <ul>
+            <li>15 usuários · 80 mapas</li>
+            <li>Verificador + Alertas</li>
+            <li>2 chips · 3.000 msgs</li>
+          </ul>
+        </div>
+        <div class="plan-card">
+          <div class="code">Plano XL</div>
+          <h3>Rede</h3>
+          <div class="amount">R$ 1.497<small>/mês</small></div>
+          <ul>
+            <li>40 usuários · 200 mapas</li>
+            <li>Todos os módulos</li>
+            <li>5 OLT · 120 jobs ONU</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Comparativo completo dos planos</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Limite / mês</th>
+              <th class="plan-p">P Essencial</th>
+              <th class="plan-m">M Comercial</th>
+              <th class="plan-g">G Operação</th>
+              <th class="plan-xl">XL Rede</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Usuários</td><td>3</td><td>8</td><td>15</td><td>40</td></tr>
+            <tr><td>Mapas CTO</td><td>15</td><td>40</td><td>80</td><td>200</td></tr>
+            <tr><td>Consultas viabilidade</td><td>500</td><td>2.000</td><td>8.000</td><td>25.000</td></tr>
+            <tr><td>Verificador FTTH</td><td>Sim</td><td>Sim</td><td>Sim</td><td>Sim</td></tr>
+            <tr><td>Chips WhatsApp</td><td>—</td><td>—</td><td>2</td><td>6</td></tr>
+            <tr><td>Números alerta</td><td>—</td><td>—</td><td>8</td><td>25</td></tr>
+            <tr><td>Mensagens alerta</td><td>—</td><td>—</td><td>3.000</td><td>15.000</td></tr>
+            <tr><td>Módulo Alertas</td><td>—</td><td>—</td><td>Sim</td><td>Sim</td></tr>
+            <tr><td>OLTs / Jobs ONU</td><td>—</td><td>—</td><td>—</td><td>5 / 120</td></tr>
+            <tr><td>Módulo OLT/ONU</td><td>—</td><td>—</td><td>—</td><td>Sim</td></tr>
+            <tr class="highlight-row">
+              <td>Valor mensal</td>
+              <td class="price">R$ 297</td>
+              <td class="price">R$ 497</td>
+              <td class="price">R$ 797</td>
+              <td class="price">R$ 1.497</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Só Verificador FTTH</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>Faixa</th><th>Usuários</th><th>Mapas</th><th>Consultas/mês</th><th>Mensal</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>V1</td><td>até 5</td><td>até 20</td><td>1.000</td><td class="price">R$ 249</td></tr>
+            <tr><td>V2</td><td>até 12</td><td>até 60</td><td>5.000</td><td class="price">R$ 449</td></tr>
+            <tr><td>V3</td><td>até 30</td><td>até 150</td><td>20.000</td><td class="price">R$ 749</td></tr>
+            <tr><td>V4</td><td colspan="3">Sob consulta</td><td class="price">Sob consulta</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Só Alertas · Só OLT/ONU</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>Módulo</th><th>Faixa</th><th>Detalhe</th><th>Mensal</th></tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="4">Alertas</td><td>A1</td><td>1 chip · 5 núm. · 1.500 msgs</td><td class="price">R$ 179</td></tr>
+            <tr><td>A2</td><td>2 chips · 12 núm. · 5.000 msgs</td><td class="price">R$ 329</td></tr>
+            <tr><td>A3</td><td>5 chips · 30 núm. · 20.000 msgs</td><td class="price">R$ 549</td></tr>
+            <tr><td>A4</td><td>10 chips · 60 núm. · 50.000 msgs</td><td class="price">R$ 899</td></tr>
+            <tr><td rowspan="4">OLT/ONU</td><td>O1</td><td>1 OLT · 40 jobs</td><td class="price">R$ 199</td></tr>
+            <tr><td>O2</td><td>3 OLT · 120 jobs</td><td class="price">R$ 399</td></tr>
+            <tr><td>O3</td><td>8 OLT · 400 jobs</td><td class="price">R$ 699</td></tr>
+            <tr><td>O4</td><td>20 OLT · 1.200 jobs</td><td class="price">R$ 1.199</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Add-ons e excedentes</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>Recurso</th><th>Pacote extra / mês</th><th>Excedente (mês seguinte)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>+1 usuário</td><td>R$ 29</td><td>R$ 35</td></tr>
+            <tr><td>+10 mapas CTO</td><td>R$ 35</td><td>R$ 45</td></tr>
+            <tr><td>+1.000 consultas</td><td>R$ 25</td><td>R$ 32</td></tr>
+            <tr><td>+1 chip WhatsApp</td><td>R$ 69</td><td>R$ 79</td></tr>
+            <tr><td>+5 números alerta</td><td>R$ 39</td><td>R$ 49</td></tr>
+            <tr><td>+1.000 mensagens</td><td>R$ 45</td><td>R$ 55</td></tr>
+            <tr><td>+1 OLT</td><td>R$ 89</td><td>R$ 99</td></tr>
+            <tr><td>+50 jobs ONU</td><td>R$ 49</td><td>R$ 59</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Se excedente recorrente ≥ 80% do próximo plano, ofereça upgrade.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Setup · Descontos · Exemplo</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>Setup (único)</th><th>Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Onboarding 1h (P/M incluso)</td><td>R$ 0</td></tr>
+            <tr><td>Onboarding G (mapas + 1 chip)</td><td class="price">R$ 690</td></tr>
+            <tr><td>Onboarding completo P/M</td><td class="price">R$ 1.290</td></tr>
+            <tr><td>Treinamento extra 2h</td><td class="price">R$ 690</td></tr>
+          </tbody>
+        </table>
+        <table style="margin-top:1rem">
+          <thead><tr><th>Desconto</th><th>%</th></tr></thead>
+          <tbody>
+            <tr><td>Anual antecipado</td><td class="price">12%</td></tr>
+            <tr><td>Semestral</td><td class="price">6%</td></tr>
+            <tr><td>2ª empresa mesmo grupo</td><td class="price">10%</td></tr>
+          </tbody>
+        </table>
+        <table style="margin-top:1rem">
+          <thead><tr><th>Exemplo proposta</th><th>Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Plano G + 1k msgs + OLT O2</td><td class="price">R$ 1.241/mês</td></tr>
+            <tr><td>Setup entrada</td><td class="price">R$ 690</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <p>comercial@rmsys.com.br · suporte@rmsys.com.br</p>
+      <p>Documento: <code>docs/PRECOS-RM-SYSTEMS.md</code> · Abra este HTML no navegador para visualizar ou imprimir (Ctrl+P)</p>
+    </footer>
+  </div>
+</body>
+</html>

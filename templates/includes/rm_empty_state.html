@@ -1,0 +1,17 @@
+{# Uso: {% include "includes/rm_empty_state.html" with empty_icon="fa-users" empty_title="..." empty_text="..." empty_action_url=url empty_action_label="..." %} #}
+<div class="rm-empty rm-empty--panel">
+  <div class="rm-empty__icon" aria-hidden="true">
+    <i class="fas {{ empty_icon|default:'fa-inbox' }}"></i>
+  </div>
+  <p class="rm-empty__title">{{ empty_title|default:"Nenhum registro encontrado" }}</p>
+  {% if empty_text %}
+  <p class="mb-3">{{ empty_text }}</p>
+  {% endif %}
+  {% if empty_action_url and empty_action_label %}
+  <a href="{{ empty_action_url }}" class="btn btn-primary rm-btn-premium">
+    {% if empty_action_icon %}<i class="fas {{ empty_action_icon }} me-1" aria-hidden="true"></i>{% endif %}
+    {{ empty_action_label }}
+  </a>
+  {% endif %}
+  {% if empty_extra %}{{ empty_extra }}{% endif %}
+</div>

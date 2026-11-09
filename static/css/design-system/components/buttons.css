@@ -1,0 +1,67 @@
+/**
+ * RM Systems DS — Buttons
+ */
+
+.rm-ui-v2 .ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  border-radius: var(--ds-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.rm-ui-v2 .ds-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+[data-theme="dark"] .rm-ui-v2 .ds-btn:focus-visible {
+  box-shadow: var(--ds-focus-ring-dark);
+}
+
+.rm-ui-v2 .ds-btn--primary {
+  background: var(--ds-gradient-brand);
+  color: var(--ds-text-inverse);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.rm-ui-v2 .ds-btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ds-shadow-md);
+  color: var(--ds-text-inverse);
+}
+
+.rm-ui-v2 .ds-btn--ghost {
+  background: transparent;
+  border-color: var(--ds-border-default);
+  color: var(--ds-text-primary);
+}
+
+.rm-ui-v2 .ds-btn--ghost:hover {
+  background: var(--ds-bg-muted);
+  border-color: var(--ds-border-strong);
+}
+
+.rm-ui-v2 .ds-btn--icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-bg-muted);
+  border: 1px solid var(--ds-border-default);
+  color: var(--ds-text-secondary);
+}
+
+.rm-ui-v2 .ds-btn--icon:hover {
+  color: var(--ds-text-accent);
+  border-color: var(--ds-border-accent);
+  box-shadow: var(--ds-shadow-glow-sm);
+}

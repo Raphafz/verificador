@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Novo job ONU{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="saas-page olt-console olt-console--narrow rm-v2-route-enter">
+  <header class="saas-page-header">
+    <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="saas-breadcrumb">
+      <i class="fas fa-arrow-left"></i> OLT / ONU
+    </a>
+    <h2>Novo job — listar / excluir ONU</h2>
+    <p class="saas-lead">Cole os serial numbers (um por linha) ou preencha depois da listagem offline.</p>
+  </header>
+
+  <form method="post" class="saas-form-card">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {{ field }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary mt-2">
+      <i class="fas fa-save me-1"></i> Salvar job
+    </button>
+  </form>
+</div>
+{% endblock %}

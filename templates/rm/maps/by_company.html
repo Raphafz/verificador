@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}Mapas CTO por Empresa (RM){% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Mapas CTO por Empresa</h2>
+        <a href="{% url 'rm:map_list' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-list"></i> Lista Global
+        </a>
+      </div>
+
+      <!-- Seção de Relatórios -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Relatórios por Empresa</h5>
+            <small class="text-muted">Total, processados e pendentes</small>
+          </div>
+          <canvas id="mapsByCompanyChart" height="100"></canvas>
+        </div>
+      </div>
+
+      <!-- Empresas e Mapas -->
+      {% for stat in company_stats %}
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-1">{{ stat.company.name }}</h5>
+              <div class="text-muted small">
+                Total: <strong>{{ stat.total_maps }}</strong>
+                • Processados: <strong>{{ stat.processed_maps }}</strong>
+                • Pendentes: <strong>{{ stat.pending_maps }}</strong>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <a href="{% url 'rm:company_edit' stat.company.id %}" class="btn btn-outline-primary">
+                <i class="fas fa-edit"></i> Editar Empresa
+              </a>
+              <button type="button" class="btn btn-outline-danger js-delete-company" data-company-id="{{ stat.company.id }}">
+                <i class="fas fa-trash"></i> Excluir Empresa
+              </button>
+              <a href="{% url 'rm:company_portal' stat.company.slug %}" class="btn btn-outline-secondary">
+                <i class="fas fa-building"></i> Portal da Empresa
+              </a>
+              <a href="{% url 'company:dashboard' company_slug=stat.company.slug %}" class="btn btn-outline-success">
+                <i class="fas fa-door-open"></i> Entrar no Painel
+              </a>
+              <a href="{% url 'company:ftth_viewer:index' company_slug=stat.company.slug %}" class="btn btn-primary">
+                <i class="fas fa-upload"></i> Upload de Mapa
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            {% if stat.maps %}
+              <div class="rm-table-wrap table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Nome do Arquivo</th>
+                      <th>Descrição</th>
+                      <th>Enviado por</th>
+                      <th>Data de Upload</th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for map in stat.maps %}
+                      <tr>
+                        <td>{{ map.file_name }}</td>
+                        <td>{{ map.description|default:"-" }}</td>
+                        <td>{{ map.uploaded_by.get_full_name|default:map.uploaded_by.username }}</td>
+                        <td>{{ map.uploaded_at|date:"d/m/Y H:i" }}</td>
+                        <td>
+                          <span class="badge {% if map.is_processed %}badge-success{% else %}badge-secondary{% endif %}">
+                            {% if map.is_processed %}Processado{% else %}Pendente{% endif %}
+                          </span>
+                        </td>
+                        <td>
+                          <a href="{% url 'rm:map_download' map.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download"></i> Download
+                          </a>
+                          <button type="button" class="btn btn-sm btn-outline-danger js-delete-map" data-map-id="{{ map.id }}">
+                            <i class="fas fa-trash"></i> Excluir
+                          </button>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle"></i> Nenhum mapa CTO enviado para esta empresa.
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_totals|json_script:"chart-totals" }}
+{{ chart_processed|json_script:"chart-processed" }}
+{{ chart_pending|json_script:"chart-pending" }}
+{% include "includes/cdn_chartjs_4_4_4_js.html" %}
+<script nonce="{{ csp_nonce }}">
+(function() {
+  // Data para o gráfico (carregados via json_script)
+  const labels = JSON.parse(document.getElementById('chart-labels').textContent);
+  const totals = JSON.parse(document.getElementById('chart-totals').textContent);
+  const processed = JSON.parse(document.getElementById('chart-processed').textContent);
+  const pending = JSON.parse(document.getElementById('chart-pending').textContent);
+
+  const ctx = document.getElementById('mapsByCompanyChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Total',
+          data: totals,
+          backgroundColor: 'rgba(0, 51, 102, 0.65)'
+        },
+        {
+          label: 'Processados',
+          data: processed,
+          backgroundColor: 'rgba(40, 167, 69, 0.65)'
+        },
+        {
+          label: 'Pendentes',
+          data: pending,
+          backgroundColor: 'rgba(220, 53, 69, 0.65)'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { precision: 0 }
+        }
+      }
+    }
+  });
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  document.querySelectorAll('.js-delete-map').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-map-id');
+      const confirmed = confirm('Tem certeza que deseja excluir este arquivo?');
+      if (!confirmed) return;
+      try {
+        const resp = await fetch(`{% url 'rm:map_delete' 0 %}`.replace('/0/', `/${id}/`), {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrftoken },
+        });
+        const data = await resp.json();
+        if (data.success) {
+          location.reload();
+        } else {
+          alert(data.message || 'Erro ao excluir mapa.');
+        }
+      } catch (e) {
+        alert('Erro ao excluir mapa.');
+      }
+    });
+  });
+
+  document.querySelectorAll('.js-delete-company').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-company-id');
+      
+      try {
+        // Primeira requisição - obter informações de dependências
+        const resp = await fetch(`{% url 'rm:company_delete' 0 %}`.replace('/0/', `/${id}/`), {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrftoken },
+        });
+        const data = await resp.json();
+        
+        if (data.requires_confirmation) {
+          // Mostrar confirmação com informações de dependências
+          const warning = data.warning || 'A exclusão desta empresa também excluirá usuários e mapas associados.';
+          const deps = data.dependencies || {};
+          const confirmMsg = `${warning}\n\n` +
+                           `Empresa: ${deps.company_name || 'N/A'}\n` +
+                           `Usuários: ${deps.users || 0}\n` +
+                           `Mapas: ${deps.maps || 0}\n\n` +
+                           `Tem certeza que deseja continuar?`;
+          
+          if (!confirm(confirmMsg)) return;
+          
+          // Segunda requisição - confirmar exclusão
+          const confirmResp = await fetch(`{% url 'rm:company_delete' 0 %}`.replace('/0/', `/${id}/`), {
+            method: 'POST',
+            headers: { 
+              'X-CSRFToken': csrftoken,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `confirmed=true`
+          });
+          
+          const confirmData = await confirmResp.json();
+          if (confirmData.success) {
+            alert(confirmData.message || 'Empresa excluída com sucesso!');
+            location.reload();
+          } else {
+            alert(confirmData.message || 'Erro ao excluir empresa.');
+          }
+        } else if (data.success) {
+          // Resposta direta de sucesso (caso não precise confirmação)
+          location.reload();
+        } else {
+          alert(data.message || 'Erro ao excluir empresa.');
+        }
+      } catch (e) {
+        console.error('Erro ao excluir empresa:', e);
+        alert('Erro ao excluir empresa. Verifique o console para mais detalhes.');
+      }
+    });
+  });
+})();
+</script>
+{% endblock %}

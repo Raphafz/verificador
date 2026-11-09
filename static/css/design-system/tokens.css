@@ -1,0 +1,123 @@
+/**
+ * RM Systems — Design System v3 (Fase 2)
+ * Fonte única de tokens. Aliases legados preservados via theme_colors.css.
+ */
+
+:root,
+[data-theme="light"] {
+  /* —— Marca —— */
+  --ds-brand-deep: #003366;
+  --ds-brand-cyan: #00d2ff;
+  --ds-brand-anthracite: #2c3e50;
+  --ds-brand-snow: #f8f9fa;
+
+  /* —— Superfícies —— */
+  --ds-bg-base: #ffffff;
+  --ds-bg-subtle: #f8f9fa;
+  --ds-bg-muted: #eef1f4;
+  --ds-bg-elevated: #ffffff;
+  --ds-bg-overlay: rgba(15, 23, 42, 0.45);
+
+  /* —— Texto —— */
+  --ds-text-primary: #2c3e50;
+  --ds-text-secondary: #64748b;
+  --ds-text-muted: #94a3b8;
+  --ds-text-inverse: #ffffff;
+  --ds-text-accent: #00a3cc;
+
+  /* —— Bordas —— */
+  --ds-border-subtle: rgba(0, 51, 102, 0.08);
+  --ds-border-default: #dee2e6;
+  --ds-border-strong: rgba(0, 51, 102, 0.18);
+  --ds-border-accent: rgba(0, 210, 255, 0.35);
+
+  /* —— Status operacional —— */
+  --ds-status-online: #10b981;
+  --ds-status-degraded: #f59e0b;
+  --ds-status-offline: #ef4444;
+  --ds-status-idle: #64748b;
+
+  /* —— Spacing —— */
+  --ds-space-0: 0;
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  --ds-space-8: 2rem;
+  --ds-space-10: 2.5rem;
+  --ds-space-12: 3rem;
+  --ds-space-16: 4rem;
+
+  /* —— Radius —— */
+  --ds-radius-xs: 6px;
+  --ds-radius-sm: 8px;
+  --ds-radius-md: 12px;
+  --ds-radius-lg: 16px;
+  --ds-radius-xl: 20px;
+  --ds-radius-pill: 9999px;
+
+  /* —— Layout —— */
+  --ds-topbar-height: 64px;
+  --ds-sidebar-width: 260px;
+  --ds-sidebar-collapsed: 68px;
+  --ds-content-max: 1320px;
+  --ds-page-gutter: clamp(1rem, 3vw, 1.75rem);
+
+  /* —— Z-index —— */
+  --ds-z-base: 1;
+  --ds-z-dropdown: 100;
+  --ds-z-sticky: 200;
+  --ds-z-overlay: 1040;
+  --ds-z-sidebar: 1050;
+  --ds-z-topbar: 1100;
+  --ds-z-modal: 1200;
+  --ds-z-toast: 1300;
+  --ds-z-command: 1400;
+  --ds-z-loading: 999999;
+
+  /* —— Motion —— */
+  --ds-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ds-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-duration-instant: 80ms;
+  --ds-duration-fast: 140ms;
+  --ds-duration-normal: 220ms;
+  --ds-duration-slow: 360ms;
+  --ds-duration-page: 420ms;
+
+  /* —— Focus —— */
+  --ds-focus-ring: 0 0 0 2px var(--ds-bg-base), 0 0 0 4px rgba(0, 210, 255, 0.55);
+  --ds-focus-ring-dark: 0 0 0 2px #070d18, 0 0 0 4px rgba(0, 210, 255, 0.45);
+
+  /* Bridge → aliases --rm-* (novos consumidores DS) */
+  --rm-topbar-height: var(--ds-topbar-height);
+  --rm-sidebar-width: var(--ds-sidebar-width);
+  --rm-sidebar-collapsed: var(--ds-sidebar-collapsed);
+  --rm-content-max: var(--ds-content-max);
+  --rm-ease-out: var(--ds-ease-out);
+  --rm-ease-spring: var(--ds-ease-spring);
+  --rm-ease-standard: var(--ds-ease-standard);
+  --rm-duration-fast: var(--ds-duration-fast);
+  --rm-duration-normal: var(--ds-duration-normal);
+  --rm-duration-slow: var(--ds-duration-slow);
+  --rm-duration-page: var(--ds-duration-page);
+}
+
+[data-theme="dark"] {
+  --ds-bg-base: #070d18;
+  --ds-bg-subtle: #0c1526;
+  --ds-bg-muted: #132238;
+  --ds-bg-elevated: rgba(12, 21, 38, 0.92);
+  --ds-bg-overlay: rgba(0, 0, 0, 0.55);
+
+  --ds-text-primary: #e8eef7;
+  --ds-text-secondary: #94a3b8;
+  --ds-text-muted: #64748b;
+  --ds-text-accent: #00d2ff;
+
+  --ds-border-subtle: rgba(0, 210, 255, 0.06);
+  --ds-border-default: rgba(0, 210, 255, 0.1);
+  --ds-border-strong: rgba(0, 210, 255, 0.18);
+}

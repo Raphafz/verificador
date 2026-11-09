@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload de Mapas - {{ company.name }}{% endblock %}
+
+{% block body_class %}upload-page dashboard-page rm-list-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/verificador.css' %}">
+<link rel="stylesheet" href="{% static 'css/rm-panel.css' %}">
+<link rel="stylesheet" href="{% static 'css/upload-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="saas-page rm-panel upload-page-shell ds-content-enter">
+    <header class="rm-panel__hero">
+        <div>
+            <h2><i class="fas fa-cloud-upload-alt" aria-hidden="true"></i> Upload de Mapas CTO</h2>
+            <p class="rm-panel__lead">{{ company.name }} — envie mapas para análise no verificador de viabilidade.</p>
+        </div>
+        <div class="upload-hero-chips" aria-label="Formatos aceitos">
+            <span class="upload-chip">XLSX</span>
+            <span class="upload-chip">CSV</span>
+            <span class="upload-chip">KML</span>
+            <span class="upload-chip">KMZ</span>
+            <span class="upload-chip">50 MB</span>
+        </div>
+    </header>
+
+    <div class="upload-stats" role="group" aria-label="Resumo dos mapas">
+        <div class="upload-stat upload-stat--primary">
+            <div class="upload-stat__value">{{ maps_total }}</div>
+            <div class="upload-stat__label">Total de mapas</div>
+        </div>
+        <div class="upload-stat upload-stat--success">
+            <div class="upload-stat__value">{{ maps_processed }}</div>
+            <div class="upload-stat__label">Processados</div>
+        </div>
+        <div class="upload-stat upload-stat--warn">
+            <div class="upload-stat__value">{{ maps_pending }}</div>
+            <div class="upload-stat__label">Pendentes</div>
+        </div>
+    </div>
+
+    <section class="rm-panel__body upload-panel mb-0">
+        <div class="upload-panel-head">
+            <h3 class="rm-panel__section-title">
+                <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i> Enviar arquivos
+            </h3>
+        </div>
+
+        <div class="upload-zone upload-area" id="uploadArea"
+             role="button" tabindex="0" aria-label="Área de upload — arraste ou selecione arquivos"
+             data-upload-url="{% url 'company:map_upload' company_slug=company.slug %}">
+            <input type="file" id="fileInput" class="upload-file-input" accept=".xlsx,.xls,.csv,.kml,.kmz" multiple tabindex="-1" aria-hidden="true">
+
+            <div class="upload-zone__icon" aria-hidden="true">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h4 class="upload-zone__title">Arraste os arquivos aqui ou clique para selecionar</h4>
+            <p class="upload-zone__meta">Vários arquivos de uma vez — até 25 por envio</p>
+            <p class="upload-zone__hint">Excel, CSV ou Google Earth (KML/KMZ)</p>
+
+            <div class="upload-zone__actions">
+                <label for="fileInput" class="rm-panel__btn-primary upload-select-btn upload-select-label" id="selectFileLabel">
+                    <i class="fas fa-folder-open" aria-hidden="true"></i>
+                    Selecionar arquivos
+                </label>
+            </div>
+
+            <div class="upload-loading-overlay" id="uploadLoadingOverlay" hidden aria-hidden="true">
+                <i class="fas fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
+                <strong id="uploadProgressTitle">Enviando arquivos...</strong>
+                <small id="uploadProgressDetail">Por favor, aguarde</small>
+            </div>
+        </div>
+    </section>
+
+    <section class="rm-panel__body upload-panel">
+        <div class="upload-maps-toolbar">
+            <div class="upload-maps-toolbar__left">
+                <h3 class="rm-panel__section-title mb-0">
+                    <i class="fas fa-layer-group" aria-hidden="true"></i> Mapas enviados
+                </h3>
+                {% if maps %}
+                <label class="upload-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="uploadMapSearch" placeholder="Buscar mapa…" autocomplete="off" aria-label="Buscar mapa por nome">
+                </label>
+                {% endif %}
+            </div>
+            <div class="upload-toolbar-actions">
+                <a href="{% url 'company:ftth_viewer:index' company_slug=company.slug %}" class="upload-toolbar-btn upload-toolbar-btn--primary">
+                    <i class="fas fa-map-marked-alt" aria-hidden="true"></i> Verificador
+                </a>
+                <a href="{% url 'company:map_history' company_slug=company.slug %}" class="upload-toolbar-btn">
+                    <i class="fas fa-history" aria-hidden="true"></i> Histórico
+                </a>
+                <button type="button" class="upload-toolbar-btn" data-csp-action="reload">
+                    <i class="fas fa-sync-alt" aria-hidden="true"></i> Atualizar
+                </button>
+            </div>
+        </div>
+
+        {% if maps %}
+        <div class="rm-table-wrap">
+            <table class="rm-table upload-maps-table" id="uploadMapsTable">
+                <thead>
+                    <tr>
+                        <th>Arquivo</th>
+                        <th>Tipo</th>
+                        <th>Tamanho</th>
+                        <th>Enviado em</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for map in maps %}
+                    <tr data-map-name="{% if map.original_filename %}{{ map.original_filename|lower }}{% elif map.file %}{{ map.file.name|lower }}{% endif %}">
+                        <td>
+                            <div class="upload-file-cell">
+                                <span class="upload-file-icon upload-file-icon--{{ map.file_type|default:'csv' }}" aria-hidden="true">{{ map.file_type|upper|default:"?"|slice:":4" }}</span>
+                                <span class="upload-file-name" title="{% if map.original_filename %}{{ map.original_filename }}{% elif map.file %}{{ map.file.name }}{% else %}Arquivo{% endif %}">
+                                    {% if map.original_filename %}{{ map.original_filename }}
+                                    {% elif map.file %}{{ map.file.name }}
+                                    {% else %}{{ map.description|default:"Arquivo" }}{% endif %}
+                                </span>
+                            </div>
+                        </td>
+                        <td><span class="rm-pill rm-pill--muted">{{ map.file_type|upper|default:"N/A" }}</span></td>
+                        <td>
+                            {% if map.file_size_bytes %}{{ map.file_size_bytes|filesizeformat }}
+                            {% elif map.file_size %}{{ map.file_size|filesizeformat }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td><time datetime="{{ map.uploaded_at|date:'c' }}">{{ map.uploaded_at|date:"d/m/Y H:i" }}</time></td>
+                        <td>
+                            {% if map.is_processed %}
+                            <span class="rm-badge-processed">Processado</span>
+                            {% else %}
+                            <span class="rm-badge-pending">Pendente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="upload-row-actions">
+                                <a href="{% url 'company:map_download' company_slug=company.slug pk=map.pk %}"
+                                   class="upload-icon-btn" title="Download" aria-label="Download">
+                                    <i class="fas fa-download" aria-hidden="true"></i>
+                                </a>
+                                <form method="post" action="{% url 'company:map_delete' company_slug=company.slug pk=map.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="upload-icon-btn upload-icon-btn--danger" title="Excluir" aria-label="Excluir"
+                                            data-csp-confirm="Tem certeza que deseja excluir este arquivo?">
+                                        <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="upload-list-footer">
+            Exibindo os {{ maps|length }} mapas mais recentes
+            {% if maps_total > maps|length %} de {{ maps_total }}{% endif %}.
+            <a href="{% url 'company:map_history' company_slug=company.slug %}">Ver histórico completo</a>
+        </p>
+        {% else %}
+        <div class="upload-empty mt-2">
+            <div class="upload-empty__icon" aria-hidden="true"><i class="fas fa-inbox"></i></div>
+            <h4>Nenhum mapa enviado ainda</h4>
+            <p>Envie seu primeiro arquivo CTO na área acima para começar a análise.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<form id="csrfHelperForm" style="display:none;" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="company_slug" value="{{ company.slug }}">
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/upload-page.js' %}" nonce="{{ csp_nonce }}" defer></script>
+{% endblock %}

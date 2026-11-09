@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+    <meta name="description" content="Plataforma ISP unificada: viabilidade FTTH, alertas e OLT - RM Systems">
+    <meta name="theme-color" content="#070d18">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RM Systems">
+    <meta name="google" content="notranslate">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>{% block title %}RM Systems{% endblock %}</title>
+    {% load static ui_tags %}
+    <script nonce="{{ csp_nonce }}">
+      (function() {
+        var themeKey = 'rm-theme';
+        function getSystemTheme() {
+          return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function getInitialTheme() {
+          try {
+            var saved = localStorage.getItem(themeKey);
+            return saved || getSystemTheme();
+          } catch (e) {
+            return getSystemTheme();
+          }
+        }
+        var theme = getInitialTheme();
+        var html = document.documentElement;
+        if (theme === 'dark') {
+          html.setAttribute('data-theme', 'dark');
+          html.classList.add('dark-theme');
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.content = '#070d18';
+        } else {
+          html.setAttribute('data-theme', 'light');
+          html.classList.add('light-theme');
+        }
+        try {
+          if (!localStorage.getItem(themeKey)) localStorage.setItem(themeKey, theme);
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/icon-rm-192.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Compat tokens legados -->
+    <link rel="stylesheet" href="{% static 'css/theme_colors.css' %}" />
+    {% include "includes/cdn_bootstrap_5_3_css.html" %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}" />
+    {% include "includes/ui_v2_styles.html" %}
+    <link rel="stylesheet" href="{% static 'css/platform.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/global-loading.css' %}" />
+    <style nonce="{{ csp_nonce }}">
+      #global-loading-overlay {
+        position: fixed; inset: 0; z-index: 999999;
+        display: flex; align-items: center; justify-content: center;
+        visibility: hidden; opacity: 0; pointer-events: none;
+      }
+      #global-loading-overlay.gl-open,
+      #global-loading-overlay.gl-leaving { visibility: visible; }
+    </style>
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    {% include "includes/cdn_fontawesome_6_0_css.html" %}
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body class="rm-ui-v2 with-topbar {% block body_class %}{% endblock %}{% if user.is_authenticated %}{% if user.is_rm_admin or user.is_company_admin %} sidebar-enabled{% endif %}{% endif %}">
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
+    <header class="topbar rm-v2-topbar" role="banner">
+      <div class="rm-v2-topbar__brand topbar__brand">
+        {% if user.is_authenticated %}
+          {% if user.is_company_admin or user.is_rm_admin %}
+        <button class="navbar-toggler d-lg-none" type="button" id="sidebarToggle" aria-label="Abrir ou fechar menu lateral" aria-expanded="false" aria-controls="sidebar">
+          <span class="navbar-toggler-icon" aria-hidden="true">≡</span>
+        </button>
+          {% endif %}
+        {% endif %}
+        {% block topbar_brand %}
+        <a href="{% if user.is_rm_admin %}{% url 'rm:admin_dashboard' %}{% elif user.company %}{% url 'company:dashboard' company_slug=user.company.slug %}{% else %}{% url 'home_redirect' %}{% endif %}"
+           class="topbar__logo-link"
+           aria-label="{{ saas_product_name|default:'RM Systems' }} — início">
+          <img src="{% static 'img/letreiro-rm.png' %}" alt="" class="topbar__wordmark" width="180" height="32">
+        </a>
+        {% endblock %}
+      </div>
+
+      {% if user.is_authenticated %}
+      <div class="rm-v2-topbar__center d-none d-md-flex">
+        <span class="rm-v2-status-bar" role="status">
+          <span class="ds-status-dot ds-status-dot--online ds-pulse" aria-hidden="true"></span>
+          Operacional
+        </span>
+        {% if user.company %}
+        <span class="rm-v2-tenant-badge" title="{{ user.company.name }}">
+          <i class="fas fa-building" aria-hidden="true"></i>
+          {{ user.company.name }}
+        </span>
+        {% elif user.is_rm_admin %}
+        <span class="rm-v2-tenant-badge">
+          <i class="fas fa-shield-halved" aria-hidden="true"></i>
+          RM Admin
+        </span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <nav class="rm-v2-topbar__actions topbar__nav topbar__actions" role="navigation" aria-label="Navegação principal">
+        {% if user.is_authenticated %}
+          <button type="button" class="rm-v2-cmd-hint" id="rmV2CmdHint" aria-label="Abrir paleta de comandos">
+            <kbd>Ctrl</kbd><kbd>K</kbd>
+          </button>
+          {% if user.is_rm_admin %}
+            <a href="{% url 'rm:admin_dashboard' %}" class="topbar__nav-link d-none d-lg-inline-flex" aria-current="{% if request.resolver_match.url_name == 'admin_dashboard' %}page{% endif %}">Dashboard</a>
+          {% endif %}
+          {% include "includes/topbar_user_menu.html" %}
+        {% else %}
+          <a href="{% url 'rm:login' %}">Entrar</a>
+        {% endif %}
+      </nav>
+    </header>
+
+    {% if user.is_authenticated %}
+      {% if user.is_company_admin or user.is_rm_admin %}
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+    <aside class="sidebar rm-v2-sidebar" id="sidebar" aria-label="Menu lateral">
+      <div class="rm-v2-sidebar__header d-none d-lg-block">
+        <p class="rm-v2-sidebar__label">Navegação</p>
+      </div>
+      <nav class="nav flex-column sidebar-nav">
+        {% include "includes/sidebar_v2_nav.html" %}
+      </nav>
+      <div class="rm-v2-sidebar__footer d-none d-lg-block">
+        <button type="button" class="rm-v2-sidebar-collapse" id="rmV2SidebarCollapse" aria-label="Recolher menu lateral">
+          <i class="fas fa-angles-left" aria-hidden="true"></i>
+        </button>
+      </div>
+    </aside>
+      {% endif %}
+    {% endif %}
+
+    <main id="main-content" class="main-container" role="main">
+      {% if user.is_authenticated %}
+      <div class="rm-breadcrumb-container">
+        {% rm_breadcrumbs %}
+      </div>
+      {% endif %}
+      {% if messages %}
+        <div class="messages" role="alert" aria-live="polite">
+          {% for message in messages %}
+            <div class="message {{ message.tags }}" role="status">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer" role="contentinfo">
+      <div class="footer__inner">
+        <p class="footer__copyright">&copy; {% now "Y" %} RM Systems. Todos os direitos reservados.</p>
+        <nav class="footer__links" aria-label="Links legais e ajuda">
+          <a href="{% url 'termos_uso' %}">Termos de Uso</a>
+          <a href="{% url 'politica_privacidade' %}">Privacidade</a>
+          <a href="{% url 'lgpd' %}">LGPD</a>
+          <a href="{% url 'dpo_contact' %}">DPO</a>
+          {% if user.is_authenticated %}
+          <a href="{% url 'my_data_portal' %}">Meus dados</a>
+          {% endif %}
+          <a href="{% url 'politica_cookies' %}">Cookies</a>
+          <a href="{% url 'faq' %}">FAQ</a>
+          <a href="{% url 'ajuda' %}">Ajuda</a>
+        </nav>
+        <p class="footer__meta">RM Systems Tecnologia &bull; Plataforma operacional ISP</p>
+      </div>
+    </footer>
+
+    {% block page_modals %}{% endblock %}
+
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/toast.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/dark-mode.js' %}" defer></script>
+    {% if user.is_authenticated %}
+    <script type="application/json" id="rm-command-routes" nonce="{{ csp_nonce }}">[
+    {% if user.is_rm_admin %}
+    {"label":"Dashboard","url":"{% url 'rm:admin_dashboard' %}","icon":"fa-chart-line"},
+    {"label":"Empresas","url":"{% url 'rm:company_list' %}","icon":"fa-building"},
+    {"label":"Usuários RM","url":"{% url 'rm:user_list' %}","icon":"fa-users"},
+    {"label":"Mapas","url":"{% url 'rm:map_list' %}","icon":"fa-map"},
+    {"label":"Tickets","url":"{% url 'rm:ticket_list' %}","icon":"fa-ticket-alt"},
+    {"label":"Meus dados","url":"{% url 'my_data_portal' %}","icon":"fa-user-shield"},
+    {"label":"Ajuda","url":"{% url 'ajuda' %}","icon":"fa-circle-question"}
+    {% elif user.company %}
+    {"label":"Hub","url":"{% url 'company:hub' company_slug=user.company.slug %}","icon":"fa-th-large"},
+    {"label":"Tickets","url":"{% url 'company:ticket_list' company_slug=user.company.slug %}","icon":"fa-ticket-alt"},
+    {"label":"Meus dados","url":"{% url 'my_data_portal' %}","icon":"fa-user-shield"},
+    {"label":"Ajuda","url":"{% url 'ajuda' %}","icon":"fa-circle-question"}{% if user.is_company_admin %},
+    {"label":"Usuários","url":"{% url 'company:user_list' company_slug=user.company.slug %}","icon":"fa-users"}{% endif %}{% if "verificador" in saas_module_codes %},
+    {"label":"Verificador","url":"{% url 'company:ftth_viewer:index' company_slug=user.company.slug %}","icon":"fa-search"}{% endif %}{% if "alertas" in saas_module_codes and user.is_company_admin %},
+    {"label":"Alertas","url":"{% url 'company:alerts:settings' company_slug=user.company.slug %}","icon":"fa-bell"}{% endif %}{% if "olt" in saas_module_codes %},
+    {"label":"OLT","url":"{% url 'company:olt_ops:home' company_slug=user.company.slug %}","icon":"fa-server"}{% endif %}
+    {% endif %}
+    ]</script>
+    {% endif %}
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/pwa.js' %}" defer></script>
+    {% include "includes/cdn_bootstrap_5_3_js.html" %}
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/rm-ui.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/rm-motion.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/sidebar-nav.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/csp-actions.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/global-loading.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/ux-forms.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/skeleton.js' %}" defer></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/quota-progress.js' %}" defer></script>
+    {% block extra_scripts %}{% endblock %}
+  </body>
+</html>

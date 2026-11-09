@@ -1,0 +1,1350 @@
+/* ===== MOBILE CSS PROFISSIONAL ===== */
+/* Integração com o design system corporativo */
+
+/* ===== OVERLAY RESPONSIVO ===== */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.6);
+    z-index: 1000;
+    display: none;
+    backdrop-filter: blur(4px);
+    transition: all 300ms ease-in-out;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.overlay.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Suporte a gestos de swipe */
+.sidebar {
+    touch-action: pan-y;
+    will-change: transform;
+}
+
+.sidebar.swiping {
+    transition: none;
+}
+
+/* Indicador visual de swipe */
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -3px;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60px;
+    background: linear-gradient(180deg, transparent, var(--rm-primary, #003366), transparent);
+    border-radius: 0 2px 2px 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.sidebar.active::before {
+    opacity: 0.6;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .sidebar::before {
+        opacity: 0.3;
+    }
+    
+    .sidebar.active::before {
+        opacity: 0.8;
+    }
+}
+
+/* ===== CONTROLE DE SCROLL ===== */
+body.no-scroll {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    /* No mobile, manter scroll habilitado na sidebar mesmo com no-scroll no body */
+}
+
+@media (max-width: 768px) {
+    /* No mobile, quando sidebar está aberta, permitir scroll apenas na sidebar */
+    body.no-scroll {
+        /* Manter body fixo para evitar scroll da página */
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Sidebar sempre permite scroll no mobile, mesmo quando body tem no-scroll */
+    body.no-scroll .sidebar,
+    .sidebar {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+        overscroll-behavior-y: contain !important;
+        overscroll-behavior-x: none !important;
+        /* Garantir que a sidebar seja scrollável */
+        will-change: scroll-position;
+        /* Permitir scroll independente do body */
+        position: fixed;
+        z-index: 1050;
+    }
+    
+    /* Conteúdo da sidebar sempre scrollável no mobile */
+    body.no-scroll .sidebar-content,
+    .sidebar-content {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+        overscroll-behavior-y: contain !important;
+        min-height: 0;
+        /* Garantir que o conteúdo possa ser scrollado */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* ===== SIDEBAR RESPONSIVA ===== */
+.sidebar {
+    z-index: 1050;
+    transform: translateX(-100%);
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--bg-primary);
+    width: clamp(280px, 85vw, 400px);
+    max-width: min(400px, calc(100vw - 40px));
+    min-width: 280px;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* Scroll suave no iOS/Safari */
+    overscroll-behavior-y: contain; /* Prevenir scroll da página quando sidebar chega ao topo/fim */
+    overscroll-behavior-x: none;
+    touch-action: pan-y; /* Permitir apenas scroll vertical */
+    /* Melhorar performance de scroll */
+    will-change: scroll-position;
+    /* Permitir scroll mesmo quando body tem no-scroll */
+    position: fixed;
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+/* Header da sidebar mobile */
+.sidebar-header {
+    padding: clamp(1rem, 4vw, 1.5rem) clamp(0.75rem, 3vw, 1rem) clamp(0.75rem, 3vw, 1rem);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+}
+
+.sidebar-brand {
+    gap: clamp(0.5rem, 2vw, 0.75rem);
+    align-items: center;
+}
+
+.brand-icon-sidebar {
+    width: clamp(32px, 8vw, 40px);
+    height: clamp(32px, 8vw, 40px);
+    min-width: 32px;
+    min-height: 32px;
+    touch-action: manipulation;
+}
+
+.brand-icon-sidebar i {
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+}
+
+.sidebar-title {
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.sidebar-subtitle {
+    font-size: clamp(0.625rem, 2vw, 0.7rem);
+    opacity: 0.8;
+    line-height: 1.3;
+}
+
+/* Conteúdo da sidebar mobile */
+.sidebar-content {
+    padding: clamp(0.75rem, 3vw, 1rem);
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+    overscroll-behavior-y: contain; /* Prevenir scroll da página quando conteúdo chega ao topo/fim */
+    touch-action: pan-y; /* Permitir scroll vertical */
+    /* Garantir que o conteúdo seja scrollável */
+    min-height: 0; /* Importante para flexbox permitir scroll */
+}
+
+.sidebar-section {
+    margin-bottom: clamp(1.5rem, 4vw, 2rem);
+}
+
+.sidebar-section:last-child {
+    margin-bottom: clamp(1rem, 3vw, 1.5rem);
+}
+
+.section-header {
+    gap: clamp(0.375rem, 1.5vw, 0.5rem);
+    margin-bottom: clamp(0.75rem, 2.5vw, 1rem);
+    padding-bottom: clamp(0.375rem, 1.5vw, 0.5rem);
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+}
+
+.section-icon {
+    width: clamp(24px, 6vw, 28px);
+    height: clamp(24px, 6vw, 28px);
+    min-width: 24px;
+    min-height: 24px;
+    font-size: clamp(0.625rem, 2vw, 0.75rem);
+    touch-action: manipulation;
+}
+
+.section-title {
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+/* Analytics grid mobile */
+.analytics-grid {
+    gap: 0.5rem;
+}
+
+.metric-card {
+    padding: 0.75rem;
+    gap: 0.5rem;
+}
+
+.metric-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+}
+
+.metric-value {
+    font-size: 1.25rem;
+}
+
+.metric-label {
+    font-size: 0.7rem;
+}
+
+/* Upload zone mobile */
+.upload-zone {
+    padding: clamp(1rem, 4vw, 1.5rem) clamp(0.75rem, 3vw, 1rem);
+    border-radius: var(--border-radius-lg);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+}
+
+.upload-zone:hover,
+.upload-zone:focus-within {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.upload-icon {
+    width: clamp(32px, 8vw, 40px);
+    height: clamp(32px, 8vw, 40px);
+    min-width: 32px;
+    min-height: 32px;
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+    margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+    flex-shrink: 0;
+}
+
+.upload-primary {
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.upload-secondary {
+    font-size: clamp(0.7rem, 2.2vw, 0.8rem);
+    opacity: 0.8;
+    line-height: 1.4;
+}
+
+.upload-button {
+    padding: clamp(0.625rem, 2.5vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+    font-size: clamp(0.7rem, 2.2vw, 0.8rem);
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    border-radius: var(--border-radius-md);
+}
+
+/* Menu de ações mobile no side menu */
+.mobile-actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 2vw, 0.75rem);
+}
+
+.mobile-action-btn {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 2vw, 1rem);
+    padding: clamp(0.75rem, 2vw, 1rem);
+    border-radius: var(--border-radius-md);
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    min-height: 44px;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.mobile-action-btn i {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    min-width: 24px;
+    color: var(--primary-color);
+}
+
+.mobile-action-btn:hover,
+.mobile-action-btn:focus {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.mobile-action-btn:hover i,
+.mobile-action-btn:focus i {
+    color: white;
+}
+
+.mobile-action-btn:active {
+    transform: translateX(2px) scale(0.98);
+}
+
+.mobile-action-btn span {
+    flex: 1;
+    text-align: left;
+}
+
+/* CTO grid mobile */
+.cto-grid {
+    gap: clamp(0.375rem, 1.5vw, 0.5rem);
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.cto-card {
+    padding: clamp(0.625rem, 2.5vw, 0.75rem);
+    gap: clamp(0.5rem, 2vw, 0.75rem);
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+}
+
+.cto-card:hover,
+.cto-card:focus {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.cto-card:active {
+    transform: translateY(0);
+}
+
+.cto-icon {
+    width: clamp(28px, 7vw, 32px);
+    height: clamp(28px, 7vw, 32px);
+    min-width: 28px;
+    min-height: 28px;
+    font-size: clamp(0.75rem, 2.2vw, 0.875rem);
+    flex-shrink: 0;
+}
+
+.cto-name {
+    font-size: clamp(0.75rem, 2.2vw, 0.8rem);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.cto-type {
+    font-size: clamp(0.625rem, 2vw, 0.7rem);
+    opacity: 0.8;
+    line-height: 1.2;
+}
+
+/* ===== MAPA RESPONSIVO ===== */
+#map {
+    /* Configurações de toque otimizadas - PERMITIR TODOS OS GESTOS */
+    touch-action: pan-x pan-y pinch-zoom double-tap-zoom;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    /* Prevenir scroll da página quando arrastando o mapa */
+    overscroll-behavior: none;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+    /* Melhorias de performance para mobile */
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Melhorar responsividade */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    /* Garantir que o mapa capture todos os eventos de toque */
+    pointer-events: auto;
+    /* Melhorar detecção de toque */
+    -ms-touch-action: pan-x pan-y pinch-zoom;
+    /* Permitir zoom com gestos de pinch */
+    -ms-content-zooming: zoom;
+}
+
+/* Melhorar área de toque do mapa no mobile */
+@media (max-width: 768px) {
+    #map {
+        /* Garantir que o mapa ocupe toda a área disponível */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        /* Melhorar responsividade do toque - PERMITIR TODOS OS GESTOS */
+        touch-action: pan-x pan-y pinch-zoom double-tap-zoom;
+        -webkit-touch-callout: none;
+        /* Permitir zoom com pinch e double-tap */
+        -ms-touch-action: pan-x pan-y pinch-zoom;
+        -ms-content-zooming: zoom;
+        /* Melhorar performance de renderização */
+        will-change: transform;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        /* Prevenir scroll da página */
+        overscroll-behavior: none;
+        overscroll-behavior-x: none;
+        overscroll-behavior-y: none;
+        -webkit-overflow-scrolling: touch;
+        /* Garantir captura de eventos */
+        pointer-events: auto;
+        /* Melhorar área de toque - garantir que todo o espaço seja utilizável */
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+        user-drag: none;
+    }
+    
+    /* Melhorar camadas do Leaflet no mobile */
+    .leaflet-container {
+        touch-action: pan-x pan-y pinch-zoom double-tap-zoom !important;
+        -webkit-tap-highlight-color: transparent;
+        background: #f4f4f4;
+        /* Garantir que o container capture eventos */
+        pointer-events: auto !important;
+        /* Melhorar detecção de gestos */
+        -ms-touch-action: pan-x pan-y pinch-zoom;
+        -ms-content-zooming: zoom;
+        /* Prevenir conflitos de scroll */
+        overscroll-behavior: none;
+        overscroll-behavior-x: none;
+        overscroll-behavior-y: none;
+    }
+    
+    /* Melhorar performance de arraste */
+    .leaflet-pane {
+        will-change: transform;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        /* Permitir gestos de toque */
+        touch-action: pan-x pan-y pinch-zoom;
+        pointer-events: auto;
+    }
+    
+    /* Garantir que todas as camadas do mapa permitam gestos */
+    .leaflet-tile-pane,
+    .leaflet-overlay-pane,
+    .leaflet-shadow-pane,
+    .leaflet-marker-pane,
+    .leaflet-tooltip-pane,
+    .leaflet-popup-pane {
+        touch-action: none;
+        pointer-events: none;
+    }
+    
+    /* Os elementos interativos devem permitir toque */
+    .leaflet-interactive,
+    .leaflet-clickable {
+        touch-action: manipulation;
+        pointer-events: auto;
+    }
+    
+    /* Melhorar tiles do mapa */
+    .leaflet-tile-container {
+        will-change: transform;
+    }
+    
+    /* Melhorar feedback visual durante arraste */
+    .leaflet-container.leaflet-touch-drag {
+        cursor: grabbing !important;
+        cursor: -webkit-grabbing !important;
+    }
+    
+    .leaflet-container.leaflet-touch-drag .leaflet-marker-icon,
+    .leaflet-container.leaflet-touch-drag .leaflet-marker-shadow {
+        cursor: grabbing !important;
+        cursor: -webkit-grabbing !important;
+    }
+    
+    /* Melhorar cursor durante arraste */
+    .leaflet-container.leaflet-dragging {
+        cursor: grabbing !important;
+        cursor: -webkit-grabbing !important;
+    }
+    
+    /* Prevenir seleção de texto durante arraste */
+    .leaflet-container.leaflet-dragging,
+    .leaflet-container.leaflet-dragging .leaflet-marker-icon,
+    .leaflet-container.leaflet-dragging .leaflet-marker-shadow {
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+    }
+    
+    /* Melhorar performance de marcadores durante arraste */
+    .leaflet-marker-icon,
+    .leaflet-marker-shadow {
+        will-change: transform;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Melhorar performance de popups */
+    .leaflet-popup {
+        will-change: transform;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Melhorar área de toque dos controles */
+    .leaflet-control {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Prevenir zoom acidental com double-tap em elementos interativos */
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip,
+    .leaflet-control {
+        touch-action: manipulation;
+    }
+    
+    /* IMPORTANTE: Garantir que elementos sobrepostos não bloqueiem gestos do mapa */
+    .top-bar,
+    .header,
+    .overlay,
+    .sidebar {
+        pointer-events: auto;
+        /* Não interferir no mapa quando fechados */
+    }
+    
+    .sidebar:not(.active),
+    .overlay:not(.active) {
+        pointer-events: none;
+    }
+    
+    /* Garantir que o mapa sempre capture eventos de toque quando visível */
+    #map {
+        pointer-events: auto !important;
+        z-index: 1;
+    }
+    
+    /* Evitar que a sidebar bloqueie o mapa quando fechada */
+    .sidebar:not(.active) {
+        pointer-events: none;
+    }
+    
+    /* Elementos de UI devem permitir cliques mas não bloquear gestos do mapa */
+    .top-bar *,
+    .header * {
+        pointer-events: auto;
+    }
+    
+    /* Área do mapa deve estar sempre acessível */
+    #map,
+    #map * {
+        touch-action: pan-x pan-y pinch-zoom double-tap-zoom;
+    }
+    
+    /* Exceção para controles do Leaflet */
+    .leaflet-control {
+        touch-action: manipulation;
+        pointer-events: auto;
+    }
+}
+
+/* Melhorar interações com popups no mapa */
+.leaflet-popup {
+    touch-action: manipulation;
+}
+
+.leaflet-popup-content-wrapper {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Melhorar controles do mapa para toque */
+.leaflet-control-zoom a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Controle de bússola para mobile */
+.leaflet-control-north .north-arrow {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Botão de limpar pesquisa para mobile */
+.clear-search-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.leaflet-control-zoom a:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+/* Melhorar marcadores para toque */
+.leaflet-marker-icon {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.custom-marker {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+}
+
+.custom-marker:active {
+    transform: scale(1.1);
+    transition: transform 0.1s ease;
+}
+
+/* ===== CONTROLES LEAFLET RESPONSIVOS ===== */
+.leaflet-control-container {
+    z-index: 1002;
+}
+
+.leaflet-top.leaflet-left,
+.leaflet-top.leaflet-right {
+    margin-top: calc(var(--header-height) + var(--spacing-md));
+    margin-left: var(--spacing-md);
+    margin-right: var(--spacing-md);
+}
+
+.leaflet-bottom.leaflet-left {
+    margin-left: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.leaflet-bottom.leaflet-right {
+    margin-right: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* ===== MELHORIAS PARA POPUPS NO MOBILE ===== */
+/* Prevenir fechamento acidental de popups no mobile */
+.leaflet-popup-content-wrapper {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+}
+
+.leaflet-popup-content {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+}
+
+/* Botões do popup de confirmação - área de toque maior no mobile */
+.confirm-verify-btn,
+.cancel-verify-btn {
+    min-height: 48px !important;
+    min-width: 100% !important;
+    padding: 14px 20px !important;
+    font-size: 16px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 1000;
+}
+
+/* Feedback visual ao tocar nos botões */
+.confirm-verify-btn:active,
+.cancel-verify-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+/* Prevenir que o popup feche ao tocar nos botões */
+.viability-popup,
+.location-popup {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+}
+
+.viability-popup *,
+.location-popup * {
+    pointer-events: auto;
+}
+
+/* Garantir que os botões não sejam bloqueados */
+.viability-popup button,
+.location-popup button {
+    pointer-events: auto !important;
+    z-index: 1001 !important;
+    position: relative;
+}
+
+/* Prevenir fechamento ao tocar dentro do popup */
+.leaflet-popup-content-wrapper:active {
+    pointer-events: auto;
+}
+
+/* Melhorar área de toque do botão de fechar do popup */
+.leaflet-popup-close-button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* ===== CONTROLES LEAFLET CUSTOMIZADOS ===== */
+.leaflet-control-zoom {
+    border: none !important;
+    box-shadow: var(--shadow-lg) !important;
+    border-radius: var(--border-radius-lg) !important;
+    overflow: hidden;
+}
+
+.leaflet-control-zoom a {
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--gray-200) !important;
+    color: var(--text-primary) !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    transition: var(--transition-fast) !important;
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 38px !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: var(--primary-color) !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+.leaflet-control-zoom a:first-child {
+    border-top-left-radius: var(--border-radius-lg) !important;
+    border-top-right-radius: var(--border-radius-lg) !important;
+}
+
+.leaflet-control-zoom a:last-child {
+    border-bottom-left-radius: var(--border-radius-lg) !important;
+    border-bottom-right-radius: var(--border-radius-lg) !important;
+}
+
+/* ===== POPUPS RESPONSIVOS ===== */
+.leaflet-popup-content-wrapper {
+    border-radius: var(--border-radius-lg) !important;
+    box-shadow: var(--shadow-xl) !important;
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--gray-200) !important;
+}
+
+.leaflet-popup-content {
+    font-family: var(--font-family-primary) !important;
+    font-size: var(--font-size-sm) !important;
+    line-height: 1.6 !important;
+    color: var(--text-primary) !important;
+    margin: var(--spacing-md) !important;
+}
+
+.leaflet-popup-tip {
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--gray-200) !important;
+}
+
+/* ===== RESPONSIVIDADE TABLET ===== */
+@media (max-width: 1024px) {
+    .top-bar {
+        padding: 0 var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+    
+    .search-container {
+        max-width: 400px;
+    }
+    
+    .sidebar {
+        width: 380px;
+    }
+    
+    .leaflet-top.leaflet-left,
+    .leaflet-top.leaflet-right {
+        margin-top: calc(var(--header-height) + var(--spacing-sm));
+        margin-left: var(--spacing-sm);
+        margin-right: var(--spacing-sm);
+    }
+    
+    .leaflet-bottom.leaflet-left,
+    .leaflet-bottom.leaflet-right {
+        margin-left: var(--spacing-sm);
+        margin-right: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+}
+
+/* ===== RESPONSIVIDADE MOBILE MÉDIO ===== */
+@media (max-width: 768px) {
+    :root {
+        --header-height: var(--header-height-mobile);
+    }
+    
+    .top-bar {
+        height: var(--header-height-mobile);
+        padding: 0 var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+    
+    /* Esconder botões da navbar no mobile, manter apenas pesquisa e menu hambúrguer */
+    .menu-admin-link,
+    .cursor-toggle-container,
+    .add-cto-toggle-container,
+    .theme-toggle-container {
+        display: none !important;
+    }
+    
+    /* Mostrar menu de ações no side menu para mobile */
+    .sidebar-mobile-actions {
+        display: block !important;
+    }
+    
+    .cursor-toggle-btn {
+        padding: 10px 16px;
+        font-size: var(--font-size-xs);
+        min-height: 44px;
+        gap: var(--spacing-xs);
+    }
+    
+    .cursor-toggle-btn i {
+        font-size: 14px;
+    }
+    
+    .brand {
+        font-size: var(--font-size-lg);
+    }
+    
+    .brand-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+    
+    .menu-toggle {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .search-input {
+        padding: 12px 16px;
+        font-size: var(--font-size-sm);
+    }
+    
+    .search-btn {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .sidebar {
+        width: 90vw;
+        max-width: 400px;
+    }
+    
+    #map {
+        top: var(--header-height-mobile);
+        height: calc(100vh - var(--header-height-mobile));
+    }
+    
+    .leaflet-top.leaflet-left,
+    .leaflet-top.leaflet-right {
+        margin-top: calc(var(--header-height-mobile) + var(--spacing-sm));
+        margin-left: var(--spacing-sm);
+        margin-right: var(--spacing-sm);
+    }
+    
+    .leaflet-bottom.leaflet-left,
+    .leaflet-bottom.leaflet-right {
+        margin-left: var(--spacing-sm);
+        margin-right: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .leaflet-control-zoom a {
+        width: 36px !important;
+        height: 36px !important;
+        line-height: 34px !important;
+        font-size: 16px !important;
+    }
+    
+    .notification {
+        top: calc(var(--header-height-mobile) + var(--spacing-md));
+        right: var(--spacing-md);
+        left: var(--spacing-md);
+        max-width: none;
+    }
+    
+    .loading-content {
+        padding: var(--spacing-xl);
+        margin: 0 var(--spacing-md);
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: var(--font-size-sm);
+    }
+    
+    .card {
+        margin: 0 var(--spacing-sm);
+        border-radius: var(--border-radius-md);
+    }
+    
+    .form-input {
+        padding: 12px 14px;
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* ===== RESPONSIVIDADE MOBILE PEQUENO ===== */
+@media (max-width: 480px) {
+    .top-bar {
+        padding: 0 var(--spacing-sm);
+        gap: var(--spacing-xs);
+    }
+    
+    /* Esconder botões da navbar no mobile pequeno também */
+    .menu-admin-link,
+    .cursor-toggle-container,
+    .add-cto-toggle-container,
+    .theme-toggle-container {
+        display: none !important;
+    }
+    
+    /* Mostrar menu de ações no side menu para mobile */
+    .sidebar-mobile-actions {
+        display: block !important;
+    }
+    
+    .brand {
+        font-size: var(--font-size-base);
+    }
+    
+    .brand-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    
+    .menu-toggle {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .search-input {
+        padding: 10px 14px;
+        font-size: var(--font-size-sm);
+    }
+    
+    .search-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .sidebar {
+        width: clamp(300px, 90vw, 380px);
+        max-width: calc(100vw - 32px);
+    }
+    
+    .cursor-toggle-btn {
+        padding: 8px 12px;
+        font-size: var(--font-size-xs);
+        min-height: 40px;
+        gap: var(--spacing-xs);
+    }
+    
+    .cursor-toggle-btn i {
+        font-size: 12px;
+    }
+    
+    .leaflet-top.leaflet-left,
+    .leaflet-top.leaflet-right {
+        margin-top: calc(var(--header-height-mobile) + var(--spacing-xs));
+        margin-left: var(--spacing-xs);
+        margin-right: var(--spacing-xs);
+    }
+    
+    .leaflet-bottom.leaflet-left,
+    .leaflet-bottom.leaflet-right {
+        margin-left: var(--spacing-xs);
+        margin-right: var(--spacing-xs);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .leaflet-control-zoom a {
+        width: 32px !important;
+        height: 32px !important;
+        line-height: 30px !important;
+        font-size: 14px !important;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: var(--font-size-xs);
+    }
+    
+    .loading-content {
+        padding: var(--spacing-lg);
+        margin: 0 var(--spacing-sm);
+    }
+    
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .loading-text {
+        font-size: var(--font-size-base);
+    }
+    
+    .loading-subtext {
+        font-size: var(--font-size-xs);
+    }
+    
+    .notification {
+        top: calc(var(--header-height-mobile) + var(--spacing-sm));
+        right: var(--spacing-sm);
+        left: var(--spacing-sm);
+        padding: var(--spacing-md);
+    }
+    
+    .card {
+        margin: 0 var(--spacing-xs);
+        border-radius: var(--border-radius-sm);
+    }
+    
+    .card-header,
+    .card-content {
+        padding: var(--spacing-md);
+    }
+    
+    .sidebar-header,
+    .sidebar-content {
+        padding: var(--spacing-md);
+    }
+    
+    .sidebar-title {
+        font-size: var(--font-size-lg);
+    }
+    
+    .sidebar-subtitle {
+        font-size: var(--font-size-xs);
+    }
+}
+
+/* ===== RESPONSIVIDADE ULTRA PEQUENA ===== */
+@media (max-width: 360px) {
+    .top-bar {
+        padding: 0 var(--spacing-xs);
+    }
+    
+    .search-container {
+        min-width: 0;
+        flex: 1;
+    }
+    
+    .search-input {
+        padding: 8px 12px;
+        font-size: var(--font-size-xs);
+    }
+    
+    .search-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .menu-toggle {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .brand-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+    
+    .loading-content {
+        padding: var(--spacing-md);
+        margin: 0 var(--spacing-xs);
+    }
+    
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .cursor-toggle-btn {
+        padding: 6px 10px;
+        font-size: var(--font-size-xs);
+        min-height: 36px;
+        gap: 4px;
+    }
+    
+    .cursor-toggle-btn i {
+        font-size: 11px;
+    }
+}
+
+/* ===== MELHORIAS DE PERFORMANCE MOBILE ===== */
+@media (max-width: 768px) {
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .sidebar {
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-y: contain !important;
+        overscroll-behavior-x: none !important;
+        touch-action: pan-y !important;
+        /* Garantir scroll suave e responsivo */
+        will-change: scroll-position;
+        /* Permitir scroll mesmo quando body tem no-scroll */
+        overflow-y: auto !important;
+    }
+    
+    /* Garantir que o conteúdo da sidebar seja scrollável */
+    .sidebar-content {
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-y: contain !important;
+        touch-action: pan-y !important;
+        overflow-y: auto !important;
+        min-height: 0;
+        flex: 1;
+    }
+    
+    /* CTO grid deve ser scrollável dentro da sidebar */
+    .cto-grid {
+        overflow-y: visible;
+        max-height: none;
+    }
+    
+    .search-input {
+        -webkit-appearance: none;
+        border-radius: var(--border-radius-full);
+    }
+    
+    button, .btn {
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    /* Otimizações para toque */
+    .menu-toggle,
+    .search-btn,
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Melhorias de toque específicas */
+    .cto-card,
+    .metric-card,
+    .upload-zone,
+    .section-header,
+    .sidebar-close-btn,
+    .theme-toggle-btn,
+    .cursor-toggle-btn {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+    
+    /* Feedback visual melhorado para toque */
+    .cto-card:active,
+    .metric-card:active,
+    .upload-zone:active,
+    .btn:active,
+    .menu-toggle:active,
+    .search-btn:active,
+    .sidebar-close-btn:active,
+    .theme-toggle-btn:active,
+    .cursor-toggle-btn:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    /* Melhorar área de toque para elementos pequenos */
+    .section-icon,
+    .brand-icon,
+    .brand-icon-sidebar {
+        position: relative;
+    }
+    
+    .section-icon::before,
+    .brand-icon::before,
+    .brand-icon-sidebar::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: max(44px, 100%);
+        height: max(44px, 100%);
+        border-radius: 50%;
+        background: transparent;
+        pointer-events: auto;
+    }
+}
+
+/* ===== ORIENTAÇÃO LANDSCAPE MOBILE ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+    :root {
+        --header-height: 56px;
+    }
+    
+    .top-bar {
+        height: 56px;
+    }
+    
+    #map {
+        top: 56px;
+        height: calc(100vh - 56px);
+    }
+    
+    .leaflet-top.leaflet-left,
+    .leaflet-top.leaflet-right {
+        margin-top: calc(56px + var(--spacing-xs));
+    }
+    
+    .sidebar {
+        width: clamp(320px, 45vw, 380px);
+        max-width: min(380px, calc(100vw - 40px));
+        min-width: 320px;
+    }
+}
+
+/* ===== ACESSIBILIDADE MOBILE ===== */
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .overlay,
+    .loading-spinner,
+    .btn,
+    .menu-toggle {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ===== MODO ESCURO MOBILE ===== */
+[data-theme="dark"] .leaflet-control-zoom a {
+    background: #2d2d2d !important;
+    border: 1px solid #404040 !important;
+    color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .leaflet-control-zoom a:hover {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .leaflet-control-north .north-arrow {
+    background: #2d2d2d !important;
+    border: 1px solid #404040 !important;
+    color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .leaflet-control-north .north-arrow:hover {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .clear-search-btn {
+    background: var(--gray-700) !important;
+    border-color: var(--gray-600) !important;
+    color: var(--gray-300) !important;
+}
+
+[data-theme="dark"] .leaflet-popup-content-wrapper {
+    background: var(--gray-800) !important;
+    border-color: var(--gray-600) !important;
+}
+
+[data-theme="dark"] .leaflet-popup-content {
+    color: var(--gray-100) !important;
+}
+
+[data-theme="dark"] .leaflet-popup-tip {
+    background: var(--gray-800) !important;
+    border-color: var(--gray-600) !important;
+}

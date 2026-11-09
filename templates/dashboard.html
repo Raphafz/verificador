@@ -1,0 +1,793 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - Verificador de Viabilidade{% endblock %}
+
+{% block extra_head %}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <!-- Header do Dashboard -->
+  <header class="dashboard-header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo-square">
+          <!-- Logo removido -->
+        </div>
+        <div class="header-info">
+          <h1 class="dashboard-title">Verificador de Viabilidade</h1>
+          <p class="dashboard-subtitle">Análise profissional de mapas CTO</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <span class="user-name" aria-label="Usuário logado">{{ user.username }}</span>
+          <a href="{% url 'my_data_portal' %}" class="btn btn-outline" style="margin-right: 0.5rem;" title="Portal LGPD — meus dados">Meus dados</a>
+          <a href="{% if user.is_rm_admin %}{% url 'rm:logout' %}{% else %}{% url 'company:logout' %}{% endif %}" class="btn btn-outline" aria-label="Sair do sistema">Sair</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu de Navegação -->
+  <nav class="dashboard-nav" aria-label="Menu principal">
+    <div class="nav-container">
+      <div class="nav-links">
+        {% if user.is_rm_admin %}
+        <a href="{% url 'rm:admin_dashboard' %}" class="nav-link active">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        {% else %}
+        <a href="{% url 'company:dashboard' user.company.slug %}" class="nav-link active">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        {% endif %}
+        {% if user.is_rm_admin %}
+        <a href="{% url 'rm:map_list' %}" class="nav-link">
+          <i class="fas fa-map"></i> Mapas CTO
+        </a>
+        <a href="{% url 'rm:user_list' %}" class="nav-link">
+          <i class="fas fa-users"></i> Usuários
+        </a>
+        <a href="{% url 'rm:company_list' %}" class="nav-link">
+          <i class="fas fa-building"></i> Empresas
+        </a>
+        {% elif user.is_company_admin %}
+        <a href="{% url 'company:map_list' user.company.slug %}" class="nav-link">
+          <i class="fas fa-map"></i> Mapas CTO
+        </a>
+        <a href="{% url 'company:user_list' user.company.slug %}" class="nav-link">
+          <i class="fas fa-users"></i> Usuários
+        </a>
+        {% else %}
+        <a href="{% url 'company:upload' company_slug=user.company.slug %}" class="nav-link">
+          <i class="fas fa-cloud-upload-alt"></i> Upload de Mapas
+        </a>
+        {% endif %}
+      </div>
+      <div class="nav-user-info">
+        <span class="user-role">
+          {% if user.is_rm_admin %}
+            <i class="fas fa-crown"></i> RM Admin
+          {% elif user.is_company_admin %}
+            <i class="fas fa-user-tie"></i> Admin da Empresa
+          {% else %}
+            <i class="fas fa-user"></i> Usuário
+          {% endif %}
+        </span>
+        {% if user.company %}
+        <span class="user-company">{{ user.company.name }}</span>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Estatísticas -->
+  <section class="stats-grid" aria-labelledby="stats-heading">
+    <h2 id="stats-heading" class="sr-only">Estatísticas do Sistema</h2>
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.total_files|default:0 }}</h3>
+        <p class="stat-label">Arquivos Enviados</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💾</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.total_size_mb|default:0 }} MB</h3>
+        <p class="stat-label">Espaço Utilizado</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{% if stats.total_files > 0 %}100%{% else %}0%{% endif %}</h3>
+        <p class="stat-label">Taxa de Sucesso</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🕒</div>
+      <div class="stat-content">
+        <h3 class="stat-number">< 5s</h3>
+        <p class="stat-label">Tempo Médio</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upload de Arquivo -->
+  <section class="upload-section" aria-labelledby="upload-heading">
+    <div class="upload-card">
+      <div class="upload-header">
+        <h2 id="upload-heading" class="section-title">Novo Upload</h2>
+        <p class="section-subtitle">Envie um arquivo de mapa CTO para análise</p>
+      </div>
+      
+      <form method="post" enctype="multipart/form-data" class="upload-form" id="uploadForm" aria-label="Formulário de upload de arquivo">
+         {% csrf_token %}
+         <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Área de upload - clique ou arraste arquivos aqui">
+           <div class="upload-content">
+             <div class="upload-icon" aria-hidden="true">📁</div>
+             <h3>Arraste e solte seu arquivo aqui</h3>
+             <p>ou clique para selecionar</p>
+             <input type="file" 
+                    name="file" 
+                    id="id_file" 
+                    class="file-input" 
+                    accept=".xlsx,.xls,.csv,.kml,.kmz"
+                    aria-describedby="file-help"
+                    required>
+           </div>
+         </div>
+         <div id="file-help" class="sr-only">
+           Formatos aceitos: Excel (.xlsx, .xls), CSV (.csv), KML (.kml) e KMZ (.kmz). Tamanho máximo: 10MB.
+         </div>
+         
+         <div class="form-row">
+           <label for="id_description">Descrição do arquivo (opcional)</label>
+           <textarea name="description" 
+                     id="id_description" 
+                     placeholder="Adicione uma descrição para identificar melhor este arquivo..." 
+                     rows="3"
+                     aria-describedby="description-help"
+                     maxlength="500"></textarea>
+           <div id="description-help" class="sr-only">
+             Máximo de 500 caracteres para a descrição do arquivo.
+           </div>
+         </div>
+         
+         <button type="submit" class="btn primary full-width upload-btn" id="uploadBtn" aria-describedby="upload-help">
+           <span class="btn-icon" aria-hidden="true">⬆️</span>
+           Enviar para Análise
+         </button>
+       </form>
+    </div>
+  </section>
+
+  <!-- Lista de Arquivos -->
+  <section class="files-section" aria-labelledby="files-heading">
+    <div class="files-header">
+      <h2 id="files-heading" class="section-title">Histórico de Análises</h2>
+      <div class="files-actions" role="toolbar" aria-label="Ações dos arquivos">
+        <button class="btn btn-outline" onclick="clearFilters()" aria-label="Limpar todos os filtros aplicados">
+          <span aria-hidden="true">🗑️</span> Limpar Filtros
+        </button>
+        <button class="btn btn-outline" onclick="refreshFiles()" aria-label="Atualizar lista de arquivos">
+          <span aria-hidden="true">🔄</span> Atualizar
+        </button>
+      </div>
+    </div>
+    
+    <!-- Busca e Filtros -->
+    <div class="files-controls" role="search" aria-label="Controles de busca e filtros">
+      <div class="search-box">
+        <label for="searchFiles" class="sr-only">Buscar arquivos por nome ou descrição</label>
+        <input type="text" 
+               id="searchFiles" 
+               placeholder="🔍 Buscar arquivos..." 
+               class="search-input"
+               aria-label="Campo de busca de arquivos"
+               autocomplete="off">
+      </div>
+      <div class="filter-controls">
+        <label for="filterType" class="sr-only">Filtrar por tipo de arquivo</label>
+        <select id="filterType" class="filter-select" aria-label="Filtrar por tipo de arquivo">
+          <option value="">Todos os tipos</option>
+          <option value="xlsx">Excel (.xlsx)</option>
+          <option value="xls">Excel (.xls)</option>
+          <option value="csv">CSV (.csv)</option>
+          <option value="kml">KML (.kml)</option>
+          <option value="kmz">KMZ (.kmz)</option>
+        </select>
+        <label for="sortBy" class="sr-only">Ordenar arquivos por</label>
+        <select id="sortBy" class="filter-select" aria-label="Ordenar arquivos por">
+          <option value="newest">Mais recentes</option>
+          <option value="oldest">Mais antigos</option>
+          <option value="name">Nome (A-Z)</option>
+          <option value="size">Tamanho</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Ações em lote -->
+    <div class="bulk-actions" 
+         id="bulkActions" 
+         style="display: none;" 
+         role="toolbar" 
+         aria-label="Ações em lote para arquivos selecionados"
+         aria-live="polite">
+      <div class="bulk-info">
+        <span id="selectedCount" aria-live="polite">0</span> arquivo(s) selecionado(s)
+      </div>
+      <div class="bulk-buttons">
+        <button class="btn btn-outline" 
+                onclick="selectAllFiles()" 
+                aria-label="Selecionar todos os arquivos visíveis">
+          Selecionar Todos
+        </button>
+        <button class="btn btn-outline" 
+                onclick="deselectAllFiles()" 
+                aria-label="Desmarcar todos os arquivos selecionados">
+          Desmarcar Todos
+        </button>
+        <button class="btn btn-danger" 
+                onclick="deleteSelectedFiles()" 
+                aria-label="Excluir arquivos selecionados">
+          <span aria-hidden="true">🗑️</span> Excluir Selecionados
+        </button>
+      </div>
+    </div>
+    
+    <!-- Contador de resultados -->
+    <div class="results-count" id="resultsCount" aria-live="polite" role="status">
+      Mostrando {{ files|length }} arquivo{{ files|length|pluralize:"s" }}
+    </div>
+    
+    <div class="files-grid" id="filesGrid" role="grid" aria-label="Lista de arquivos analisados">
+      {% for f in files %}
+        <div class="file-card" 
+             data-filename="{{ f.file.name|lower }}"
+             data-description="{{ f.description|default:""|lower }}"
+             data-type="{% if f.file.name|slice:"-5:" == ".xlsx" %}xlsx{% elif f.file.name|slice:"-4:" == ".xls" %}xls{% elif f.file.name|slice:"-4:" == ".csv" %}csv{% elif f.file.name|slice:"-4:" == ".kml" %}kml{% elif f.file.name|slice:"-4:" == ".kmz" %}kmz{% else %}other{% endif %}"
+             data-date="{{ f.uploaded_at|date:"Y-m-d" }}"
+             data-size="{{ f.file.size }}"
+             role="gridcell"
+             tabindex="0"
+             aria-label="Arquivo {{ f.file.name }}, enviado em {{ f.uploaded_at|date:"d/m/Y" }}">
+          <div class="file-header">
+            <div class="file-select">
+              <label for="checkbox-{{ f.id }}" class="sr-only">
+                Selecionar arquivo {{ f.file.name }}
+              </label>
+              <input type="checkbox" 
+                     id="checkbox-{{ f.id }}"
+                     class="file-checkbox" 
+                     data-file-id="{{ f.id }}" 
+                     onchange="updateBulkActions()"
+                     aria-describedby="file-info-{{ f.id }}">
+            </div>
+            <div class="file-icon" aria-hidden="true">
+              {% if f.file.name|slice:"-5:" == ".xlsx" or f.file.name|slice:"-4:" == ".xls" %}
+                📊
+              {% elif f.file.name|slice:"-4:" == ".csv" %}
+                📋
+              {% elif f.file.name|slice:"-4:" == ".kml" or f.file.name|slice:"-4:" == ".kmz" %}
+                🗺️
+              {% else %}
+                📄
+              {% endif %}
+            </div>
+            <div class="file-status status-success" role="status" aria-label="Status: Processado com sucesso">
+              <span aria-hidden="true">✅</span> Processado
+            </div>
+          </div>
+          <div class="file-content" id="file-info-{{ f.id }}">
+            <h3 class="file-name" title="{{ f.file.name }}">
+              {% if f.file.name|length > 30 %}
+                {{ f.file.name|slice:":27" }}...
+              {% else %}
+                {{ f.file.name }}
+              {% endif %}
+            </h3>
+            <p class="file-description">{{ f.description|default:"Sem descrição" }}</p>
+            <div class="file-meta">
+              <span class="file-date" title="Data de upload" aria-label="Enviado em {{ f.uploaded_at|date:"d/m/Y H:i" }}">
+                <span aria-hidden="true">📅</span> {{ f.uploaded_at|date:"d/m/Y H:i" }}
+              </span>
+              <span class="file-size" title="Tamanho do arquivo" aria-label="Tamanho: {{ f.file.size|filesizeformat }}">
+                <span aria-hidden="true">📏</span> {{ f.file.size|filesizeformat }}
+              </span>
+              <span class="file-type" title="Tipo do arquivo" aria-label="Tipo: {{ f.file.name|slice:"-4:"|upper }}">
+                <span aria-hidden="true">🏷️</span> {{ f.file.name|slice:"-4:"|upper }}
+              </span>
+            </div>
+          </div>
+          <div class="file-actions" role="group" aria-label="Ações para o arquivo {{ f.file.name }}">
+            <button class="btn btn-outline btn-sm" 
+                    onclick="downloadFile( f.id )" 
+                    aria-label="Baixar arquivo {{ f.file.name }}">
+              <span aria-hidden="true">⬇️</span> Download
+            </button>
+            <button class="btn btn-outline btn-sm btn-danger" 
+                    onclick="deleteFile( f.id )" 
+                    aria-label="Excluir arquivo {{ f.file.name }}">
+              <span aria-hidden="true">🗑️</span> Excluir
+            </button>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state" role="status" aria-label="Nenhum arquivo encontrado">
+          <div class="empty-icon" aria-hidden="true">📂</div>
+          <h3>Nenhum arquivo enviado ainda</h3>
+          <p>Comece enviando seu primeiro arquivo de mapa CTO para análise.</p>
+          <small>Formatos aceitos: .xlsx, .xls, .csv, .kml, .kmz (máximo 10MB)</small>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+// Drag and drop functionality
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('id_file');
+const uploadForm = document.getElementById('uploadForm');
+const uploadBtn = document.getElementById('uploadBtn');
+
+uploadArea.addEventListener('click', () => fileInput.click());
+
+uploadArea.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadArea.style.borderColor = 'var(--primary)';
+  uploadArea.style.backgroundColor = 'rgba(var(--primary-rgb), 0.05)';
+});
+
+uploadArea.addEventListener('dragleave', () => {
+  uploadArea.style.borderColor = 'var(--gray-light)';
+  uploadArea.style.backgroundColor = 'transparent';
+});
+
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.style.borderColor = 'var(--gray-light)';
+  uploadArea.style.backgroundColor = 'transparent';
+  
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    const file = files[0];
+    if (validateFile(file)) {
+      fileInput.files = files;
+      updateUploadArea(file);
+      showToast('success', 'Arquivo selecionado', `${file.name} está pronto para upload`);
+    }
+  }
+});
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) {
+    const file = e.target.files[0];
+    if (validateFile(file)) {
+      updateUploadArea(file);
+      showToast('success', 'Arquivo selecionado', `${file.name} está pronto para upload`);
+    }
+  }
+});
+
+function validateFile(file) {
+  const allowedTypes = [
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel',
+    'text/csv',
+    'application/vnd.google-earth.kml+xml',
+    'application/vnd.google-earth.kmz',
+    'text/xml',
+    'application/xml',
+    'application/zip'
+  ];
+  
+  if (!allowedTypes.includes(file.type)) {
+    showToast('error', 'Tipo de arquivo inválido', 'Por favor, selecione um arquivo Excel (.xlsx, .xls), CSV (.csv), KML (.kml) ou KMZ (.kmz)');
+    return false;
+  }
+  
+  if (file.size > 10 * 1024 * 1024) { // 10MB
+    showToast('error', 'Arquivo muito grande', 'O arquivo deve ter no máximo 10MB');
+    return false;
+  }
+  
+  return true;
+}
+
+function updateUploadArea(file) {
+  const uploadContent = uploadArea.querySelector('.upload-content');
+  uploadContent.innerHTML = `
+    <div class="upload-icon">📄</div>
+    <h3>Arquivo selecionado</h3>
+    <p>${file.name}</p>
+    <small>Clique para alterar</small>
+  `;
+}
+
+// Form submission handled below with resubmission prevention
+
+// File actions
+function downloadFile(fileId) {
+  showToast('info', 'Iniciando download', 'Seu arquivo será baixado em instantes');
+  
+  // Create a temporary link for download to avoid navigation issues
+  const link = document.createElement('a');
+  link.href = `/download/${fileId}/`;
+  link.download = '';
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function deleteFile(fileId) {
+  if (confirm('Tem certeza que deseja excluir este arquivo?')) {
+    showToast('info', 'Excluindo arquivo', 'Removendo arquivo do sistema...');
+    
+    // Create a form for DELETE action to avoid navigation issues
+    const form = document.createElement('form');
+    form.method = 'GET'; // Using GET as per your current URL pattern
+    form.action = `/delete/${fileId}/`;
+    form.style.display = 'none';
+    document.body.appendChild(form);
+    form.submit();
+  }
+}
+
+function refreshFiles() {
+  location.reload();
+}
+
+// File search and filter functionality
+let allFiles = [];
+
+function initializeFileManagement() {
+  // Store all file cards for filtering
+  allFiles = Array.from(document.querySelectorAll('.file-card'));
+  
+  // Search functionality
+  const searchInput = document.getElementById('searchFiles');
+  const filterType = document.getElementById('filterType');
+  const sortBy = document.getElementById('sortBy');
+  
+  if (searchInput) {
+    searchInput.addEventListener('input', filterFiles);
+  }
+  if (filterType) {
+    filterType.addEventListener('change', filterFiles);
+  }
+  if (sortBy) {
+    sortBy.addEventListener('change', filterFiles);
+  }
+}
+
+function filterFiles() {
+  const searchTerm = document.getElementById('searchFiles').value.toLowerCase();
+  const typeFilter = document.getElementById('filterType').value;
+  const sortOption = document.getElementById('sortBy').value;
+  
+  let filteredFiles = allFiles.filter(card => {
+    const filename = card.dataset.filename || '';
+    const description = card.dataset.description || '';
+    const type = card.dataset.type || '';
+    
+    // Search filter
+    const matchesSearch = filename.includes(searchTerm) || description.includes(searchTerm);
+    
+    // Type filter
+    const matchesType = !typeFilter || type === typeFilter;
+    
+    return matchesSearch && matchesType;
+  });
+  
+  // Sort files
+  filteredFiles.sort((a, b) => {
+    switch (sortOption) {
+      case 'oldest':
+        return new Date(a.dataset.date) - new Date(b.dataset.date);
+      case 'name':
+        return a.dataset.filename.localeCompare(b.dataset.filename);
+      case 'size':
+        return parseInt(b.dataset.size) - parseInt(a.dataset.size);
+      case 'newest':
+      default:
+        return new Date(b.dataset.date) - new Date(a.dataset.date);
+    }
+  });
+  
+  // Hide all files first
+  allFiles.forEach(card => {
+    card.classList.add('hidden');
+    card.classList.remove('highlighted');
+  });
+  
+  // Show filtered files
+  filteredFiles.forEach(card => {
+    card.classList.remove('hidden');
+    if (searchTerm && (card.dataset.filename.includes(searchTerm) || card.dataset.description.includes(searchTerm))) {
+      card.classList.add('highlighted');
+    }
+  });
+  
+  // Update results count
+  updateResultsCount(filteredFiles.length);
+  
+  // Reorder files in DOM
+  const filesGrid = document.getElementById('filesGrid');
+  filteredFiles.forEach(card => {
+    filesGrid.appendChild(card);
+  });
+}
+
+function updateResultsCount(count) {
+  const resultsCount = document.getElementById('resultsCount');
+  if (resultsCount) {
+    const total = allFiles.length;
+    if (count === total) {
+      resultsCount.textContent = `Mostrando ${count} arquivo${count !== 1 ? 's' : ''}`;
+    } else {
+      resultsCount.textContent = `Mostrando ${count} de ${total} arquivo${total !== 1 ? 's' : ''}`;
+    }
+  }
+}
+
+function clearFilters() {
+  document.getElementById('searchFiles').value = '';
+  document.getElementById('filterType').value = '';
+  document.getElementById('sortBy').value = 'newest';
+  filterFiles();
+  showToast('info', 'Filtros limpos', 'Todos os arquivos estão sendo exibidos');
+}
+
+// Bulk actions functionality
+function updateBulkActions() {
+  const checkboxes = document.querySelectorAll('.file-checkbox');
+  const selectedCheckboxes = document.querySelectorAll('.file-checkbox:checked');
+  const bulkActions = document.getElementById('bulkActions');
+  const selectedCount = document.getElementById('selectedCount');
+  
+  // Update selected count
+  selectedCount.textContent = selectedCheckboxes.length;
+  
+  // Show/hide bulk actions bar
+  if (selectedCheckboxes.length > 0) {
+    bulkActions.style.display = 'flex';
+  } else {
+    bulkActions.style.display = 'none';
+  }
+  
+  // Update file card appearance
+  checkboxes.forEach(checkbox => {
+    const fileCard = checkbox.closest('.file-card');
+    if (checkbox.checked) {
+      fileCard.classList.add('selected');
+    } else {
+      fileCard.classList.remove('selected');
+    }
+  });
+}
+
+function selectAllFiles() {
+  const visibleCheckboxes = document.querySelectorAll('.file-card:not(.hidden) .file-checkbox');
+  visibleCheckboxes.forEach(checkbox => {
+    checkbox.checked = true;
+  });
+  updateBulkActions();
+  showToast('info', 'Arquivos selecionados', `${visibleCheckboxes.length} arquivo(s) selecionado(s)`);
+}
+
+function deselectAllFiles() {
+  const checkboxes = document.querySelectorAll('.file-checkbox');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = false;
+  });
+  updateBulkActions();
+  showToast('info', 'Seleção removida', 'Todos os arquivos foram desmarcados');
+}
+
+function deleteSelectedFiles() {
+  const selectedCheckboxes = document.querySelectorAll('.file-checkbox:checked');
+  const fileIds = Array.from(selectedCheckboxes).map(cb => cb.dataset.fileId);
+  
+  if (fileIds.length === 0) {
+    showToast('warning', 'Nenhum arquivo selecionado', 'Selecione pelo menos um arquivo para excluir');
+    return;
+  }
+  
+  const confirmMessage = `Tem certeza que deseja excluir ${fileIds.length} arquivo(s) selecionado(s)? Esta ação não pode ser desfeita.`;
+  
+  if (confirm(confirmMessage)) {
+    showToast('info', 'Excluindo arquivos', 'Removendo arquivos selecionados...');
+    
+    // For now, redirect to delete individual files
+    // In a real implementation, you'd want a bulk delete endpoint
+    if (fileIds.length === 1) {
+      window.location.href = `/delete/${fileIds[0]}/`;
+    } else {
+      // Simulate bulk delete by redirecting to first file
+      // You should implement a proper bulk delete endpoint
+      showToast('warning', 'Funcionalidade em desenvolvimento', 'Exclusão em lote será implementada em breve');
+    }
+  }
+}
+
+// Keyboard navigation for file cards
+function initializeKeyboardNavigation() {
+  const fileCards = document.querySelectorAll('.file-card');
+  
+  fileCards.forEach((card, index) => {
+    card.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          // Toggle checkbox selection
+          const checkbox = card.querySelector('.file-checkbox');
+          if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            updateBulkActions();
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          const nextCard = fileCards[index + 1];
+          if (nextCard && !nextCard.classList.contains('hidden')) {
+            nextCard.focus();
+          }
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          const prevCard = fileCards[index - 1];
+          if (prevCard && !prevCard.classList.contains('hidden')) {
+            prevCard.focus();
+          }
+          break;
+        case 'Home':
+          e.preventDefault();
+          const firstVisibleCard = Array.from(fileCards).find(c => !c.classList.contains('hidden'));
+          if (firstVisibleCard) firstVisibleCard.focus();
+          break;
+        case 'End':
+          e.preventDefault();
+          const visibleCards = Array.from(fileCards).filter(c => !c.classList.contains('hidden'));
+          const lastVisibleCard = visibleCards[visibleCards.length - 1];
+          if (lastVisibleCard) lastVisibleCard.focus();
+          break;
+      }
+    });
+  });
+}
+
+// Enhanced upload area keyboard support
+function initializeUploadAreaKeyboard() {
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('id_file');
+  
+  if (uploadArea && fileInput) {
+    uploadArea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+  }
+}
+
+// Announce changes to screen readers
+function announceToScreenReader(message) {
+  const announcement = document.createElement('div');
+  announcement.setAttribute('aria-live', 'polite');
+  announcement.setAttribute('aria-atomic', 'true');
+  announcement.className = 'sr-only';
+  announcement.textContent = message;
+  
+  document.body.appendChild(announcement);
+  
+  setTimeout(() => {
+    document.body.removeChild(announcement);
+  }, 1000);
+}
+
+// Enhanced updateResultsCount with screen reader announcement
+function updateResultsCount(count) {
+  const resultsCount = document.getElementById('resultsCount');
+  if (resultsCount) {
+    const text = `Mostrando ${count} arquivo${count !== 1 ? 's' : ''}`;
+    resultsCount.textContent = text;
+    
+    // Announce to screen readers
+    announceToScreenReader(`Filtros aplicados. ${text} encontrado${count !== 1 ? 's' : ''}.`);
+  }
+}
+
+// Enhanced updateBulkActions with screen reader announcement
+function updateBulkActions() {
+  const checkboxes = document.querySelectorAll('.file-checkbox:checked');
+  const bulkActions = document.getElementById('bulkActions');
+  const selectedCount = document.getElementById('selectedCount');
+  
+  if (checkboxes.length > 0) {
+    bulkActions.style.display = 'flex';
+    selectedCount.textContent = checkboxes.length;
+    
+    // Update file card styles
+    document.querySelectorAll('.file-card').forEach(card => {
+      const checkbox = card.querySelector('.file-checkbox');
+      if (checkbox && checkbox.checked) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+    });
+    
+    // Announce to screen readers
+    announceToScreenReader(`${checkboxes.length} arquivo${checkboxes.length !== 1 ? 's' : ''} selecionado${checkboxes.length !== 1 ? 's' : ''}`);
+  } else {
+    bulkActions.style.display = 'none';
+    document.querySelectorAll('.file-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+  }
+}
+
+// Prevent form resubmission dialog
+let formSubmitted = false;
+
+// Override form submission to prevent resubmission
+uploadForm.addEventListener('submit', function(e) {
+  if (formSubmitted) {
+    e.preventDefault();
+    showToast('warning', 'Aguarde', 'Formulário já foi enviado, aguarde o processamento');
+    return false;
+  }
+  
+  if (!fileInput.files.length) {
+    e.preventDefault();
+    showToast('warning', 'Nenhum arquivo selecionado', 'Por favor, selecione um arquivo antes de enviar');
+    return false;
+  }
+  
+  formSubmitted = true;
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = '<span class="btn-icon">⏳</span> Enviando...';
+  showToast('info', 'Enviando arquivo', 'Processando seu arquivo, aguarde...');
+});
+
+// Prevent back button resubmission
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+    // Page was loaded from cache (back button)
+    formSubmitted = false;
+    uploadBtn.disabled = false;
+    uploadBtn.innerHTML = '<span class="btn-icon">📤</span> Enviar Arquivo';
+  }
+});
+
+// Prevent refresh resubmission
+window.addEventListener('beforeunload', function(e) {
+  if (formSubmitted) {
+    // Don't show confirmation dialog for form resubmission
+    return;
+  }
+});
+
+// Show welcome message
+document.addEventListener('DOMContentLoaded', function() {
+  initializeFileManagement();
+  initializeKeyboardNavigation();
+  initializeUploadAreaKeyboard();
+  
+  setTimeout(() => {
+    showToast('success', 'Bem-vindo!', 'Dashboard carregado com sucesso');
+  }, 500);
+});
+</script>
+{% endblock %}

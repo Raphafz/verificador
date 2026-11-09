@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manual do Usuário - RM Systems{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px; margin: 2rem auto; padding: 2rem;">
+  <div class="card" style="background: var(--rm-card-bg); border: 1px solid var(--rm-card-border); border-radius: 0.5rem; padding: 2rem; box-shadow: var(--rm-shadow-md);">
+    <h1 style="color: var(--rm-primary); margin-bottom: 1.5rem; font-size: 2rem;">
+      <i class="fas fa-book-open me-2"></i>Manual do Usuário
+    </h1>
+    
+    <p style="color: var(--rm-text-secondary); margin-bottom: 2rem;">Guia completo para utilizar o sistema de verificação de viabilidade RM Systems.</p>
+    
+    <div style="line-height: 1.8; color: var(--rm-text-primary);">
+      <!-- Índice -->
+      <section style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">Índice</h2>
+        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+          <li><a href="#introducao" style="color: var(--rm-primary); text-decoration: none;">1. Introdução</a></li>
+          <li><a href="#primeiros-passos" style="color: var(--rm-primary); text-decoration: none;">2. Primeiros Passos</a></li>
+          <li><a href="#upload-mapas" style="color: var(--rm-primary); text-decoration: none;">3. Upload de Mapas</a></li>
+          <li><a href="#verificador" style="color: var(--rm-primary); text-decoration: none;">4. Verificador de Viabilidade</a></li>
+          <li><a href="#gestao-usuarios" style="color: var(--rm-primary); text-decoration: none;">5. Gestão de Usuários</a></li>
+          <li><a href="#relatorios" style="color: var(--rm-primary); text-decoration: none;">6. Relatórios e Estatísticas</a></li>
+          <li><a href="#duvidas" style="color: var(--rm-primary); text-decoration: none;">7. Dúvidas Frequentes</a></li>
+        </ul>
+      </section>
+
+      <!-- 1. Introdução -->
+      <section id="introducao" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">1. Introdução</h2>
+        
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">1.1. Sobre o Sistema</h3>
+        <p>O RM Systems é uma plataforma SaaS para verificação de viabilidade de mapas CTO (Central de Terminação Óptica). O sistema permite:</p>
+        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li>Upload e gerenciamento de mapas CTO em diversos formatos</li>
+          <li>Análise e verificação de viabilidade de localizações</li>
+          <li>Geração de relatórios e estatísticas</li>
+          <li>Gestão de usuários e empresas (multi-tenant)</li>
+        </ul>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">1.2. Tipos de Usuários</h3>
+        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li><strong>RM Admin:</strong> Administrador do sistema com acesso total</li>
+          <li><strong>Company Admin:</strong> Administrador da empresa com acesso à gestão da empresa</li>
+          <li><strong>Company User:</strong> Usuário comum com acesso ao verificador</li>
+        </ul>
+      </section>
+
+      <!-- 2. Primeiros Passos -->
+      <section id="primeiros-passos" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">2. Primeiros Passos</h2>
+        
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">2.1. Acessando o Sistema</h3>
+        <ol style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li>Acesse a URL do sistema fornecida pelo administrador</li>
+          <li>Na página de login, informe seu e-mail ou nome de usuário</li>
+          <li>Informe sua senha</li>
+          <li>Clique em "Entrar"</li>
+        </ol>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">2.2. Navegação</h3>
+        <p>Após fazer login, você verá:</p>
+        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li><strong>Menu Lateral:</strong> Acesso às funcionalidades principais (disponível para administradores)</li>
+          <li><strong>Barra Superior:</strong> Informações do usuário e opções de logout</li>
+          <li><strong>Conteúdo Principal:</strong> Área de trabalho com dashboards e ferramentas</li>
+        </ul>
+      </section>
+
+      <!-- 3. Upload de Mapas -->
+      <section id="upload-mapas" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">3. Upload de Mapas</h2>
+        
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">3.1. Formatos Suportados</h3>
+        <p>O sistema aceita os seguintes formatos:</p>
+        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li><strong>Excel:</strong> .xlsx, .xls</li>
+          <li><strong>CSV:</strong> .csv</li>
+          <li><strong>Google Earth:</strong> .kml, .kmz</li>
+        </ul>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">3.2. Fazendo Upload</h3>
+        <ol style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li>Acesse a página de Upload através do menu lateral</li>
+          <li>Clique em "Selecionar Arquivo" ou arraste o arquivo para a área de upload</li>
+          <li>Aguarde o processamento do arquivo</li>
+          <li>Uma notificação confirmará o sucesso do upload</li>
+        </ol>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">3.3. Limitações</h3>
+        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li>Tamanho máximo: 5MB por arquivo</li>
+          <li>Um arquivo por vez</li>
+          <li>Apenas formatos suportados são aceitos</li>
+        </ul>
+      </section>
+
+      <!-- 4. Verificador de Viabilidade -->
+      <section id="verificador" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">4. Verificador de Viabilidade</h2>
+        
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">4.1. Acessando o Verificador</h3>
+        <ol style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li>Acesse o Verificador através do menu lateral</li>
+          <li>No menu lateral esquerdo, você verá uma lista de mapas disponíveis</li>
+        </ol>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">4.2. Selecionando Mapas</h3>
+        <p>Você pode selecionar múltiplos mapas usando as caixas de seleção (checkboxes) ao lado de cada mapa. Isso permite visualizar todas as localizações no mapa simultaneamente.</p>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">4.3. Interpretando os Resultados</h3>
+        <p>Os resultados da verificação são exibidos no mapa com cores diferentes:</p>
+        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li><strong style="color: var(--rm-success);">Verde:</strong> Viável (até 300m da CTO)</li>
+          <li><strong style="color: var(--rm-warning);">Amarelo:</strong> Viabilidade Limitada (300m-800m da CTO)</li>
+          <li><strong style="color: var(--rm-danger);">Vermelho:</strong> Sem Viabilidade (acima de 800m da CTO)</li>
+        </ul>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">4.4. Buscando Localizações</h3>
+        <p>Use a barra de busca no mapa para encontrar localizações específicas por endereço ou coordenadas.</p>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">4.5. Histórico de Verificações</h3>
+        <p>Os resultados das verificações são salvos automaticamente e podem ser visualizados no histórico de análises (disponível para administradores).</p>
+      </section>
+
+      <!-- 5. Gestão de Usuários -->
+      <section id="gestao-usuarios" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">5. Gestão de Usuários</h2>
+        <p><strong>Disponível apenas para administradores (Company Admin e RM Admin)</strong></p>
+        
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">5.1. Criando Usuários</h3>
+        <ol style="margin-left: 2rem; margin-top: 0.5rem;">
+          <li>Acesse a lista de usuários através do menu lateral</li>
+          <li>Clique em "Novo Usuário"</li>
+          <li>Preencha os campos obrigatórios:
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+              <li>Nome de usuário</li>
+              <li>E-mail</li>
+              <li>Nome e sobrenome</li>
+              <li>Senha</li>
+              <li>Função (role)</li>
+              <li>Empresa (se aplicável)</li>
+            </ul>
+          </li>
+          <li>Clique em "Salvar"</li>
+        </ol>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">5.2. Editando Usuários</h3>
+        <p>Clique no ícone de editar ao lado do usuário na lista para editar suas informações.</p>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">5.3. Ativando/Desativando Usuários</h3>
+        <p>Use o botão de ativar/desativar ao lado do usuário para controlar o acesso ao sistema.</p>
+      </section>
+
+      <!-- 6. Relatórios e Estatísticas -->
+      <section id="relatorios" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">6. Relatórios e Estatísticas</h2>
+        <p><strong>Disponível apenas para administradores (Company Admin e RM Admin)</strong></p>
+        
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">6.1. Acessando Relatórios</h3>
+        <p>Acesse a seção de Relatórios através do menu lateral para visualizar estatísticas e métricas do sistema.</p>
+
+        <h3 style="color: var(--rm-text-primary); font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem;">6.2. Exportando Dados</h3>
+        <p>Você pode exportar os dados dos relatórios em formato CSV ou JSON para análise externa.</p>
+      </section>
+
+      <!-- 7. Dúvidas Frequentes -->
+      <section id="duvidas" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--rm-primary); font-size: 1.5rem; margin-bottom: 1rem; margin-top: 2rem;">7. Dúvidas Frequentes</h2>
+        <p>Para mais perguntas e respostas, consulte nossa <a href="{% url 'faq' %}" style="color: var(--rm-primary);">página de FAQ</a>.</p>
+        
+        <p>Se você ainda tiver dúvidas ou precisar de ajuda adicional, entre em contato com o <a href="{% url 'ajuda' %}" style="color: var(--rm-primary);">suporte</a>.</p>
+      </section>
+    </div>
+
+    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rm-card-border);">
+      <a href="{% url 'home_redirect' %}" class="btn" style="background: var(--rm-primary); color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; text-decoration: none; display: inline-block;">
+        <i class="fas fa-arrow-left me-2"></i>Voltar
+      </a>
+      <a href="{% url 'faq' %}" class="btn" style="background: var(--rm-info); color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; text-decoration: none; display: inline-block; margin-left: 1rem;">
+        <i class="fas fa-question-circle me-2"></i>Ver FAQ
+      </a>
+      <a href="{% url 'ajuda' %}" class="btn" style="background: var(--rm-success); color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; text-decoration: none; display: inline-block; margin-left: 1rem;">
+        <i class="fas fa-life-ring me-2"></i>Precisa de Ajuda?
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

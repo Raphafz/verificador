@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Erro interno do servidor - 500{% endblock %}
+
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-actions">
+            <a href="{% url 'rm:admin_dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-home me-2"></i>
+                Ir para o Dashboard
+            </a>
+            <button onclick="location.reload()" class="btn btn-outline-secondary">
+                <i class="fas fa-redo me-2"></i>
+                Tentar Novamente
+            </button>
+        </div>
+        
+        <div class="error-help">
+            <h6>O que você pode fazer:</h6>
+            <ul>
+                <li>Aguardar alguns minutos e tentar novamente</li>
+                <li>Verificar sua conexão com a internet</li>
+                <li>Limpar o cache do navegador</li>
+                <li>Contatar o suporte técnico se o problema persistir</li>
+            </ul>
+            
+            <div class="error-contact">
+                <strong>Suporte técnico:</strong>
+                <p>Se o erro persistir, entre em contato com nossa equipe de suporte.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.error-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.error-icon {
+    font-size: 4rem;
+    color: var(--rm-warning, #ffc107);
+    margin-bottom: 1rem;
+}
+
+.error-code {
+    font-size: 6rem;
+    font-weight: 900;
+    color: var(--rm-warning, #ffc107);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.error-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--rm-text-primary, #1f2937);
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--rm-text-secondary, #6b7280);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.error-help {
+    text-align: left;
+    background: var(--rm-card-bg, #f8fafc);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--rm-warning, #ffc107);
+}
+
+.error-help h6 {
+    color: var(--rm-text-primary, #1f2937);
+    margin-bottom: 1rem;
+}
+
+.error-help ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: var(--rm-text-secondary, #6b7280);
+}
+
+.error-help li {
+    margin-bottom: 0.5rem;
+}
+
+.error-contact {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rm-border, #e5e7eb);
+}
+
+.error-contact strong {
+    color: var(--rm-text-primary, #1f2937);
+}
+
+.error-contact p {
+    margin: 0.5rem 0 0 0;
+    color: var(--rm-text-secondary, #6b7280);
+}
+
+/* Dark mode */
+[data-theme="dark"] .error-help {
+    background: var(--rm-card-bg, #2d3748);
+    color: var(--rm-text-primary, #e2e8f0);
+}
+
+[data-theme="dark"] .error-help h6 {
+    color: var(--rm-text-primary, #e2e8f0);
+}
+
+[data-theme="dark"] .error-help ul {
+    color: var(--rm-text-secondary, #a0aec0);
+}
+
+[data-theme="dark"] .error-contact {
+    border-top-color: var(--rm-border, #4a5568);
+}
+
+@media (max-width: 768px) {
+    .error-code {
+        font-size: 4rem;
+    }
+    
+    .error-title {
+        font-size: 1.5rem;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .error-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+{% endblock %}

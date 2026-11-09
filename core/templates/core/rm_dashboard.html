@@ -1,0 +1,167 @@
+{% extends ui_shell %}
+{% load static %}
+
+{% block title %}Dashboard Administrativo - RM Systems{% endblock %}
+
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/rm-dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="saas-page rm-dash rm-dash-v2 ds-content-enter">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        {% include "includes/rm_activation_email_toast.html" %}
+        <header class="rm-dash__hero">
+            <div>
+                <h2>Dashboard Administrativo</h2>
+                <p class="rm-dash__hero-lead">Visão geral da plataforma, empresas e atividade recente.</p>
+            </div>
+            <div class="rm-dash__date">
+                <i class="fas fa-calendar" aria-hidden="true"></i>
+                <time datetime="{{ today|date:'Y-m-d' }}">{{ today|date:"d/m/Y" }}</time>
+            </div>
+        </header>
+
+        {% if bridge_status %}
+        <div class="rm-dash__status {% if bridge_status.healthy %}rm-dash__status--ok{% elif bridge_status.healthy == False %}rm-dash__status--warn{% else %}rm-dash__status--idle{% endif %}" role="status">
+            <span><strong>Alert-bridge:</strong> {{ bridge_status.message }}</span>
+            {% if bridge_status.last_seen_at %}
+            <small>Último poll: {{ bridge_status.last_seen_at|date:"d/m/Y H:i" }}</small>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="rm-dash__stats rm-stagger">
+            <article class="rm-dash__stat rm-dash__stat--companies">
+                <div class="rm-dash__stat-icon" aria-hidden="true">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div>
+                    <p class="rm-dash__stat-value" data-rm-counter="{{ total_companies }}">{{ total_companies }}</p>
+                    <p class="rm-dash__stat-label">Empresas</p>
+                </div>
+            </article>
+            <article class="rm-dash__stat rm-dash__stat--users">
+                <div class="rm-dash__stat-icon" aria-hidden="true">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <p class="rm-dash__stat-value" data-rm-counter="{{ total_users }}">{{ total_users }}</p>
+                    <p class="rm-dash__stat-label">Usuários</p>
+                </div>
+            </article>
+            <article class="rm-dash__stat rm-dash__stat--maps">
+                <div class="rm-dash__stat-icon" aria-hidden="true">
+                    <i class="fas fa-map"></i>
+                </div>
+                <div>
+                    <p class="rm-dash__stat-value" data-rm-counter="{{ total_maps }}">{{ total_maps }}</p>
+                    <p class="rm-dash__stat-label">Mapas CTO</p>
+                </div>
+            </article>
+            <article class="rm-dash__stat rm-dash__stat--active">
+                <div class="rm-dash__stat-icon" aria-hidden="true">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <p class="rm-dash__stat-value" data-rm-counter="{{ active_companies }}">{{ active_companies }}</p>
+                    <p class="rm-dash__stat-label">Ativas</p>
+                </div>
+            </article>
+        </div>
+
+        <div class="rm-dash__grid">
+            <section class="rm-dash__panel rm-dash__activity">
+                <h3 class="rm-dash__panel-title">
+                    <i class="fas fa-clock" aria-hidden="true"></i>
+                    Atividade Recente
+                </h3>
+                {% if recent_activities %}
+                <div class="rm-dash__activity-list">
+                    {% for activity in recent_activities %}
+                    <article class="rm-dash__activity-item">
+                        <div class="rm-dash__activity-icon" aria-hidden="true">
+                            <i class="fas fa-{{ activity.icon }}"></i>
+                        </div>
+                        <div>
+                            <p class="rm-dash__activity-text">{{ activity.description }}</p>
+                            <span class="rm-dash__activity-time">{{ activity.timestamp|timesince }} atrás</span>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="rm-dash__empty">
+                    <i class="fas fa-info-circle fa-2x mb-3 d-block" aria-hidden="true"></i>
+                    <p class="mb-0">Nenhuma atividade recente</p>
+                </div>
+                {% endif %}
+            </section>
+
+            <aside class="rm-dash__panel rm-dash__actions-panel">
+                <h3 class="rm-dash__panel-title">
+                    <i class="fas fa-bolt" aria-hidden="true"></i>
+                    Ações Rápidas
+                </h3>
+                <form class="rm-dash__search" action="{% url 'rm:user_quick_search' %}" method="get">
+                    <input type="text" name="q" class="form-control" placeholder="Buscar usuário…" aria-label="Buscar por e-mail, nome ou usuário">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline">Editar</span>
+                    </button>
+                </form>
+                <nav class="rm-dash__actions" aria-label="Ações rápidas">
+                    <a href="{% url 'rm:company_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        Nova Empresa
+                    </a>
+                    <a href="{% url 'rm:user_create' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user-plus" aria-hidden="true"></i>
+                        Novo Usuário
+                    </a>
+                    <a href="{% url 'rm:user_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user-edit" aria-hidden="true"></i>
+                        Editar Usuários
+                    </a>
+                    <a href="{% url 'rm:tenant_usage' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                        Uso por tenant
+                    </a>
+                    <a href="{% url 'rm:reports' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-download" aria-hidden="true"></i>
+                        Gerar Relatório
+                    </a>
+                </nav>
+
+                <div class="rm-dash__activation-emails">
+                    <h4 class="rm-dash__activation-title">
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
+                        E-mails transacionais
+                    </h4>
+                    <p class="rm-dash__activation-hint">Escolha o template e envie para cada usuário.</p>
+                    {% if activation_email_users %}
+                    <ul class="rm-dash__activation-list">
+                        {% for u in activation_email_users %}
+                        <li class="rm-dash__activation-item">
+                            <div class="rm-dash__activation-user">
+                                <strong>{{ u.get_full_name|default:u.username }}</strong>
+                                <small>{{ u.email }}</small>
+                            </div>
+                            {% include "includes/rm_activation_email_button.html" with target_user=u btn_class="btn-sm btn-info" show_label=True %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="rm-dash__activation-empty">Nenhum usuário com e-mail cadastrado.</p>
+                    {% endif %}
+                    <a href="{% url 'rm:user_list' %}" class="btn btn-sm btn-outline-secondary w-100 mt-2">
+                        Ver lista completa de usuários
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </div>
+    {% include "includes/rm_activation_email_script.html" %}
+{% endblock %}

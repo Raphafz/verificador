@@ -1,0 +1,95 @@
+/**
+ * RM Systems DS — Animações operacionais
+ */
+
+@keyframes dsStaggerIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rm-ui-v2 .rm-stagger > * {
+  animation: dsStaggerIn var(--ds-duration-slow) var(--ds-ease-out) both;
+}
+
+.rm-ui-v2 .rm-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.rm-ui-v2 .rm-stagger > *:nth-child(2) { animation-delay: 50ms; }
+.rm-ui-v2 .rm-stagger > *:nth-child(3) { animation-delay: 100ms; }
+.rm-ui-v2 .rm-stagger > *:nth-child(4) { animation-delay: 150ms; }
+.rm-ui-v2 .rm-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.rm-ui-v2 .rm-stagger > *:nth-child(6) { animation-delay: 250ms; }
+.rm-ui-v2 .rm-stagger > *:nth-child(n+7) { animation-delay: 300ms; }
+
+@keyframes dsPulseOperational {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.92); }
+}
+
+.rm-ui-v2 .ds-pulse {
+  animation: dsPulseOperational 1.8s var(--ds-ease-standard) infinite;
+}
+
+@keyframes dsShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.rm-ui-v2 .ds-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--ds-bg-muted);
+  border-radius: var(--ds-radius-sm);
+}
+
+.rm-ui-v2 .ds-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ds-gradient-shimmer);
+  background-size: 200% 100%;
+  animation: dsShimmer 1.4s var(--ds-ease-standard) infinite;
+}
+
+@keyframes dsSuccessPop {
+  0% { transform: scale(0.95); opacity: 0; }
+  60% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.rm-ui-v2 .ds-feedback-success {
+  animation: dsSuccessPop var(--ds-duration-normal) var(--ds-ease-spring) both;
+}
+
+@keyframes dsErrorShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.rm-ui-v2 .ds-feedback-error {
+  animation: dsErrorShake var(--ds-duration-slow) var(--ds-ease-out) both;
+}
+
+@keyframes dsSidebarPill {
+  from { opacity: 0; transform: scaleX(0.85); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+.rm-ui-v2 .rm-v2-sidebar .nav-link.active::before {
+  animation: dsSidebarPill var(--ds-duration-normal) var(--ds-ease-out) both;
+}
+
+@keyframes dsCounterGlow {
+  0% { text-shadow: none; }
+  40% { text-shadow: 0 0 16px rgba(0, 210, 255, 0.35); }
+  100% { text-shadow: none; }
+}
+
+.rm-ui-v2 .rm-dash__stat-value.is-counting {
+  animation: dsCounterGlow var(--ds-duration-slow) var(--ds-ease-out);
+}

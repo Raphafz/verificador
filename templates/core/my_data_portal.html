@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Meus dados — LGPD{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto;">
+  <div class="card" style="padding: 2rem;">
+    <h1>Portal do titular</h1>
+    <p class="text-muted">Exercício dos direitos previstos na LGPD (acesso, portabilidade e eliminação).</p>
+
+    <section style="margin: 1.5rem 0;">
+      <h2>Exportar meus dados (portabilidade)</h2>
+      <p>Formatos disponíveis — exportação registrada em auditoria.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        <a href="{% url 'my_data_export' %}?format=json" class="btn primary">JSON</a>
+        <a href="{% url 'my_data_export' %}?format=csv" class="btn btn-outline-primary">CSV</a>
+        <a href="{% url 'my_data_export' %}?format=zip&amp;redirect=1" class="btn btn-outline-primary">ZIP (link assinado 24h)</a>
+      </div>
+      {% if exports %}
+      <p class="text-muted" style="margin-top: 1rem;">Exportações ZIP recentes (expiram automaticamente):</p>
+      <ul>
+        {% for e in exports %}
+        <li>{{ e.created_at|date:"d/m/Y H:i" }} — {{ e.export_format|upper }} — expira {{ e.expires_at|date:"d/m/Y H:i" }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+
+    <section style="margin: 1.5rem 0;">
+      <h2>Solicitações LGPD</h2>
+      {% if requests %}
+      <ul>
+        {% for r in requests %}
+        <li>{{ r.get_request_type_display }} — {{ r.get_status_display }} — {{ r.created_at|date:"d/m/Y" }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>Nenhuma solicitação registrada.</p>
+      {% endif %}
+    </section>
+
+    <section style="margin: 1.5rem 0;">
+      <h2>Histórico de consentimentos</h2>
+      {% if consents %}
+      <ul>
+        {% for c in consents %}
+        <li>{{ c.get_document_type_display }} — v{{ c.document_version }} — {{ c.accepted_at|date:"d/m/Y H:i" }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>Nenhum registro ainda.</p>
+      {% endif %}
+    </section>
+
+    <section style="margin: 1.5rem 0; border-top: 1px solid var(--rm-card-border); padding-top: 1.5rem;">
+      <h2>Solicitar desativação da conta</h2>
+      <p>Administradores da empresa devem solicitar exclusão ao suporte. Usuários comuns podem desativar a própria conta.</p>
+      <form method="post" action="{% url 'my_data_delete_request' %}" onsubmit="return confirm('Deseja realmente desativar sua conta?');">
+        {% csrf_token %}
+        <p><label>Confirme digitando <strong>DELETE</strong>:</label></p>
+        <input type="text" name="confirm" class="form-control" style="max-width: 200px; margin-bottom: 1rem;" required autocomplete="off">
+        <button type="submit" class="btn btn-outline-danger">Desativar minha conta</button>
+      </form>
+    </section>
+
+    <p style="margin-top: 2rem;"><a href="{% url 'dpo_contact' %}">Falar com o encarregado de dados</a></p>
+  </div>
+</div>
+{% endblock %}

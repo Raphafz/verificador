@@ -1,0 +1,61 @@
+/**
+ * RM Systems DS — Dropdowns
+ */
+
+.rm-ui-v2 .dropdown-menu {
+  background: var(--ds-bg-elevated);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-md);
+  box-shadow: var(--ds-shadow-md);
+  padding: var(--ds-space-2);
+  animation: dsFadeUp var(--ds-duration-fast) var(--ds-ease-out) both;
+}
+
+.rm-ui-v2 .dropdown-item {
+  border-radius: var(--ds-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ds-text-primary);
+  padding: 0.5rem 0.75rem;
+}
+
+.rm-ui-v2 .dropdown-item:hover,
+.rm-ui-v2 .dropdown-item:focus {
+  background: var(--ds-bg-muted);
+  color: var(--ds-text-primary);
+}
+
+.rm-ui-v2 .topbar-user-menu__dropdown {
+  min-width: 220px;
+}
+
+.rm-ui-v2 .topbar-user-menu__meta {
+  padding: 0.5rem 0.75rem;
+}
+
+.rm-ui-v2 .topbar-user-menu__email {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--ds-text-muted);
+}
+
+.rm-ui-v2 .topbar-user-menu__company {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ds-text-primary);
+  margin-top: 0.15rem;
+}
+
+.rm-ui-v2 .dropdown-divider {
+  border-color: var(--ds-border-subtle);
+  margin: var(--ds-space-2) 0;
+}
+
+.rm-ui-v2 .topbar-user-menu__logout {
+  color: var(--ds-status-offline) !important;
+}
+
+.rm-ui-v2 .topbar-user-menu__logout:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
+}

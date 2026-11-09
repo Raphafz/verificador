@@ -1,0 +1,19 @@
+# Alvos autorizados — RM Systems (local / staging)
+# Uso: scripts/run-cascavel-staging.sh ou run-cascavel-staging.ps1
+# Ajuste COMPANY_SLUG se o tenant de teste tiver outro slug.
+
+http://127.0.0.1:8000
+http://127.0.0.1:8000/health/
+http://127.0.0.1:8000/ready/
+http://127.0.0.1:8000/health/security/
+http://127.0.0.1:8000/api/v1/
+http://127.0.0.1:8000/api/v1/docs/
+http://127.0.0.1:8000/api/internal/alert-bridge/configs/
+http://127.0.0.1:8000/rm/login/
+http://127.0.0.1:8000/admin/
+http://127.0.0.1:8000/meus-dados/
+http://127.0.0.1:8000/encarregado-dados/
+http://127.0.0.1:8000/verificador/
+http://127.0.0.1:8000/fibramar/login/
+http://127.0.0.1:8000/fibramar/verificador/
+http://127.0.0.1:8000/static/ftth_viewer/js/app.js

@@ -1,0 +1,72 @@
+{% extends "olt_ops/base_olt.html" %}
+
+{% block title %}Histórico #{{ job.id }} — {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="saas-page olt-console rm-v2-route-enter">
+  <header class="saas-page-header">
+    <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="saas-breadcrumb">
+      <i class="fas fa-arrow-left"></i> OLT / ONU
+    </a>
+    <h2>Histórico da operação</h2>
+    <p class="saas-lead mb-2">
+      {{ job.olt.name }} ·
+      {% if job.gpon_port %}Porta {{ job.gpon_port }}{% else %}Exclusão por SN{% endif %}
+    </p>
+    <span class="ds-badge ds-badge--{{ job.status }}">{{ job.get_status_display }}</span>
+  </header>
+
+  {% if job.serial_numbers %}
+  <div class="ds-card mb-3">
+    <h3 class="ds-card__title">{% if job.olt.vendor == 'zte' %}IDs ONU offline ({{ job.serial_list|length }}){% else %}Números de série ({{ job.serial_list|length }}){% endif %}</h3>
+    <pre class="olt-live-log mb-0" id="serialsPre" style="min-height:80px;max-height:200px;">{{ job.serial_numbers }}</pre>
+    <button type="button" class="ds-btn ds-btn--ghost mt-2 py-1" id="btnCopySerials">
+      <i class="fas fa-copy"></i> Copiar lista
+    </button>
+  </div>
+  {% endif %}
+
+  {% if job.log_output %}
+  <div class="ds-card mb-3">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+      <h3 class="ds-card__title mb-0">Log técnico completo</h3>
+      <button type="button" class="ds-btn ds-btn--outline py-1" id="btnCopyOltLog">
+        <i class="fas fa-copy"></i> Copiar
+      </button>
+    </div>
+    <pre class="olt-live-log mb-0" id="oltLogPre">{{ job.log_output }}</pre>
+  </div>
+  {% else %}
+  <div class="ds-alert ds-alert--neutral">
+    <span class="ds-alert__icon"><i class="fas fa-info-circle"></i></span>
+    <div class="ds-alert__body">Nenhum log registrado para esta operação.</div>
+  </div>
+  {% endif %}
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="ds-btn ds-btn--outline">Voltar</a>
+    {% if job.status == 'listing' or job.status == 'running' %}
+    <a href="{% url 'company:olt_ops:job_live' company_slug=company.slug pk=job.pk %}" class="ds-btn ds-btn--primary">Ver ao vivo</a>
+    {% endif %}
+  </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+(function () {
+  function copyBtn(btnId, preId, okText) {
+    var btn = document.getElementById(btnId);
+    var pre = document.getElementById(preId);
+    if (!btn || !pre) return;
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(pre.textContent || '').then(function () {
+        if (typeof showSuccess === 'function') showSuccess(okText || 'Copiado!');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copiado';
+        setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copiar'; }, 2000);
+      });
+    });
+  }
+  copyBtn('btnCopyOltLog', 'oltLogPre', 'Log copiado.');
+  copyBtn('btnCopySerials', 'serialsPre', 'Lista copiada.');
+})();
+</script>
+{% endblock %}

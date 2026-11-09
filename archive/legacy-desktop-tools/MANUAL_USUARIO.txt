@@ -1,0 +1,231 @@
+================================================================================
+  OLT ONU — Listar offline + Deletar ONU
+  CastroX © 2026  |  Versão 1.0.0
+================================================================================
+
+  Suporte: https://t.me/castrox23  (@castrox23)
+
+
+O QUE É ESTE PROGRAMA?
+----------------------
+
+  Ferramenta para técnicos de rede (NOC/ISP) que trabalham com OLTs GPON
+  Huawei e ZTE. Ela automatiza:
+
+    1) Listar ONTs offline (fantasmas) em uma porta GPON
+    2) Gravar os serial numbers (SN) em um arquivo
+    3) Apagar cada ONU na OLT, com relatório em log
+
+  Tudo em uma única janela — sem precisar repetir comandos manualmente
+  no PuTTY para cada SN.
+
+
+REQUISITOS
+----------
+
+  - Windows 10 ou 11
+  - Acesso de rede ou VPN até a OLT (IP alcançável)
+  - putty.exe nesta mesma pasta (recomendado; baixe em https://www.putty.org/)
+  - plink.exe (opcional; vem junto do PuTTY — melhora conexões SSH antigas)
+
+
+ARQUIVOS DA PASTA (não apague)
+------------------------------
+
+  INICIAR.vbs ou EXECUTAR.bat .... Abre o programa
+  deletar_onu_gui.exe ............. Programa principal
+  putty.exe ....................... Cliente SSH/Telnet (coloque aqui)
+  empresas.json ................... Suas empresas e OLTs cadastradas
+  onu_deletar.txt ................. Lista de SN a apagar (gerada ou manual)
+  log\ ............................ Relatórios de cada execução
+  LEIA-ME.txt ..................... Este manual
+
+
+================================================================================
+  PRIMEIRO USO — CADASTRO (faça uma vez por instalação)
+================================================================================
+
+  PASSO 1 — Abrir o programa
+  --------------------------
+  Dê duplo clique em INICIAR.vbs (recomendado) ou EXECUTAR.bat.
+
+  Se aparecer aviso para criar empresa, clique em Sim.
+
+
+  PASSO 2 — Criar sua empresa / cliente
+  -------------------------------------
+  Clique em [ Nova empresa ].
+  Digite o nome (ex.: "Minha ISP" ou nome do cliente).
+  Salvar.
+
+
+  PASSO 3 — Cadastrar cada OLT
+  ----------------------------
+  Clique em [ + OLT ] e preencha:
+
+    Nome / local ....... Identificação (ex.: HUAWEI MA5800 - CENTRO)
+    Fabricante ......... Huawei ou ZTE
+    Conexão ............ SSH (porta 22) ou Telnet
+    IP / host .......... Endereço da OLT
+    Porta .............. 22 para SSH; em Telnet use a porta da sua rede
+    Usuário / Senha .... Login da OLT (modo enable/config)
+
+  Comandos personalizados (opcional):
+    Deixe em branco para usar o padrão do fabricante.
+    Use [ Preencher padrão do fabricante ] como modelo.
+    Só altere se sua OLT usar comandos diferentes.
+
+  Salvar OLT.
+
+  Repita [ + OLT ] para cada equipamento.
+
+
+  PASSO 4 — Backup do cadastro
+  ----------------------------
+  Copie o arquivo empresas.json para um local seguro.
+  Ao instalar em outro PC, copie a pasta USAR inteira ou só este arquivo.
+
+
+================================================================================
+  USO DIÁRIO — FLUXO COMPLETO
+================================================================================
+
+  PASSO 1 — Selecionar empresa e OLT
+  ----------------------------------
+  No topo: escolha a Empresa na lista.
+  Na tabela abaixo, clique na OLT desejada (ou use Buscar para filtrar).
+
+
+  PASSO 2 — Listar ONTs offline (aba «1. Listar offline»)
+  -------------------------------------------------------
+  Informe a porta GPON no formato F/S/P, por exemplo:  0/1/14
+
+  Opção A — Listar direto na OLT (Huawei):
+    Clique em [ Listar na OLT → gravar onu_deletar.txt ]
+    O programa conecta, executa o comando e grava os SN no arquivo.
+
+  Opção B — Usar saída copiada do PuTTY:
+    No PuTTY, rode o comando display ont info ... all na OLT.
+    Selecione toda a saída e pressione Ctrl+C.
+    Clique em [ Gerar TXT do clipboard ].
+
+  Nota: listagem automática na OLT funciona em Huawei. Em ZTE use o
+  clipboard ou cadastre um comando personalizado de listagem.
+
+  Se encontrar ONTs, o programa pergunta se deseja ir para a aba Deletar.
+
+
+  PASSO 3 — Conferir a lista (aba «2. Deletar ONU»)
+  -------------------------------------------------
+  Veja quantos SN estão em onu_deletar.txt.
+  Use [ Abrir / editar TXT ] se precisar remover ou acrescentar linhas manualmente.
+  [ Recarregar lista ] atualiza a visualização após editar o arquivo.
+
+
+  PASSO 4 — Executar exclusão
+  ---------------------------
+  Clique em [ Executar exclusão ].
+  Confirme na janela (ação IRREVERSÍVEL).
+
+  Durante a execução:
+    - [ Parar processos ] interrompe após a ONU atual
+    - Acompanhe o log na área «Saída e resumo»
+
+  Ao terminar:
+    - Veja o resumo (quantas foram deletadas)
+    - [ Abrir último log ] ou [ Pasta log ] para o relatório completo
+
+
+================================================================================
+  BOTÕES ÚTEIS (área de saída)
+================================================================================
+
+  Limpar saída ........ Limpa o texto na tela
+  Copiar tudo ......... Copia o log para colar em chamado/e-mail
+  Abrir último log .... Abre o relatório .txt mais recente
+  Pasta log ........... Abre a pasta com todos os relatórios
+
+
+================================================================================
+  COMANDOS PADRÃO (quando não personalizar na OLT)
+================================================================================
+
+  HUAWEI — Listar offline:
+    display ont info {frame} {slot} {port} all
+
+  HUAWEI — Localizar SN:
+    display ont info by-sn {sn}
+
+  HUAWEI — Deletar (sequência automática):
+    undo service-port ... → interface gpon → ont delete → quit
+
+  ZTE — Localizar SN:
+    show gpon onu by sn {sn}
+
+  ZTE — Deletar:
+    interface gpon-olt_{pon_id} → no onu {onu_numero} → exit
+
+  Placeholders disponíveis nos comandos personalizados:
+    {sn} {frame} {slot} {port} {fsp} {fs} {ont_id}
+    {line_profile_id} {gemport} {pon_id} {onu_numero}
+
+
+================================================================================
+  PROBLEMAS COMUNS
+================================================================================
+
+  «Não conecta» / timeout
+    - Verifique VPN, firewall e se o IP/porta estão corretos no cadastro
+    - Teste ping até a OLT
+    - Na primeira vez com PuTTY, abra putty.exe manualmente e aceite a chave
+
+  «Nenhuma empresa cadastrada»
+    - Use [ Nova empresa ] e depois [ + OLT ]
+
+  «SN não encontrado» na exclusão
+    - SN pode estar em outra OLT ou formato diferente no adesivo
+    - Confira se selecionou a OLT correta
+    - Veja o relatório em log\ para a resposta bruta da OLT
+
+  Lista vazia na listagem
+    - Confira F/S/P (frame/slot/porta)
+    - Pode não haver ONT offline+initial nessa porta
+
+  empresas.json «sumiu» após atualizar
+    - O cadastro fica SEMPRE nesta pasta, no arquivo empresas.json
+    - Faça backup antes de substituir a pasta USAR
+
+
+================================================================================
+  INSTALAR EM OUTRO COMPUTADOR
+================================================================================
+
+  1) Copie a pasta USAR inteira (ZIP) para o outro PC
+  2) Inclua: deletar_onu_gui.exe, putty.exe, empresas.json, onu_deletar.txt
+  3) Abra INICIAR.vbs — não é necessário instalar Python
+
+
+================================================================================
+  AVISO IMPORTANTE
+================================================================================
+
+  - A exclusão de ONU NÃO pode ser desfeita.
+  - Mantenha empresas.json em local seguro (contém senhas das OLTs).
+  - Use apenas em redes que você está autorizado a operar.
+
+
+================================================================================
+  SUPORTE
+================================================================================
+
+  Dúvidas, sugestões ou contratação de personalização:
+
+    Telegram: https://t.me/castrox23
+    Usuário:  @castrox23
+
+  Ao pedir suporte, envie:
+    - Print da mensagem de erro
+    - Trecho do último arquivo em log\
+    - Fabricante da OLT (Huawei/ZTE) e tipo de conexão (SSH/Telnet)
+
+================================================================================

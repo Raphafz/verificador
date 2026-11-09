@@ -1,0 +1,172 @@
+{% extends "olt_ops/base_olt.html" %}
+
+{% block title %}OLT / ONU — {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="saas-page olt-console rm-v2-route-enter">
+  <header class="saas-page-header">
+    <a href="{% url 'company:hub' company_slug=company.slug %}" class="saas-breadcrumb">
+      <i class="fas fa-arrow-left"></i> Voltar ao Hub
+    </a>
+    <h2>OLT / ONU</h2>
+    <p class="saas-lead">Liste equipamentos offline ou remova ONUs diretamente na OLT Huawei ou ZTE.</p>
+  </header>
+
+  <div class="ds-steps" aria-hidden="true">
+    <span class="ds-step is-active">1. Escolher OLT</span>
+    <span class="ds-step">2. Executar</span>
+    <span class="ds-step">3. Acompanhar ao vivo</span>
+  </div>
+
+  {% if user.is_company_admin %}
+  <div class="saas-action-bar mb-4">
+    <a href="{% url 'company:olt_ops:olt_list' company_slug=company.slug %}" class="ds-btn ds-btn--outline">
+      <i class="fas fa-server"></i> Gerenciar OLTs
+    </a>
+    <a href="{% url 'company:olt_ops:vpn_settings' company_slug=company.slug %}" class="ds-btn ds-btn--outline">
+      <i class="fas fa-shield-alt"></i> VPN da empresa
+    </a>
+  </div>
+
+  {% if vpn_config and vpn_config.is_configured %}
+  <div class="ds-alert ds-alert--success mb-4">
+    <span class="ds-alert__icon"><i class="fas fa-check-circle"></i></span>
+    <div class="ds-alert__body">
+      <strong>VPN ativa ({{ vpn_config.type_label }})</strong>
+      {{ vpn_config.summary_label }} — o servidor conecta antes de acessar a OLT.
+    </div>
+  </div>
+  {% elif vpn_config and vpn_config.is_enabled %}
+  <div class="ds-alert ds-alert--warning mb-4">
+    <span class="ds-alert__icon"><i class="fas fa-exclamation-triangle"></i></span>
+    <div class="ds-alert__body">
+      <strong>VPN incompleta</strong>
+      Faltam dados de conexão.
+      <a href="{% url 'company:olt_ops:vpn_settings' company_slug=company.slug %}" class="d-block mt-2">Completar configuração</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="ds-alert ds-alert--info mb-4">
+    <span class="ds-alert__icon"><i class="fas fa-info-circle"></i></span>
+    <div class="ds-alert__body">
+      <strong>OLT em rede interna?</strong>
+      <a href="{% url 'company:olt_ops:vpn_settings' company_slug=company.slug %}">Configure a VPN</a> da empresa.
+    </div>
+  </div>
+  {% endif %}
+  {% endif %}
+
+  {% if not olts %}
+  <div class="ds-card ds-empty">
+    <div class="ds-empty__icon"><i class="fas fa-server"></i></div>
+    <p class="mb-2 fw-semibold">Nenhuma OLT cadastrada</p>
+    <p class="small text-muted mb-3">Cadastre o equipamento para começar a listar ou excluir ONUs.</p>
+    {% if user.is_company_admin %}
+    <a href="{% url 'company:olt_ops:olt_create' company_slug=company.slug %}" class="ds-btn ds-btn--primary">Cadastrar OLT</a>
+    {% else %}
+    <p class="small text-muted mb-0">Peça ao administrador da empresa.</p>
+    {% endif %}
+  </div>
+  {% else %}
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="ds-card h-100">
+        <div class="ds-card__title">
+          <span class="ds-card__icon ds-card__icon--primary"><i class="fas fa-search"></i></span>
+          Listar offline
+        </div>
+        <form method="post" class="ds-form" data-loading-message="Iniciando busca…" data-overlay-message="Conectando na OLT…">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="list_offline">
+          <div class="mb-3">
+            <label class="form-label">{{ list_form.olt.label }}</label>
+            {{ list_form.olt }}
+            {% if list_form.olt.errors %}<div class="text-danger small">{{ list_form.olt.errors }}</div>{% endif %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">{{ list_form.gpon_port.label }}</label>
+            {{ list_form.gpon_port }}
+            {% if list_form.gpon_port.errors %}<div class="text-danger small">{{ list_form.gpon_port.errors }}</div>{% endif %}
+            <div class="form-text">Formato F/S/P — exemplo: 0/1/14</div>
+          </div>
+          <button type="submit" class="ds-btn ds-btn--primary ds-btn--block">
+            <i class="fas fa-list"></i> Listar offline
+          </button>
+        </form>
+        <p class="form-text mt-3 mb-0">Abre a tela ao vivo com o progresso da operação.</p>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="ds-card h-100">
+        <div class="ds-card__title">
+          <span class="ds-card__icon ds-card__icon--danger"><i class="fas fa-trash-alt"></i></span>
+          Excluir ONUs
+        </div>
+        <form method="post" class="ds-form"
+              data-loading-message="Iniciando exclusão…"
+              data-overlay-message="Conectando na OLT…"
+              data-confirm="Esta ação remove as ONUs na OLT de forma irreversível. Deseja continuar?">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="delete_onus">
+          <div class="mb-3">
+            <label class="form-label">{{ delete_form.olt.label }}</label>
+            {{ delete_form.olt }}
+            {% if delete_form.olt.errors %}<div class="text-danger small">{{ delete_form.olt.errors }}</div>{% endif %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">{{ delete_form.serial_numbers.label }}</label>
+            {{ delete_form.serial_numbers }}
+            {% if delete_form.serial_numbers.errors %}<div class="text-danger small">{{ delete_form.serial_numbers.errors }}</div>{% endif %}
+            <div class="form-text">Um número de série por linha</div>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="confirm" value="yes" id="confirmDelete" required>
+            <label class="form-check-label" for="confirmDelete">
+              Confirmo a exclusão irreversível na OLT
+            </label>
+          </div>
+          <button type="submit" class="ds-btn ds-btn--danger ds-btn--block">
+            <i class="fas fa-trash-alt"></i> Excluir selecionadas
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if jobs %}
+  <div class="ds-card mt-4">
+    <h3 class="ds-card__title mb-3">Últimas operações</h3>
+    <div class="rm-table-wrap ds-table-wrap">
+      <table class="ds-table table mb-0">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>OLT</th>
+            <th>Detalhe</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          <tr>
+            <td>{{ job.created_at|date:"d/m/Y H:i" }}</td>
+            <td>{{ job.olt.name }}</td>
+            <td>{% if job.gpon_port %}Porta {{ job.gpon_port }}{% else %}{{ job.serial_list|length }} SN{% endif %}</td>
+            <td><span class="ds-badge ds-badge--{{ job.status }}">{{ job.get_status_display }}</span></td>
+            <td>
+              <a href="{% url 'company:olt_ops:job_live' company_slug=company.slug pk=job.pk %}" class="ds-btn ds-btn--ghost py-0 px-2">Ao vivo</a>
+              <a href="{% url 'company:olt_ops:job_detail' company_slug=company.slug pk=job.pk %}" class="ds-btn ds-btn--ghost py-0 px-2">Log</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

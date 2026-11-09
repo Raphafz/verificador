@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Uso por tenant — RM Systems{% endblock %}
+{% block body_class %}dashboard-page rm-tenant-usage-page{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="saas-page dashboard-page ds-content-enter rm-tenant-usage">
+  <header class="saas-page-header d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h2 class="mb-1">Uso por tenant</h2>
+      <p class="rm-tenant-usage__lead mb-0">Quotas, consumo mensal e sinais de upsell por empresa.</p>
+    </div>
+    <a href="{% url 'rm:admin_dashboard' %}" class="btn btn-outline-secondary btn-sm rm-tenant-usage__back">
+      <i class="fas fa-arrow-left me-1"></i> Dashboard
+    </a>
+  </header>
+
+  <div class="ds-card rm-tenant-usage__filters mb-4">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label rm-tenant-usage__label" for="tenant-q">Empresa</label>
+        <input type="text" id="tenant-q" name="q" value="{{ q }}" class="form-control" placeholder="Buscar por nome…">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label rm-tenant-usage__label" for="tenant-plan">Plano</label>
+        <select id="tenant-plan" name="plan" class="form-select">
+          <option value="">Todos os planos</option>
+          {% for code, label in plan_choices %}
+            <option value="{{ code }}" {% if plan == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="fas fa-filter me-1"></i> Filtrar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="ds-card rm-tenant-usage__table-card p-0 overflow-hidden">
+    <div class="ds-table-wrap rm-tenant-usage__table-wrap">
+      <table class="table table-hover align-middle mb-0 rm-tenant-usage__table">
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Plano</th>
+            <th>Usuários</th>
+            <th>Mapas</th>
+            <th>Viab./mês</th>
+            <th>Jobs OLT/mês</th>
+            <th>Chips WA</th>
+            <th>Alertas</th>
+            <th>Sinal</th>
+            <th class="text-end">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            {% with s=row.summary u=row.usage %}
+            <tr class="{% if not row.company.is_active %}rm-tenant-usage__row--inactive{% endif %}">
+              <td class="rm-tenant-usage__company">
+                <span class="rm-tenant-usage__company-name">{{ row.company.name }}</span>
+                {% if not row.company.is_active %}
+                  <span class="badge bg-secondary ms-1">Inativa</span>
+                {% endif %}
+              </td>
+              <td>
+                <span class="badge rm-tenant-usage__plan-badge">{{ s.plan_code }}</span>
+                <span class="rm-tenant-usage__plan-label">{{ s.plan_label }}</span>
+              </td>
+              <td>{% for i in s.items %}{% if i.metric == 'users' %}<span class="rm-usage-cell"><span class="rm-usage-used">{{ u.users }}</span><span class="rm-usage-sep">/</span><span class="rm-usage-limit">{{ i.limit|default:"—" }}</span></span>{% endif %}{% endfor %}</td>
+              <td>{% for i in s.items %}{% if i.metric == 'maps' %}<span class="rm-usage-cell"><span class="rm-usage-used">{{ u.maps }}</span><span class="rm-usage-sep">/</span><span class="rm-usage-limit">{{ i.limit|default:"—" }}</span></span>{% endif %}{% endfor %}</td>
+              <td>{% for i in s.items %}{% if i.metric == 'viability_month' %}<span class="rm-usage-cell"><span class="rm-usage-used">{{ u.viability_month }}</span><span class="rm-usage-sep">/</span><span class="rm-usage-limit">{{ i.limit|default:"—" }}</span></span>{% endif %}{% endfor %}</td>
+              <td>{% for i in s.items %}{% if i.metric == 'olt_jobs_month' %}<span class="rm-usage-cell"><span class="rm-usage-used">{{ u.olt_jobs_month }}</span><span class="rm-usage-sep">/</span><span class="rm-usage-limit">{{ i.limit|default:"—" }}</span></span>{% endif %}{% endfor %}</td>
+              <td><span class="rm-usage-used">{{ u.whatsapp_chips }}</span></td>
+              <td><span class="rm-usage-used">{{ u.alert_phones }}</span></td>
+              <td>
+                {% if row.at_limit_count %}
+                  <span class="badge rm-tenant-usage__signal rm-tenant-usage__signal--danger">{{ row.at_limit_count }} no limite</span>
+                {% elif row.near_limit_count %}
+                  <span class="badge rm-tenant-usage__signal rm-tenant-usage__signal--warn">{{ row.near_limit_count }} ≥80%</span>
+                {% else %}
+                  <span class="badge rm-tenant-usage__signal rm-tenant-usage__signal--ok">OK</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a href="{% url 'rm:company_portal' row.company.slug %}" class="btn btn-sm btn-primary rm-tenant-usage__action">
+                  Painel
+                </a>
+              </td>
+            </tr>
+            {% endwith %}
+          {% empty %}
+            <tr>
+              <td colspan="10" class="rm-tenant-usage__empty text-center py-5">
+                <i class="fas fa-building fa-2x mb-2 d-block opacity-50"></i>
+                Nenhuma empresa encontrada.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

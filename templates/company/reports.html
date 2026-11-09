@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Relatórios - {{ company.name }}{% endblock %}
+
+{% block body_class %}dashboard-page rm-list-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/rm-panel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="saas-page rm-panel ds-content-enter">
+  <header class="rm-panel__hero">
+    <div>
+      <h2><i class="fas fa-chart-bar" aria-hidden="true"></i> Relatórios de Desempenho</h2>
+      <p class="rm-panel__lead">Visão consolidada das operações de {{ company.name }}.</p>
+    </div>
+    <div class="rm-panel__date">
+      <i class="fas fa-calendar-week" aria-hidden="true"></i>
+      Atualizado em {% now "d/m/Y H:i" %}
+    </div>
+  </header>
+
+  <div class="rm-panel__stats">
+    <article class="rm-stat-card">
+      <span class="rm-stat-card__label">Total de mapas enviados</span>
+      <span class="rm-stat-card__value">{{ map_stats.total }}</span>
+      <span class="rm-stat-card__hint"><i class="fas fa-map text-primary"></i> Mapas associados à empresa</span>
+    </article>
+    <article class="rm-stat-card">
+      <span class="rm-stat-card__label">Mapas processados</span>
+      <span class="rm-stat-card__value">{{ map_stats.processed }}</span>
+      <span class="rm-stat-card__hint"><i class="fas fa-check-circle" style="color:#059669"></i> Prontos para análise</span>
+    </article>
+    <article class="rm-stat-card">
+      <span class="rm-stat-card__label">Em processamento</span>
+      <span class="rm-stat-card__value">{{ map_stats.pending }}</span>
+      <span class="rm-stat-card__hint"><i class="fas fa-clock"></i> Dependem de ação</span>
+    </article>
+    <article class="rm-stat-card">
+      <span class="rm-stat-card__label">Uploads (30 dias)</span>
+      <span class="rm-stat-card__value">{{ map_stats.last_30_days }}</span>
+      <span class="rm-stat-card__hint"><i class="fas fa-calendar-day"></i> Atividade recente</span>
+    </article>
+  </div>
+
+  <section class="rm-panel__section">
+    <h3 class="rm-panel__section-title"><i class="fas fa-chart-pie" aria-hidden="true"></i> Distribuição de viabilidade</h3>
+    <div class="rm-panel__charts">
+      <div class="rm-panel__chart-box">
+        <canvas id="viabilityChart" role="img" aria-label="Distribuição de viabilidade"></canvas>
+      </div>
+      <div class="rm-panel__chart-box">
+        <canvas id="verificationChart" role="img" aria-label="Resultados das verificações"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="rm-panel__section">
+    <h3 class="rm-panel__section-title"><i class="fas fa-chart-line" aria-hidden="true"></i> Volume de mapas e verificações</h3>
+    <div class="rm-panel__charts">
+      <div class="rm-panel__chart-box">
+        {% if monthly_upload_values %}
+        <canvas id="uploadTrendChart" role="img" aria-label="Evolução mensal de uploads"></canvas>
+        {% else %}
+        <div class="rm-panel__empty" style="padding:2rem;">
+          <i class="fas fa-folder-open" aria-hidden="true"></i>
+          <p class="mb-0">Histórico de uploads insuficiente para o gráfico.</p>
+        </div>
+        {% endif %}
+      </div>
+      <div class="rm-panel__chart-box">
+        {% if monthly_verification_values %}
+        <canvas id="verificationTrendChart" role="img" aria-label="Evolução mensal de verificações"></canvas>
+        {% else %}
+        <div class="rm-panel__empty" style="padding:2rem;">
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <p class="mb-0">Verificações ainda sem histórico suficiente.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="rm-panel__section">
+    <h3 class="rm-panel__section-title"><i class="fas fa-user-tie" aria-hidden="true"></i> Top colaboradores</h3>
+    {% if top_uploaders %}
+    <ul class="rm-top-list">
+      {% for uploader in top_uploaders %}
+      <li>
+        <div>
+          <strong>{{ uploader.name }}</strong>
+          {% if uploader.username %}<br><span style="font-size:0.75rem;color:var(--rm-text-secondary)">@{{ uploader.username }}</span>{% endif %}
+        </div>
+        <span class="rm-pill rm-pill--muted">{{ uploader.total }} mapas</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="rm-panel__empty">
+      <i class="fas fa-user" aria-hidden="true"></i>
+      <p class="mb-0">Nenhum upload registrado ainda.</p>
+    </div>
+    {% endif %}
+  </section>
+</div>
+
+{{ monthly_upload_labels|json_script:"monthly-upload-labels" }}
+{{ monthly_upload_values|json_script:"monthly-upload-values" }}
+{{ monthly_verification_labels|json_script:"monthly-verification-labels" }}
+{{ monthly_verification_values|json_script:"monthly-verification-values" }}
+{{ viability_labels|json_script:"viability-labels" }}
+{{ viability_values|json_script:"viability-values" }}
+{{ verification_labels|json_script:"verification-labels" }}
+{{ verification_values|json_script:"verification-values" }}
+{% endblock %}
+
+{% block extra_scripts %}
+{% include "includes/cdn_chartjs_4_4_4_js.html" %}
+<script nonce="{{ csp_nonce }}">
+  const viabilityLabels = JSON.parse(document.getElementById('viability-labels').textContent);
+  const viabilityValues = JSON.parse(document.getElementById('viability-values').textContent);
+  const verificationLabels = JSON.parse(document.getElementById('verification-labels').textContent);
+  const verificationValues = JSON.parse(document.getElementById('verification-values').textContent);
+  const uploadLabels = JSON.parse(document.getElementById('monthly-upload-labels').textContent);
+  const uploadValues = JSON.parse(document.getElementById('monthly-upload-values').textContent);
+  const verificationTrendLabels = JSON.parse(document.getElementById('monthly-verification-labels').textContent);
+  const verificationTrendValues = JSON.parse(document.getElementById('monthly-verification-values').textContent);
+  const palette = ['#28a745','#ffc107','#dc3545','#6c757d'];
+  const textColor = getComputedStyle(document.documentElement).getPropertyValue('--rm-text-secondary').trim() || '#94a3b8';
+
+  const chartDefaults = {
+    plugins: { legend: { labels: { color: textColor } } }
+  };
+
+  const viabilityCtx = document.getElementById('viabilityChart');
+  if (viabilityCtx && viabilityValues.some(v => v > 0)) {
+    new Chart(viabilityCtx, {
+      type: 'doughnut',
+      data: { labels: viabilityLabels, datasets: [{ data: viabilityValues, backgroundColor: palette, borderWidth: 0 }] },
+      options: { ...chartDefaults, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
+    });
+  }
+
+  const verificationCtx = document.getElementById('verificationChart');
+  if (verificationCtx && verificationValues.some(v => v > 0)) {
+    new Chart(verificationCtx, {
+      type: 'doughnut',
+      data: { labels: verificationLabels, datasets: [{ data: verificationValues, backgroundColor: ['#003366','#00d2ff','#dc3545','#17a2b8'], borderWidth: 0 }] },
+      options: { plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
+    });
+  }
+
+  const uploadTrendCtx = document.getElementById('uploadTrendChart');
+  if (uploadTrendCtx && uploadValues.length) {
+    new Chart(uploadTrendCtx, {
+      type: 'line',
+      data: { labels: uploadLabels, datasets: [{ label: 'Uploads', data: uploadValues, tension: 0.35, borderColor: '#00d2ff', backgroundColor: 'rgba(0,210,255,0.15)', fill: true, pointRadius: 4 }] },
+      options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: textColor } }, x: { ticks: { color: textColor } } } }
+    });
+  }
+
+  const verificationTrendCtx = document.getElementById('verificationTrendChart');
+  if (verificationTrendCtx && verificationTrendValues.length) {
+    new Chart(verificationTrendCtx, {
+      type: 'line',
+      data: { labels: verificationTrendLabels, datasets: [{ label: 'Verificações', data: verificationTrendValues, tension: 0.35, borderColor: '#003366', backgroundColor: 'rgba(0,51,102,0.15)', fill: true, pointRadius: 4 }] },
+      options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: textColor } }, x: { ticks: { color: textColor } } } }
+    });
+  }
+</script>
+{% endblock %}

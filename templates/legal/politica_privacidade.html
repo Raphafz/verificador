@@ -1,0 +1,109 @@
+{% extends 'docs_base.html' %}
+
+{% block title %}Política de Privacidade - RM Systems{% endblock %}
+{% block docs_nav_privacidade %} is-active{% endblock %}
+{% block docs_icon %}fa-shield-alt{% endblock %}
+{% block docs_title %}Política de Privacidade{% endblock %}
+{% block docs_lead %}Como coletamos, usamos e protegemos seus dados pessoais na plataforma RM Systems.{% endblock %}
+{% block docs_meta %}
+<p class="docs-hero__meta"><i class="far fa-calendar-alt" aria-hidden="true"></i> Última atualização: {% now "d/m/Y" %}</p>
+{% endblock %}
+
+{% block docs_body %}
+<section class="docs-section">
+  <h2 class="docs-section__title">1. Introdução</h2>
+  <p>A RM Systems ("nós", "nosso" ou "Empresa") está comprometida em proteger a privacidade de seus usuários. Esta Política de Privacidade descreve como coletamos, usamos, compartilhamos e protegemos suas informações pessoais quando você utiliza nosso sistema de verificação de viabilidade ("Sistema").</p>
+  <p>Ao utilizar o Sistema, você concorda com as práticas descritas nesta política.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">2. Informações que Coletamos</h2>
+  <h3 class="docs-subsection__title">2.1. Informações Fornecidas por Você</h3>
+  <ul class="docs-list">
+    <li><strong>Dados da Conta:</strong> Nome, e-mail, nome de usuário, senha (criptografada)</li>
+    <li><strong>Informações da Empresa:</strong> Nome da empresa, CNPJ, endereço, telefone</li>
+    <li><strong>Dados de Upload:</strong> Mapas CTO e arquivos que você faz upload no Sistema</li>
+    <li><strong>Comunicações:</strong> Mensagens que você nos envia através do suporte</li>
+  </ul>
+  <h3 class="docs-subsection__title">2.2. Informações Coletadas Automaticamente</h3>
+  <ul class="docs-list">
+    <li><strong>Dados de Uso:</strong> Como você utiliza o Sistema, páginas visitadas, ações realizadas</li>
+    <li><strong>Dados Técnicos:</strong> Endereço IP, tipo de navegador, sistema operacional, dados de dispositivo</li>
+    <li><strong>Cookies:</strong> Informações coletadas através de cookies (veja nossa <a href="{% url 'politica_cookies' %}">Política de Cookies</a>)</li>
+  </ul>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">3. Como Usamos suas Informações</h2>
+  <p>Utilizamos suas informações pessoais para:</p>
+  <ul class="docs-list">
+    <li>Fornecer, manter e melhorar o Sistema</li>
+    <li>Processar seus uploads e análises de mapas</li>
+    <li>Autenticar sua identidade e gerenciar sua conta</li>
+    <li>Enviar notificações importantes sobre o serviço</li>
+    <li>Responder às suas solicitações e fornecer suporte</li>
+    <li>Detectar e prevenir fraudes, abusos e atividades ilegais</li>
+    <li>Cumprir obrigações legais e regulatórias</li>
+  </ul>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">4. Compartilhamento de Informações</h2>
+  <p>Não vendemos suas informações pessoais. Podemos compartilhar suas informações apenas nas seguintes circunstâncias:</p>
+  <h3 class="docs-subsection__title">4.1. Isolamento Multi-tenant</h3>
+  <p>Seus dados são completamente isolados entre empresas. Outras empresas não têm acesso aos seus dados, exceto conforme necessário para fornecer o serviço e conforme autorizado por você.</p>
+  <h3 class="docs-subsection__title">4.2. Prestadores de Serviços</h3>
+  <p>Podemos compartilhar informações com prestadores de serviços terceirizados que nos ajudam a operar o Sistema (ex.: hospedagem, e-mail transacional), sujeitos a acordos de confidencialidade.</p>
+  <h3 class="docs-subsection__title">4.3. Requisitos Legais</h3>
+  <p>Podemos divulgar informações se necessário para cumprir leis, regulamentos, processos legais ou solicitações governamentais.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">5. Segurança dos Dados</h2>
+  <p>Implementamos medidas técnicas e organizacionais apropriadas para proteger suas informações pessoais, incluindo:</p>
+  <ul class="docs-list">
+    <li>Criptografia de dados em trânsito (HTTPS/TLS)</li>
+    <li>Criptografia de senhas (hash seguro)</li>
+    <li>Isolamento completo de dados entre empresas (multi-tenant)</li>
+    <li>Controles de acesso baseados em função</li>
+    <li>Monitoramento de segurança e backups regulares</li>
+  </ul>
+  <p>Nenhum método de transmissão pela internet ou armazenamento eletrônico é 100% seguro. Embora nos esforcemos para proteger suas informações, não podemos garantir segurança absoluta.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">6. Seus Direitos (LGPD)</h2>
+  <p>Conforme a Lei Geral de Proteção de Dados (LGPD), você tem os seguintes direitos:</p>
+  <ul class="docs-list">
+    <li><strong>Acesso:</strong> Solicitar acesso às suas informações pessoais</li>
+    <li><strong>Correção:</strong> Solicitar correção de dados incompletos ou desatualizados</li>
+    <li><strong>Eliminação:</strong> Solicitar exclusão de suas informações pessoais</li>
+    <li><strong>Portabilidade:</strong> Solicitar portabilidade dos seus dados</li>
+    <li><strong>Revogação de Consentimento:</strong> Revogar consentimento quando aplicável</li>
+  </ul>
+  <p>Para exercer esses direitos, consulte a <a href="{% url 'lgpd' %}">página de Compliance LGPD</a> ou entre em contato pelo suporte.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">7. Retenção de Dados</h2>
+  <p>Mantemos suas informações pessoais pelo tempo necessário para cumprir os propósitos descritos nesta política, a menos que um período de retenção mais longo seja exigido ou permitido por lei.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">8. Alterações nesta Política</h2>
+  <p>Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos você sobre mudanças significativas através do Sistema ou por e-mail.</p>
+</section>
+
+<section class="docs-section">
+  <h2 class="docs-section__title">9. Contato</h2>
+  <p>Se você tiver dúvidas sobre esta Política de Privacidade, acesse a <a href="{% url 'ajuda' %}">página de Ajuda</a> ou escreva para <a href="mailto:{{ site_dpo_email }}">{{ site_dpo_email }}</a>.</p>
+</section>
+{% endblock %}
+
+{% block docs_actions_extra %}
+<a href="{% url 'lgpd' %}" class="docs-btn">LGPD</a>
+<a href="{% url 'dpo_contact' %}" class="docs-btn">DPO</a>
+<a href="mailto:{{ site_dpo_email }}" class="docs-btn docs-btn--primary">
+  <i class="fas fa-envelope" aria-hidden="true"></i> {{ site_dpo_email }}
+</a>
+{% endblock %}

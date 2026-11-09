@@ -1,0 +1,23 @@
+{% extends "base_auth_v2.html" %}
+
+{% block title %}Aceite de termos — RM Systems{% endblock %}
+{% block auth_title %}Confirmação legal (LGPD){% endblock %}
+{% block auth_subtitle %}Versão <strong>{{ version }}</strong> — leia e aceite para continuar{% endblock %}
+
+{% block auth_content %}
+<ul class="auth-consent-links">
+  <li><a href="{% url 'termos_uso' %}" target="_blank" rel="noopener">Termos de Uso</a></li>
+  <li><a href="{% url 'politica_privacidade' %}" target="_blank" rel="noopener">Política de Privacidade</a></li>
+  <li><a href="{% url 'politica_cookies' %}" target="_blank" rel="noopener">Política de Cookies</a></li>
+</ul>
+<form method="post">
+  {% csrf_token %}
+  <div class="ds-field">
+    <label class="ds-remember-label" for="consent-accept">
+      <input type="checkbox" name="accept" value="yes" id="consent-accept" required>
+      <span class="ds-caption">Li e aceito os documentos acima. Autorizo o tratamento dos meus dados conforme a Política de Privacidade.</span>
+    </label>
+  </div>
+  <button type="submit" class="ds-btn ds-btn--primary w-100">Continuar</button>
+</form>
+{% endblock %}

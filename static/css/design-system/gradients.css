@@ -1,0 +1,27 @@
+/**
+ * RM Systems DS — Gradientes (uso moderado)
+ */
+
+:root {
+  --ds-gradient-brand: linear-gradient(135deg, #003366 0%, #004d80 42%, #006699 100%);
+  --ds-gradient-brand-subtle: linear-gradient(135deg, rgba(0, 51, 102, 0.08) 0%, transparent 60%);
+  --ds-gradient-mesh: radial-gradient(ellipse 80% 50% at 15% -10%, rgba(0, 210, 255, 0.12), transparent 55%);
+  --ds-gradient-mesh-secondary: radial-gradient(ellipse 50% 35% at 95% 0%, rgba(0, 51, 102, 0.08), transparent 50%);
+  --ds-gradient-active-pill: linear-gradient(135deg, rgba(0, 51, 102, 0.95) 0%, rgba(0, 102, 153, 0.85) 100%);
+  --ds-gradient-shimmer: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
+}
+
+[data-theme="dark"] {
+  --ds-gradient-brand: linear-gradient(135deg, #003366 0%, #0a2540 45%, #004d66 100%);
+  --ds-gradient-brand-subtle: linear-gradient(135deg, rgba(0, 210, 255, 0.06) 0%, transparent 55%);
+  --ds-gradient-mesh: radial-gradient(ellipse 90% 55% at 10% -15%, rgba(0, 210, 255, 0.14), transparent 55%);
+  --ds-gradient-mesh-secondary: radial-gradient(ellipse 55% 40% at 98% 0%, rgba(0, 51, 102, 0.35), transparent 50%);
+  --ds-gradient-active-pill: linear-gradient(135deg, #003366 0%, #006699 55%, rgba(0, 210, 255, 0.25) 100%);
+}
+
+.rm-ui-v2 .ds-mesh-bg {
+  background:
+    var(--ds-gradient-mesh),
+    var(--ds-gradient-mesh-secondary),
+    var(--ds-bg-base);
+}

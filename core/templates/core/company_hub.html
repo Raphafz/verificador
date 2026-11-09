@@ -1,0 +1,101 @@
+{% extends ui_shell %}
+
+{% load static %}
+
+
+
+{% block title %}{{ company.name }} — Plataforma{% endblock %}
+
+{% block body_class %}hub-page{% endblock %}
+
+
+
+{% block extra_head %}
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container-fluid hub-shell">
+
+  <div class="hub-inner">
+
+    <div class="hub-hero">
+
+      <span class="hub-badge">Plataforma ISP</span>
+
+      <h2 class="mb-1">{{ company.name }}</h2>
+
+      <p class="hub-subtitle">Escolha um módulo — viabilidade, OLT{% if user.is_company_admin %} ou alertas WhatsApp{% endif %}</p>
+
+      {% if user.is_company_admin %}
+
+      <p class="hub-stats">
+
+        <span><i class="fas fa-users me-1"></i> {{ total_users }} usuários</span>
+
+        {% if company.module_verificador %}
+
+        <span><i class="fas fa-map me-1"></i> {{ total_maps }} mapas</span>
+
+        {% endif %}
+
+      </p>
+
+      {% endif %}
+
+    </div>
+
+
+
+    {% if user.is_company_admin %}
+    {% include "includes/quota_usage.html" %}
+    {% endif %}
+
+    {% if saas_modules %}
+
+    <div class="row g-4">
+
+      {% for module in saas_modules %}
+
+      <div class="col-md-6 col-lg-4">
+
+        <a href="{{ module.url }}" class="module-card" data-no-loading>
+
+          <div class="module-icon module-icon--{{ module.code }}">
+
+            <i class="fas {{ module.icon }}"></i>
+
+          </div>
+
+          <h4 class="h5 module-title">{{ module.label }}</h4>
+
+          <p class="module-desc">{{ module.description }}</p>
+
+          <span class="module-arrow"><i class="fas fa-arrow-right"></i></span>
+
+        </a>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-warning saas-panel">
+
+      Nenhum módulo habilitado para esta empresa. Contate o administrador RM Systems.
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</div>
+
+{% endblock %}
+

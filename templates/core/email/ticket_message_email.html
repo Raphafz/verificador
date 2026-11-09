@@ -1,0 +1,45 @@
+{% extends "core/email/base_transactional.html" %}
+
+{% block email_title %}Nova mensagem — {{ ticket.ticket_number }}{% endblock %}
+
+{% block email_preheader %}
+Nova mensagem no ticket {{ ticket.ticket_number }}: {{ ticket.title }}
+{% endblock %}
+
+{% block email_body %}
+<h2 style="margin:0 0 20px;font-family:'Montserrat',Arial,sans-serif;color:#003366;font-size:20px;font-weight:600;">
+  Nova mensagem no ticket
+</h2>
+
+<p style="margin:0 0 15px;font-size:15px;color:#2C3E50;line-height:1.6;">
+  Há uma nova mensagem no ticket <strong>{{ ticket.ticket_number }}</strong>:
+</p>
+
+<div style="background:#e9ecef;padding:15px;border-radius:8px;margin:16px 0;font-size:14px;color:#2C3E50;">
+  <strong>Ticket:</strong> {{ ticket.ticket_number }}<br>
+  <strong>Título:</strong> {{ ticket.title }}<br>
+  <strong>Status:</strong> {{ ticket.get_status_display }}
+</div>
+
+<div style="background:#f8f9fa;border-left:4px solid #003366;padding:20px;margin:20px 0;border-radius:6px;">
+  <p style="margin:0 0 10px;font-weight:700;color:#003366;font-size:14px;">
+    {{ sender.get_full_name|default:sender.username }}
+  </p>
+  <div style="font-size:14px;color:#212529;line-height:1.6;white-space:pre-wrap;">{{ message.message|linebreaks }}</div>
+</div>
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:24px auto;">
+  <tr>
+    <td align="center" bgcolor="#003366" style="background-color:#003366;border-radius:8px;">
+      <a href="{{ ticket_url }}" style="display:inline-block;padding:12px 30px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">
+        Responder ticket
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:20px 0 0;font-size:14px;color:#2C3E50;">
+  Atenciosamente,<br>
+  <strong>Equipe {{ brand_name }}</strong>
+</p>
+{% endblock %}

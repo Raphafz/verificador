@@ -1,0 +1,534 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Usuários - RM Systems{% endblock %}
+{% block body_class %}dashboard-page rm-users-page{% endblock %}
+
+{% block content %}
+<div class="saas-page dashboard-page ds-content-enter rm-users">
+  <header class="saas-page-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h2 class="mb-1">
+        <i class="fas fa-users me-2"></i>
+        Gestão de Usuários
+      </h2>
+      <p class="saas-lead mb-0">Gerencie usuários do sistema e suas permissões.</p>
+    </div>
+    <a href="{% url 'rm:user_create' %}" class="btn btn-primary">
+      <i class="fas fa-user-plus me-1"></i>
+      Novo Usuário
+    </a>
+  </header>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stats-card rm-users-stat rm-users-stat--total h-100">
+        <div class="rm-users-stat__value">{{ users|length }}</div>
+        <p class="rm-users-stat__label">Total de Usuários</p>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stats-card rm-users-stat rm-users-stat--active h-100">
+        <div class="rm-users-stat__value">{{ users|length }}</div>
+        <p class="rm-users-stat__label">Usuários Ativos</p>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stats-card rm-users-stat rm-users-stat--inactive h-100">
+        <div class="rm-users-stat__value">0</div>
+        <p class="rm-users-stat__label">Usuários Inativos</p>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stats-card rm-users-stat rm-users-stat--new h-100">
+        <div class="rm-users-stat__value">0</div>
+        <p class="rm-users-stat__label">Novos Hoje</p>
+      </div>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% include "includes/rm_activation_email_toast.html" %}
+
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+  <div class="ds-card rm-users__actions mb-4">
+    <h3 class="rm-users__actions-title">
+      <i class="fas fa-bolt"></i>
+      Ações Rápidas
+    </h3>
+    <div class="rm-users__actions-grid">
+      <button type="button" class="btn btn-outline-primary" onclick="exportUsers()">
+        <i class="fas fa-download me-1"></i> Exportar Lista
+      </button>
+      <button type="button" class="btn btn-outline-success" onclick="bulkActivate()">
+        <i class="fas fa-check-circle me-1"></i> Ativar Selecionados
+      </button>
+      <button type="button" class="btn btn-outline-warning" onclick="bulkDeactivate()">
+        <i class="fas fa-pause-circle me-1"></i> Desativar Selecionados
+      </button>
+      <button type="button" class="btn btn-outline-info" onclick="refreshUsers()">
+        <i class="fas fa-sync me-1"></i> Atualizar Lista
+      </button>
+    </div>
+  </div>
+
+  <div class="ds-card rm-users__filters mb-4">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label" for="searchInput">Buscar</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <input type="text" class="form-control" placeholder="Nome, email ou empresa…" id="searchInput">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label" for="statusFilter">Status</label>
+        <select class="form-select" id="statusFilter">
+          <option value="">Todos os status</option>
+          <option value="active">Ativos</option>
+          <option value="inactive">Inativos</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label" for="roleFilter">Função</label>
+        <select class="form-select" id="roleFilter">
+          <option value="">Todas as funções</option>
+          <option value="RM">RM</option>
+          <option value="COMPANY_ADMIN">Admin Empresa</option>
+          <option value="COMPANY_USER">Usuário Empresa</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label" for="companyFilter">Empresa</label>
+        <select class="form-select" id="companyFilter">
+          <option value="">Todas as empresas</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+          <i class="fas fa-times me-1"></i> Limpar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ds-card rm-users__table-card">
+    <div class="ds-table-wrap">
+      <div class="rm-table-wrap table-responsive">
+        <table class="table table-hover mb-0 rm-users__table">
+          <thead>
+            <tr>
+              <th>
+                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+              </th>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Função</th>
+              <th>Empresa</th>
+              <th>Status</th>
+              <th class="rm-users__col-actions">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+              <tr class="user-row" style="cursor: pointer;" data-user-id="{{ u.id }}" onclick="showUserDetails({{ u.id }})">
+                <td onclick="event.stopPropagation();">
+                  <input type="checkbox" class="user-checkbox" value="{{ u.id }}">
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="me-3">
+                      <i class="fas fa-user text-primary"></i>
+                    </div>
+                    <div>
+                      <strong>{{ u.get_full_name|default:u.username }}</strong>
+                      <br>
+                      <small class="text-muted">@{{ u.username }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ u.email }}</td>
+                <td>
+                  {% if u.role == 'RM' %}
+                    <span class="badge role-badge" style="background-color:#764ba2">{{ u.get_role_display }}</span>
+                  {% elif u.role == 'COMPANY_ADMIN' %}
+                    <span class="badge bg-primary role-badge">{{ u.get_role_display }}</span>
+                  {% else %}
+                    <span class="badge bg-secondary role-badge">{{ u.get_role_display }}</span>
+                  {% endif %}
+                </td>
+                <td>{% if u.company %}{{ u.company.name }}{% else %}-{% endif %}</td>
+                <td>
+                  {% if u.is_active %}
+                    <span class="status-badge status-active">
+                      <i class="fas fa-check-circle me-1"></i>Ativo
+                    </span>
+                  {% else %}
+                    <span class="status-badge status-inactive">
+                      <i class="fas fa-times-circle me-1"></i>Inativo
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="rm-users__col-actions" onclick="event.stopPropagation();">
+                  <div class="rm-users__action-btns" role="group">
+                    <a href="{% url 'rm:user_edit' u.id %}"
+                       class="btn btn-sm btn-outline-primary"
+                       title="Editar">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    {% if u.email %}
+                    {% include "includes/rm_activation_email_button.html" with target_user=u btn_class="btn-sm btn-info" show_label=True %}
+                    {% else %}
+                    <button type="button"
+                            class="btn btn-sm btn-secondary"
+                            disabled
+                            title="Usuário sem e-mail cadastrado">
+                      <i class="fas fa-paper-plane me-1"></i>
+                      <span>Sem e-mail</span>
+                    </button>
+                    {% endif %}
+                    <button type="button"
+                            class="btn btn-sm btn-outline-{% if u.is_active %}warning{% else %}success{% endif %}"
+                            data-user-id="{{ u.id }}"
+                            onclick="toggleUserStatus(this.dataset.userId)"
+                            title="{% if u.is_active %}Desativar{% else %}Ativar{% endif %}">
+                      <i class="fas fa-{% if u.is_active %}pause{% else %}play{% endif %}"></i>
+                    </button>
+                    {% if not u.is_superuser and u.id != user.id %}
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            data-user-id="{{ u.id }}"
+                            onclick="deleteUser(this.dataset.userId)"
+                            title="Apagar">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-5">
+                  <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
+                  <p class="text-muted mb-3">Nenhum usuário cadastrado</p>
+                  <a href="{% url 'rm:user_create' %}" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-1"></i>
+                    Cadastrar Primeiro Usuário
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Detalhes do Usuário -->
+<div class="modal fade user-details-modal" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userDetailsModalLabel">
+          <i class="fas fa-user-circle me-2"></i>Detalhes do Usuário
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body" id="userDetailsContent">
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <a href="#" id="editUserBtn" class="btn btn-primary">
+          <i class="fas fa-edit me-1"></i> Editar Usuário
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    function toggleUserStatus(userId) {
+        if (confirm('Tem certeza que deseja alterar o status deste usuário?')) {
+            fetch(`/rm/usuarios/${userId}/toggle/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                credentials: 'same-origin',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Erro ao alterar status do usuário');
+                }
+            });
+        }
+    }
+
+    function deleteUser(userId) {
+        if (!confirm('Tem certeza que deseja apagar este usuário?')) return;
+        fetch(`/rm/usuarios/${userId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Erro ao apagar usuário');
+            }
+        })
+        .catch(() => alert('Erro ao apagar usuário'));
+    }
+
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        applyFilters();
+    });
+
+    document.getElementById('roleFilter').addEventListener('change', function() {
+        applyFilters();
+    });
+
+    document.getElementById('companyFilter').addEventListener('change', function() {
+        applyFilters();
+    });
+
+    function applyFilters() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const roleFilter = document.getElementById('roleFilter').value;
+        const companyFilter = document.getElementById('companyFilter').value;
+
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const statusBadge = row.querySelector('.status-badge');
+            const roleBadge = row.querySelector('.role-badge');
+
+            let shouldShow = true;
+
+            if (searchTerm && !text.includes(searchTerm)) {
+                shouldShow = false;
+            }
+
+            if (statusFilter && statusBadge) {
+                const isActive = statusBadge.classList.contains('status-active');
+                if ((statusFilter === 'active' && !isActive) || (statusFilter === 'inactive' && isActive)) {
+                    shouldShow = false;
+                }
+            }
+
+            if (roleFilter && roleBadge) {
+                const roleText = roleBadge.textContent.trim();
+                if (!roleText.includes(roleFilter)) {
+                    shouldShow = false;
+                }
+            }
+
+            row.style.display = shouldShow ? '' : 'none';
+        });
+    }
+
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.user-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAll.checked;
+        });
+    }
+
+    function exportUsers() {
+        alert('Funcionalidade de exportação será implementada em breve!');
+    }
+
+    function bulkActivate() {
+        const selected = getSelectedUsers();
+        if (selected.length === 0) {
+            alert('Selecione pelo menos um usuário!');
+            return;
+        }
+        if (confirm(`Ativar ${selected.length} usuário(s) selecionado(s)?`)) {
+            alert('Funcionalidade de ativação em lote será implementada em breve!');
+        }
+    }
+
+    function bulkDeactivate() {
+        const selected = getSelectedUsers();
+        if (selected.length === 0) {
+            alert('Selecione pelo menos um usuário!');
+            return;
+        }
+        if (confirm(`Desativar ${selected.length} usuário(s) selecionado(s)?`)) {
+            alert('Funcionalidade de desativação em lote será implementada em breve!');
+        }
+    }
+
+    function refreshUsers() {
+        location.reload();
+    }
+
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('roleFilter').value = '';
+        document.getElementById('companyFilter').value = '';
+        applyFilters();
+    }
+
+    function getSelectedUsers() {
+        const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    function showUserDetails(userId) {
+        const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+        const contentDiv = document.getElementById('userDetailsContent');
+        const editBtn = document.getElementById('editUserBtn');
+
+        contentDiv.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2">Carregando informações do usuário...</p>
+            </div>
+        `;
+
+        editBtn.href = `/rm/usuarios/${userId}/editar/`;
+        modal.show();
+
+        fetch(`/rm/usuarios/${userId}/detalhes/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                contentDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Erro ao carregar informações: ${data.error}
+                    </div>
+                `;
+                return;
+            }
+
+            const roleColors = {
+                'RM': '#764ba2',
+                'COMPANY_ADMIN': 'var(--rm-primary)',
+                'COMPANY_USER': 'var(--rm-secondary)'
+            };
+
+            const statusBadge = data.is_active
+                ? '<span class="badge bg-success">Ativo</span>'
+                : '<span class="badge bg-danger">Inativo</span>';
+
+            const roleBadge = `<span class="badge" style="background-color: ${roleColors[data.role_code] || '#6c757d'}">${data.role}</span>`;
+
+            contentDiv.innerHTML = `
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--rm-primary);"></i>
+                        </div>
+                        <h4>${data.full_name || data.username}</h4>
+                        <p class="text-muted">@${data.username}</p>
+                    </div>
+                </div>
+
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-envelope me-2"></i>E-mail</div>
+                    <div class="user-detail-value">${data.email || 'Não informado'}</div>
+                </div>
+
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-phone me-2"></i>Telefone</div>
+                    <div class="user-detail-value">${data.phone}</div>
+                </div>
+
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-user-tag me-2"></i>Função</div>
+                    <div class="user-detail-value">${roleBadge}</div>
+                </div>
+
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-building me-2"></i>Empresa</div>
+                    <div class="user-detail-value">${data.company}</div>
+                </div>
+
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-info-circle me-2"></i>Status</div>
+                    <div class="user-detail-value">${statusBadge} ${data.is_staff ? '<span class="badge bg-info ms-2">Staff</span>' : ''} ${data.is_superuser ? '<span class="badge bg-warning ms-2">Superusuário</span>' : ''}</div>
+                </div>
+
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-calendar-check me-2"></i>Último Acesso</div>
+                    <div class="user-detail-value">${data.last_login}</div>
+                </div>
+
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-calendar-plus me-2"></i>Data de Cadastro</div>
+                    <div class="user-detail-value">${data.date_joined || data.created_at || 'Não disponível'}</div>
+                </div>
+
+                ${data.updated_at ? `
+                <div class="user-detail-item">
+                    <div class="user-detail-label"><i class="fas fa-calendar-edit me-2"></i>Última Atualização</div>
+                    <div class="user-detail-value">${data.updated_at}</div>
+                </div>
+                ` : ''}
+            `;
+        })
+        .catch(error => {
+            contentDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Erro ao carregar informações do usuário. Por favor, tente novamente.
+                </div>
+            `;
+            console.error('Erro:', error);
+        });
+    }
+</script>
+{% include "includes/rm_activation_email_script.html" %}
+{% endblock %}

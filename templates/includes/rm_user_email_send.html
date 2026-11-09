@@ -1,0 +1,20 @@
+{% load rm_email_tags %}
+{% get_rm_email_templates target_user as email_templates %}
+<div class="rm-email-send-group d-flex flex-wrap align-items-stretch gap-1">
+  <select class="form-select form-select-sm rm-email-template-select"
+          aria-label="Template de e-mail para {{ target_user.email }}"
+          title="Escolha o template de e-mail">
+    {% for t in email_templates %}
+    <option value="{{ t.id }}" title="{{ t.description }}">{{ t.label }}</option>
+    {% empty %}
+    <option value="activation">Ativação de conta</option>
+    {% endfor %}
+  </select>
+  <button type="button"
+          class="btn {{ btn_class|default:'btn-sm btn-info' }} rm-send-email-btn"
+          data-user-id="{{ target_user.id }}"
+          data-user-email="{{ target_user.email }}"
+          title="Enviar e-mail para {{ target_user.email }}">
+    <i class="fas fa-paper-plane{% if show_label %} me-1{% endif %}" aria-hidden="true"></i>{% if show_label %}<span>Enviar</span>{% endif %}
+  </button>
+</div>

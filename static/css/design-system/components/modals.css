@@ -1,0 +1,44 @@
+/**
+ * RM Systems DS — Modals
+ */
+
+.rm-ui-v2 .modal-content {
+  background: var(--ds-bg-elevated);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-lg);
+}
+
+.rm-ui-v2 .modal-backdrop.show {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.rm-ui-v2 .modal.fade .modal-dialog {
+  transition: transform var(--ds-duration-normal) var(--ds-ease-out);
+}
+
+.rm-ui-v2 .modal.show .modal-dialog {
+  transform: none;
+}
+
+.rm-ui-v2 .modal-header {
+  border-bottom-color: var(--ds-border-subtle);
+  padding: var(--ds-space-5) var(--ds-space-6);
+}
+
+.rm-ui-v2 .modal-body {
+  padding: var(--ds-space-6);
+}
+
+.rm-ui-v2 .modal-footer {
+  border-top-color: var(--ds-border-subtle);
+  padding: var(--ds-space-4) var(--ds-space-6);
+  background: var(--ds-bg-subtle);
+}
+
+.rm-ui-v2 .modal-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ds-text-primary);
+}

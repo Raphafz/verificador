@@ -1,0 +1,31 @@
+{% extends "olt_ops/base_olt.html" %}
+
+{% block title %}{{ action }} OLT — {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="saas-page olt-console olt-console--narrow rm-v2-route-enter">
+  <header class="saas-page-header">
+    <a href="{% url 'company:olt_ops:olt_list' company_slug=company.slug %}" class="saas-breadcrumb">
+      <i class="fas fa-arrow-left"></i> OLTs
+    </a>
+    <h2>{{ action }} OLT</h2>
+    <p class="saas-lead">Dados de acesso SSH ou Telnet ao equipamento.</p>
+  </header>
+
+  <form method="post" class="ds-card ds-form" data-loading-message="Salvando…">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+      {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <div class="d-flex gap-2 flex-wrap mt-2">
+      <button type="submit" class="ds-btn ds-btn--primary">Salvar</button>
+      <a href="{% url 'company:olt_ops:olt_list' company_slug=company.slug %}" class="ds-btn ds-btn--outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

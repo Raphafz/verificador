@@ -1,0 +1,63 @@
+/**
+ * RM Systems DS — Transitions base
+ */
+
+.rm-ui-v2 {
+  --ds-transition-fast: var(--ds-duration-fast) var(--ds-ease-out);
+  --ds-transition-normal: var(--ds-duration-normal) var(--ds-ease-out);
+  --ds-transition-slow: var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.rm-ui-v2 a,
+.rm-ui-v2 button,
+.rm-ui-v2 .nav-link,
+.rm-ui-v2 .ds-card,
+.rm-ui-v2 .rm-dash__stat {
+  transition:
+    background-color var(--ds-transition-normal),
+    border-color var(--ds-transition-normal),
+    color var(--ds-transition-fast),
+    box-shadow var(--ds-transition-normal),
+    transform var(--ds-transition-fast),
+    opacity var(--ds-transition-fast);
+}
+
+.rm-ui-v2 .rm-v2-route-enter {
+  animation: dsRouteEnter var(--ds-duration-page) var(--ds-ease-out) both;
+}
+
+@keyframes dsRouteEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rm-ui-v2 .rm-v2-fade-up {
+  animation: dsFadeUp var(--ds-duration-slow) var(--ds-ease-out) both;
+}
+
+@keyframes dsFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rm-ui-v2 .rm-v2-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow-md);
+}
+
+.rm-ui-v2 .rm-v2-hover-lift:active {
+  transform: translateY(0);
+  transition-duration: var(--ds-duration-instant);
+}

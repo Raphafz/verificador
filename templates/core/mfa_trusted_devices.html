@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Dispositivos confiáveis MFA{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 720px; margin: 2rem auto;">
+  <h1>Dispositivos confiáveis</h1>
+  <ul class="list-group mb-3">
+    {% for d in devices %}
+    <li class="list-group-item d-flex justify-content-between">
+      <span>{{ d.device_label|truncatechars:60 }}<br><small>Expira {{ d.expires_at|date:"d/m/Y" }}</small></span>
+      <form method="post">{% csrf_token %}
+        <input type="hidden" name="device_id" value="{{ d.id }}">
+        <button type="submit" class="btn btn-sm btn-outline-danger">Revogar</button>
+      </form>
+    </li>
+    {% empty %}
+    <li class="list-group-item">Nenhum dispositivo lembrado.</li>
+    {% endfor %}
+  </ul>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="revoke_all">
+    <button type="submit" class="btn btn-warning">Revogar todos</button>
+  </form>
+</div>
+{% endblock %}

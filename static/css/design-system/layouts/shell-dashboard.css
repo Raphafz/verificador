@@ -1,0 +1,109 @@
+/**
+ * RM Systems DS — Shell Dashboard
+ */
+
+.rm-ui-v2 .rm-dash-v2 {
+  padding-bottom: var(--ds-space-10);
+}
+
+.rm-ui-v2 .rm-dash-v2__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  margin-bottom: var(--ds-space-6);
+  padding-bottom: var(--ds-space-5);
+  border-bottom: 1px solid var(--ds-border-subtle);
+}
+
+.rm-ui-v2 .rm-dash-v2__title {
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 0;
+  color: var(--ds-text-primary);
+}
+
+.rm-ui-v2 .rm-dash-v2__lead {
+  margin: var(--ds-space-2) 0 0;
+  font-size: 0.9375rem;
+  color: var(--ds-text-secondary);
+  max-width: 32rem;
+}
+
+.rm-ui-v2 .rm-dash-v2__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ds-text-secondary);
+  background: var(--ds-bg-elevated);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-pill);
+}
+
+.rm-ui-v2 .rm-dash-v2__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--ds-space-4);
+  margin-bottom: var(--ds-space-6);
+}
+
+.rm-ui-v2 .rm-dash-v2__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ds-space-5);
+}
+
+@media (min-width: 992px) {
+  .rm-ui-v2 .rm-dash-v2__grid {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+.rm-ui-v2 .rm-dash-v2__panel {
+  background: var(--ds-bg-elevated);
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-xs);
+  overflow: hidden;
+}
+
+.rm-ui-v2 .rm-dash-v2__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ds-space-4) var(--ds-space-5);
+  border-bottom: 1px solid var(--ds-border-subtle);
+}
+
+.rm-ui-v2 .rm-dash-v2__panel-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ds-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+}
+
+.rm-ui-v2 .rm-dash-v2__panel-body {
+  padding: var(--ds-space-5);
+}
+
+.rm-ui-v2 .rm-dash-v2__panel-body--chart {
+  min-height: 280px;
+  position: relative;
+}
+
+.rm-ui-v2 .rm-dash-v2__panel-body.is-loading {
+  min-height: 200px;
+}
+
+.rm-ui-v2 .rm-dash-v2__panel-body.is-loading .ds-skeleton {
+  height: 12rem;
+  border-radius: var(--ds-radius-md);
+}

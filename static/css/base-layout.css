@@ -1,0 +1,61 @@
+/**
+ * Layout base — regras antes em <style> inline no base.html
+ */
+
+.main-content,
+.content-card,
+.main-container > .container:not(.container-fluid),
+.form-container {
+  max-width: min(1200px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.main-container {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.form-container {
+  max-width: min(640px, 100%);
+}
+
+.card,
+.upload-area {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Páginas de erro */
+body.error-page .sidebar,
+body.error-page .sidebar-overlay,
+body.error-page .settings-button,
+body.error-page .skip-link,
+body.error-page .footer {
+  display: none !important;
+}
+
+body.error-page .main-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+
+body.error-page .error-container {
+  position: fixed !important;
+  top: var(--rm-topbar-height, 76px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 99999 !important;
+  background: transparent !important;
+  height: calc(100vh - var(--rm-topbar-height, 76px)) !important;
+  height: calc(100dvh - var(--rm-topbar-height, 76px)) !important;
+}

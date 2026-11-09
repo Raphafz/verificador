@@ -1,0 +1,491 @@
+{% extends ui_shell %}
+{% load static %}
+
+{% block title %}Alertas — {{ company.name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/design-system/pages/alerts.css' %}?v=20260525b">
+{% endblock %}
+
+{% block content %}
+<script nonce="{{ csp_nonce }}">window.__DISABLE_GLOBAL_LOADING__ = true;</script>
+<div class="saas-page alerts-console rm-v2-route-enter" data-no-global-loading="1">
+  <header class="saas-page-header">
+    <a href="{% url 'company:hub' company_slug=company.slug %}" class="saas-breadcrumb">
+      <i class="fas fa-arrow-left"></i> Voltar ao Hub
+    </a>
+    <h2>Alertas Telegram → WhatsApp</h2>
+    <p class="saas-lead">
+      {{ company.name }} — cada <strong>chip WhatsApp</strong> é uma linha separada.
+      Marque <strong>Enviar alertas</strong> em vários chips para o mesmo alerta sair por todos (conectados).
+      Os telefones abaixo são quem <em>recebe</em>.
+    </p>
+  </header>
+
+  <div class="alert alert-warning mb-0 {% if worker_online %}d-none{% endif %}" id="wa-worker-banner">
+    <strong>Worker MENSAGENS parado</strong> (porta 3921).
+    Reinicie: <code>python manage.py runserver</code> (sem <code>--no-bridge</code>) e aguarde
+    <code>[alert-bridge] API WhatsApp OK</code> no terminal.
+    Use <strong>Limpar sessão</strong> se o chip ficou travado; depois <strong>Conectar</strong> quando o worker subir.
+  </div>
+
+  <section class="saas-panel mb-4">
+    <h5 class="fw-bold mb-3"><i class="fab fa-whatsapp me-2 text-success"></i>Chips WhatsApp (contas que enviam)</h5>
+    <p class="text-muted small">Adicione chips, edite modo/número sem excluir, e marque «Enviar alertas» em quantos quiser.</p>
+
+    {% for row in line_rows %}
+    {% with line=row.line ef=row.edit_form %}
+    <div class="wa-line-card {% if line.send_alerts %}is-default{% endif %}" data-line-id="{{ line.pk }}" id="line-card-{{ line.pk }}">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+        <div>
+          <strong>{{ line.label }}</strong>
+          {% if line.send_alerts %}<span class="badge bg-primary ms-1">Envia alertas</span>{% endif %}
+          <div class="text-muted small">
+            Modo: {{ line.get_login_mode_display }}
+            {% if line.pairing_phone %} · {{ line.pairing_phone }}{% endif %}
+          </div>
+        </div>
+        <span class="wa-status-pill disconnected" id="pill-{{ line.pk }}">—</span>
+      </div>
+      <p class="small text-muted mb-2" id="msg-{{ line.pk }}"></p>
+
+      <div class="wa-qr-wrap d-none mb-2 text-center" id="qr-wrap-{{ line.pk }}">
+        <div class="wa-qr-box">
+          <p class="wa-qr-placeholder" id="qr-ph-{{ line.pk }}">Gerando QR…</p>
+          <img id="qr-{{ line.pk }}" alt="QR Code WhatsApp" width="220" height="220" class="d-none">
+        </div>
+      </div>
+      <div class="wa-pairing-wrap d-none mb-2 text-center" id="pair-wrap-{{ line.pk }}">
+        <div class="wa-pairing-code" id="pair-code-{{ line.pk }}">----</div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button type="button" class="btn btn-sm btn-success btn-wa-connect" data-line-id="{{ line.pk }}" {% if not worker_online %}disabled{% endif %} title="Precisa do worker Node (porta 3921)">
+          <i class="fas fa-link"></i> Conectar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger btn-wa-disconnect" data-line-id="{{ line.pk }}">
+          Desconectar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-warning btn-wa-clear" data-line-id="{{ line.pk }}" title="Apaga credenciais locais — use se não conseguir conectar">
+          Limpar sessão
+        </button>
+        {% if not line.send_alerts %}
+        <form method="post" action="{% url 'company:alerts:line_set_default' company_slug=company.slug line_id=line.pk %}" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-primary">Ativar envio</button>
+        </form>
+        {% endif %}
+        <form method="post" action="{% url 'company:alerts:line_delete' company_slug=company.slug line_id=line.pk %}" class="d-inline" onsubmit="return confirm('Remover linha {{ line.label }}?');">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-secondary">Excluir linha</button>
+        </form>
+      </div>
+
+      <details class="mt-3" {% if ef.errors %}open{% endif %}>
+        <summary class="btn btn-sm btn-outline-secondary d-inline-block wa-edit-toggle">Editar linha</summary>
+        <form method="post" class="row g-2 mt-2 pt-2 border-top">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="edit_line">
+          <input type="hidden" name="line_id" value="{{ line.pk }}">
+          <div class="col-md-4">
+            <label class="form-label">Nome</label>
+            {{ ef.label }}
+            {% if ef.label.errors %}<div class="text-danger small">{{ ef.label.errors }}</div>{% endif %}
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Modo de conexão</label>
+            {% for radio in ef.login_mode %}
+            <div class="wa-login-option">
+              <div class="form-check mb-0">
+                {{ radio.tag }}
+                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4 edit-phone-wrap wa-phone-wrap" data-line-id="{{ line.pk }}">
+            <label class="form-label">Número (pareamento)</label>
+            {{ ef.pairing_phone }}
+            {% if ef.pairing_phone.errors %}<div class="text-danger small">{{ ef.pairing_phone.errors }}</div>{% endif %}
+          </div>
+          <div class="col-md-4">
+            <div class="form-check">
+              {{ ef.send_alerts }}
+              <label class="form-check-label">Enviar alertas</label>
+            </div>
+            <div class="form-check">
+              {{ ef.is_active }}
+              <label class="form-check-label">Linha ativa</label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" name="reconnect_after_edit" value="1" id="reconnect-{{ line.pk }}" checked>
+              <label class="form-check-label" for="reconnect-{{ line.pk }}">Reconectar se mudar modo/número</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Salvar alterações</button>
+          </div>
+        </form>
+      </details>
+    </div>
+    {% endwith %}
+    {% endfor %}
+
+    {% if not line_rows %}
+    <p class="text-muted mb-3">Nenhum chip cadastrado. Adicione o primeiro abaixo.</p>
+    {% endif %}
+
+    <hr class="my-3">
+    <h6 class="fw-bold mb-2">Adicionar chip WhatsApp</h6>
+    <form method="post" class="row g-2 align-items-end">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_line">
+      <div class="col-md-4">
+        <label class="form-label">Nome</label>
+        {{ line_form.label }}
+      </div>
+      <div class="col-md-8">
+        <label class="form-label">Modo de conexão</label>
+        {% for radio in line_form.login_mode %}
+        <div class="wa-login-option">
+          <div class="form-check mb-0">
+            {{ radio.tag }}
+            <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="col-md-4 wa-phone-wrap" id="new-line-phone-wrap">
+        <label class="form-label">Número (pareamento)</label>
+        {{ line_form.pairing_phone }}
+      </div>
+      <div class="col-md-4">
+        <div class="form-check">
+          {{ line_form.send_alerts }}
+          <label class="form-check-label">Enviar alertas</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> Adicionar linha</button>
+      </div>
+    </form>
+  </section>
+
+  <form method="post" class="saas-form-card">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save_config">
+    <div class="form-check form-switch mb-2">
+      {{ form.is_active }}
+      <label class="form-check-label fw-semibold">Bridge ativo</label>
+    </div>
+    <p class="text-muted small mb-4">Após salvar, o worker recarrega em ~15s (não precisa reiniciar o runserver).</p>
+
+    <h6 class="fw-bold">Telegram</h6>
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <label class="form-label">Token do bot Telegram</label>
+        {{ form.telegram_bot_token }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">ID do grupo Telegram</label>
+        {{ form.telegram_group_id }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Prefixo das mensagens</label>
+        {{ form.message_prefix }}
+      </div>
+    </div>
+
+    <h6 class="fw-bold">Destinos (quem recebe no WhatsApp)</h6>
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Telefones (PV, vírgula)</label>
+        {{ form.whatsapp_alert_phones }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Ou JID do grupo WhatsApp</label>
+        {{ form.whatsapp_group_jid }}
+      </div>
+      <div class="col-12"><hr><h6 class="fw-bold mb-2">Filtro de mensagens (Telegram → WhatsApp)</h6></div>
+      <div class="col-12 form-check">
+        {{ form.filter_enabled }}
+        <label class="form-check-label">Usar filtro personalizado</label>
+        <div class="form-text">Desmarcado = encaminha <strong>todas</strong> as mensagens de texto do grupo.</div>
+      </div>
+      <div class="col-12 wa-filter-rules" id="filter-rules-block">
+        <label class="form-label">Regras (uma por linha)</label>
+        {{ form.filter_rules }}
+        <div class="form-text">
+          Copie da mensagem do Telegram o trecho exato que deve aparecer.
+          Ex: <code>Alto uso de largura de banda</code>, <code>(LINK.K2)</code>, <code>CTO-123</code>
+        </div>
+      </div>
+      <div class="col-12 form-check">
+        {{ form.filter_match_all }}
+        <label class="form-check-label">Exigir <strong>todas</strong> as linhas (modo E)</label>
+        <div class="form-text">Desmarcado = basta <strong>uma</strong> linha coincidir (modo OU).</div>
+      </div>
+      <div class="col-12"><hr></div>
+      <div class="col-12 form-check">
+        {{ form.antiban_enabled }}
+        <label class="form-check-label">Antiban</label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Delay mín. (ms)</label>
+        {{ form.antiban_delay_min_ms }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Delay máx. (ms)</label>
+        {{ form.antiban_delay_max_ms }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Warmup (s)</label>
+        {{ form.antiban_warmup_sec }}
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar</button>
+      <a href="{% url 'company:hub' company_slug=company.slug %}" class="btn btn-outline-primary">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+(function() {
+  const slug = "{{ company.slug|escapejs }}";
+  const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const base = "/{{ company.slug|escapejs }}/alertas/linhas/";
+  const workerStatusUrl = "/{{ company.slug|escapejs }}/alertas/worker-status/";
+  const workerBanner = document.getElementById('wa-worker-banner');
+  const pollHeaders = { 'X-Skip-Global-Loading': '1' };
+
+  async function refreshWorkerUi() {
+    try {
+      const r = await fetch(workerStatusUrl, { credentials: 'same-origin', headers: pollHeaders });
+      const d = await r.json();
+      const on = Boolean(d.online);
+      document.querySelectorAll('.btn-wa-connect').forEach(btn => { btn.disabled = !on; });
+      if (workerBanner) workerBanner.classList.toggle('d-none', on);
+      return on;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  const labels = {
+    connected: 'Conectado', qr: 'Aguardando QR', pairing: 'Pareamento',
+    connecting: 'Conectando…', disconnected: 'Desconectado', error: 'Erro',
+    worker_offline: 'Worker parado'
+  };
+  const lineUi = {};
+
+  function loadQrImage(lineId, qrUpdatedAt) {
+    const qrWrap = document.getElementById('qr-wrap-' + lineId);
+    const qrImg = document.getElementById('qr-' + lineId);
+    const qrPh = document.getElementById('qr-ph-' + lineId);
+    if (!qrImg || !qrWrap) return;
+
+    const ui = lineUi[lineId] || {};
+    const ts = qrUpdatedAt || 0;
+    if (ui.qrLoadedTs === ts && qrImg.src) return;
+
+    lineUi[lineId] = { ...ui, qrLoadedTs: ts, showingQr: true };
+    qrWrap.classList.remove('d-none');
+    if (qrPh) {
+      qrPh.classList.remove('d-none');
+      qrPh.textContent = 'Gerando QR…';
+    }
+    qrImg.classList.add('d-none');
+    qrImg.onload = function() {
+      qrImg.classList.remove('d-none');
+      if (qrPh) qrPh.classList.add('d-none');
+    };
+    qrImg.onerror = function() {
+      qrImg.classList.add('d-none');
+      if (qrPh) {
+        qrPh.classList.remove('d-none');
+        qrPh.textContent = 'QR indisponível. Aguarde ou clique em Conectar de novo.';
+      }
+    };
+    qrImg.src = base + lineId + '/whatsapp/qr/?t=' + ts;
+  }
+
+  function hideQr(lineId) {
+    const qrWrap = document.getElementById('qr-wrap-' + lineId);
+    const qrImg = document.getElementById('qr-' + lineId);
+    if (qrWrap) qrWrap.classList.add('d-none');
+    if (qrImg) {
+      qrImg.classList.add('d-none');
+      qrImg.removeAttribute('src');
+    }
+    if (lineUi[lineId]) lineUi[lineId].showingQr = false;
+  }
+
+  function updateLine(lineId, data) {
+    const st = data.status || 'disconnected';
+    const pill = document.getElementById('pill-' + lineId);
+    const msg = document.getElementById('msg-' + lineId);
+    const pairWrap = document.getElementById('pair-wrap-' + lineId);
+    const pairCode = document.getElementById('pair-code-' + lineId);
+    if (!pill) return;
+
+    const ui = lineUi[lineId] || {};
+    const showQr =
+      st === 'qr' ||
+      (ui.showingQr && (st === 'connecting' || st === 'qr'));
+
+    if (st === 'qr') {
+      lineUi[lineId] = { ...ui, showingQr: true };
+    }
+
+    pill.className = 'wa-status-pill ' + (showQr ? 'qr' : st);
+    pill.textContent = labels[showQr ? 'qr' : st] || st;
+    if (msg) {
+      let hint = data.message || '';
+      if (data.has_stale_auth) {
+        hint = data.message || hint;
+      } else if (data.status_from_cache && data.status === 'connected') {
+        hint += ' (worker parado — reinicie o runserver)';
+      }
+      msg.textContent = hint;
+    }
+
+    if (showQr) {
+      loadQrImage(lineId, data.qr_updated_at || ui.qrLoadedTs || Date.now());
+    } else {
+      hideQr(lineId);
+    }
+
+    if (pairWrap) pairWrap.classList.toggle('d-none', !(st === 'pairing' && data.pairing_code));
+    if (pairCode && data.pairing_code) pairCode.textContent = data.pairing_code;
+  }
+
+  async function pollLine(lineId) {
+    try {
+      const r = await fetch(base + lineId + '/whatsapp/status/', {
+        credentials: 'same-origin',
+        headers: pollHeaders,
+      });
+      updateLine(lineId, await r.json());
+    } catch (e) {}
+  }
+
+  function dismissGlobalLoading() {
+    if (window.globalLoadingScreen) window.globalLoadingScreen.forceHide();
+  }
+  dismissGlobalLoading();
+  document.addEventListener('DOMContentLoaded', dismissGlobalLoading);
+
+  refreshWorkerUi();
+  setInterval(refreshWorkerUi, 5000);
+
+  document.querySelectorAll('[data-line-id]').forEach(el => {
+    const id = el.getAttribute('data-line-id');
+    if (id) pollLine(id);
+  });
+  setInterval(() => {
+    document.querySelectorAll('.wa-line-card').forEach(card => {
+      const id = card.getAttribute('data-line-id');
+      if (id) pollLine(id);
+    });
+  }, 5000);
+
+  document.querySelectorAll('.btn-wa-connect').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const lineId = btn.getAttribute('data-line-id');
+      if (!(await refreshWorkerUi())) {
+        alert('Worker MENSAGENS offline. Reinicie: python manage.py runserver');
+        return;
+      }
+      btn.disabled = true;
+      try {
+        const r = await fetch(base + lineId + '/whatsapp/conectar/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrf, 'X-Skip-Global-Loading': '1' },
+          credentials: 'same-origin'
+        });
+        const d = await r.json();
+        if (d.error) alert(d.error);
+        else pollLine(lineId);
+      } finally {
+        btn.disabled = false;
+        refreshWorkerUi();
+      }
+    });
+  });
+
+  document.querySelectorAll('.btn-wa-clear').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const lineId = btn.getAttribute('data-line-id');
+      if (!confirm('Apagar credenciais deste chip no servidor? Você precisará escanear o QR de novo.')) return;
+      btn.disabled = true;
+      try {
+        const r = await fetch(base + lineId + '/whatsapp/limpar-sessao/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrf, 'X-Skip-Global-Loading': '1' },
+          credentials: 'same-origin'
+        });
+        const d = await r.json();
+        if (d.error) alert(d.error);
+        pollLine(lineId);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  document.querySelectorAll('.btn-wa-disconnect').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const lineId = btn.getAttribute('data-line-id');
+      if (!confirm('Desconectar e apagar credenciais deste chip? (novo QR na próxima conexão)')) return;
+      const fd = new FormData();
+      fd.append('delete_auth', '1');
+      btn.disabled = true;
+      try {
+        const r = await fetch(base + lineId + '/whatsapp/desconectar/', {
+          method: 'POST', headers: { 'X-CSRFToken': csrf }, body: fd, credentials: 'same-origin'
+        });
+        const d = await r.json();
+        if (d.error) alert(d.error);
+        else pollLine(lineId);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  function toggleNewPhone() {
+    const mode = document.querySelector('input[name="login_mode"]:checked');
+    const wrap = document.getElementById('new-line-phone-wrap');
+    if (wrap) wrap.classList.toggle('is-visible', Boolean(mode && mode.value === 'pairing'));
+  }
+  document.querySelectorAll('input[name="login_mode"]').forEach(el => el.addEventListener('change', toggleNewPhone));
+  toggleNewPhone();
+
+  const filterOn = document.getElementById('id_filter_enabled');
+  const filterBlock = document.getElementById('filter-rules-block');
+  function toggleFilterBlock() {
+    if (filterBlock) filterBlock.classList.toggle('is-dimmed', !(filterOn && filterOn.checked));
+  }
+  if (filterOn) {
+    filterOn.addEventListener('change', toggleFilterBlock);
+    toggleFilterBlock();
+  }
+
+  document.querySelectorAll('.edit-phone-wrap').forEach(wrap => {
+    const lineId = wrap.getAttribute('data-line-id');
+    const prefix = 'edit' + lineId + '_';
+    const radios = document.querySelectorAll('input[name="' + prefix + 'login_mode"]');
+    function toggle() {
+      const checked = document.querySelector('input[name="' + prefix + 'login_mode"]:checked');
+      wrap.classList.toggle('is-visible', Boolean(checked && checked.value === 'pairing'));
+    }
+    radios.forEach(r => r.addEventListener('change', toggle));
+    toggle();
+  });
+})();
+</script>
+{% endblock %}

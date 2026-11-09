@@ -1,0 +1,166 @@
+/* Estilos do LoadingManager — transições suaves (RM Systems) */
+
+.loading-state {
+  position: relative;
+  pointer-events: none;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  animation: ls-fade-in 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  animation: ls-overlay-in 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-content i {
+  font-size: 2rem;
+  color: var(--rm-primary, #003366);
+  animation: ls-spin 0.9s linear infinite;
+}
+
+.loading-text {
+  font-weight: 600;
+  color: var(--rm-text-primary, #2c3e50);
+  animation: ls-text-pulse 1.6s ease-in-out infinite;
+}
+
+.loading-button {
+  opacity: 0.75;
+  cursor: not-allowed !important;
+  transition: opacity 0.2s ease;
+}
+
+.loading-input {
+  opacity: 0.55;
+  cursor: not-allowed !important;
+  transition: opacity 0.2s ease;
+}
+
+.form-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(248, 249, 250, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: ls-overlay-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: var(--rm-card-bg, #fff);
+  border: 1px solid var(--rm-border-primary, #dee2e6);
+  border-radius: var(--rm-border-radius-lg, 0.75rem);
+  box-shadow: var(--rm-shadow-md, 0 10px 24px rgba(0, 51, 102, 0.1));
+  transform: scale(0.96);
+  opacity: 0;
+  animation: ls-card-in 0.38s cubic-bezier(0.34, 1.1, 0.64, 1) forwards;
+}
+
+.form-loading-content i {
+  font-size: 1.75rem;
+  color: var(--rm-primary, #003366);
+  animation: ls-spin 0.85s linear infinite;
+}
+
+.table-loading {
+  text-align: center;
+  padding: 3rem;
+  animation: ls-fade-in 0.35s ease;
+}
+
+.table-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.table-loading-content i {
+  animation: ls-spin 0.9s linear infinite;
+  color: var(--rm-primary, #003366);
+}
+
+[data-theme="dark"] .loading-overlay {
+  background: rgba(18, 18, 18, 0.82);
+}
+
+[data-theme="dark"] .form-loading-overlay {
+  background: rgba(18, 18, 18, 0.88);
+}
+
+[data-theme="dark"] .form-loading-content {
+  background: var(--rm-card-bg, #1e1e1e);
+  color: var(--rm-text-primary, #e0e0e0);
+  border-color: var(--rm-border-primary, #424242);
+}
+
+@keyframes ls-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ls-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ls-card-in {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ls-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ls-text-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-container,
+  .loading-overlay,
+  .form-loading-overlay,
+  .form-loading-content,
+  .table-loading,
+  .loading-content i,
+  .form-loading-content i,
+  .table-loading-content i,
+  .loading-text {
+    animation: none !important;
+  }
+  .form-loading-content {
+    opacity: 1;
+    transform: none;
+  }
+}

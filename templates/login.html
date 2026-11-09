@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#003366">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="RM Systems">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>RM Systems</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/icon-rm-192.png' %}">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/theme_colors.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/platform.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ds/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ds/theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ds/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ds/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ds/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ds/utilities.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile-scroll-fix.css' %}">
+    <script nonce="{{ csp_nonce }}">
+      (function(){var k='rm-theme';try{var t=localStorage.getItem(k)||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+    </script>
+    <!-- Fix específico para iOS - deve ser o último CSS -->
+    <style>
+      /* Fix específico para iPhone/iOS - máxima prioridade */
+      @media (max-width: 768px) {
+        html,
+        body {
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          -webkit-overflow-scrolling: touch !important;
+          position: relative !important;
+          height: auto !important;
+          min-height: 100vh !important;
+          max-height: none !important;
+        }
+        
+        .side-by-side-layout,
+        .info-side,
+        .login-side,
+        .login-card,
+        .form {
+          overflow: visible !important;
+          max-height: none !important;
+          height: auto !important;
+        }
+        
+        body {
+          touch-action: pan-y !important;
+          overscroll-behavior-y: contain !important;
+          padding-bottom: 0 !important;
+          min-height: 100vh !important;
+          height: auto !important;
+          max-height: none !important;
+        }
+        
+        html {
+          min-height: 100vh !important;
+          height: auto !important;
+          max-height: none !important;
+        }
+        
+      }
+    </style>
+    {% include "includes/cdn_fontawesome_6_0_css.html" %}
+</head>
+<body class="auth-page" data-login-scope="rm">
+    {% include "includes/login_background.html" %}
+    <div class="side-by-side-layout">
+        <!-- Lado esquerdo - Informações da empresa -->
+        <div class="info-side">
+            <div class="info-content">
+                <div class="info-container">
+                    <h1 class="main-title">
+                        <span class="title-highlight">Inovação</span> para<br>
+                        conquistar<br>
+                        <span class="title-highlight">resultados</span>
+                    </h1>
+                    
+                    <p class="main-subtitle">Verificador de viabilidade com mapas CTO</p>
+                    
+                    <!-- Features compactas -->
+                    <div class="compact-features">
+                        <div class="compact-feature">
+                            <h4>Precisão de análise</h4>
+                            <p>Valida mapas CTO com regras consistentes.</p>
+                        </div>
+                        <div class="compact-feature">
+                            <h4>Relatórios rápidos</h4>
+                            <p>Resumo executivo em segundos.</p>
+                        </div>
+                        <div class="compact-feature">
+                            <h4>Integração simples</h4>
+                            <p>Upload direto e histórico centralizado.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lado direito - Formulário de login -->
+        <div class="login-side">
+            <div class="login-card">
+                <div class="logo-container auth-logo-stack">
+                    <img src="{% static 'img/letreiro-rm.png' %}" alt="RM Systems" class="login-logo login-logo--wordmark" width="260" height="52">
+                </div>
+                <h2 class="card-title">Entre em sua conta</h2>
+                
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li class="{{ message.tags }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                
+                <form method="post" class="form" id="loginForm">
+                    {% csrf_token %}
+                    <div class="form-row" id="rowEmail">
+                        <label for="id_username">E-mail ou usuário</label>
+                        <input type="text" name="username" id="id_username" placeholder="email@exemplo.com ou usuário" required autocomplete="username">
+                    </div>
+                    
+                    <div class="form-row" id="rowPassword">
+                        <label for="id_password">Senha</label>
+                        <div class="password-input-container">
+                            <input type="password" name="password" id="id_password" required autocomplete="current-password">
+                            <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar senha">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="remember">
+                        <input type="checkbox" id="rememberEmail" name="remember">
+                        <label for="rememberEmail">Lembrar login e senha</label>
+                    </div>
+                    
+                    <button type="submit" class="btn primary full-width" id="actionBtn">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/login.js' %}"></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/dark-mode.js' %}"></script>
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/rm-ui.js' %}" defer></script>
+    <!-- PWA Service Worker -->
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/pwa.js' %}"></script>
+    {% include 'includes/auth_login_footer.html' %}
+    {% include 'includes/auth_mobile_scroll_fix.html' %}
+</body>
+</html>

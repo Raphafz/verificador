@@ -1,0 +1,366 @@
+/**
+ * Formulários administrativos RM — empresa, usuários, etc.
+ */
+
+body.rm-form-page .main-container {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(37, 99, 235, 0.1), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 95% 0%, rgba(6, 182, 212, 0.06), transparent 50%),
+    var(--rm-bg-primary);
+}
+
+.rm-form-page .rm-form {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.rm-form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--rm-primary);
+  background: var(--rm-primary-50, rgba(0, 51, 102, 0.1));
+  border: 1px solid rgba(0, 51, 102, 0.2);
+  border-radius: 999px;
+}
+
+[data-theme="dark"] .rm-form-badge {
+  background: rgba(0, 51, 102, 0.2);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.rm-panel__btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--rm-text-primary) !important;
+  text-decoration: none !important;
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-border-surface, var(--rm-card-border));
+  transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.rm-panel__btn-secondary:hover {
+  border-color: var(--rm-primary);
+  color: var(--rm-primary) !important;
+  transform: translateY(-1px);
+}
+
+/* —— Seções —— */
+.rm-form-section {
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-border-surface, var(--rm-card-border));
+  border-radius: 1.25rem;
+  padding: 1.35rem 1.5rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--rm-shadow-sm, 0 4px 20px rgba(15, 23, 42, 0.06));
+}
+
+.rm-form-section__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.35rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rm-border-surface, var(--rm-card-border));
+}
+
+.rm-form-section__icon {
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, rgba(0, 51, 102, 0.15), rgba(6, 182, 212, 0.12));
+  color: var(--rm-primary);
+  font-size: 1.15rem;
+}
+
+.rm-form-section__head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--rm-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.rm-form-section__head p {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--rm-text-secondary);
+}
+
+.rm-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem 1.25rem;
+}
+
+.rm-form-grid--full {
+  grid-template-columns: 1fr;
+}
+
+.rm-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rm-form-field--full {
+  grid-column: 1 / -1;
+}
+
+.rm-form-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--rm-text-primary);
+  margin: 0;
+}
+
+.rm-form-label.required::after {
+  content: ' *';
+  color: var(--rm-error, #dc2626);
+}
+
+.rm-form-hint {
+  font-size: 0.75rem;
+  color: var(--rm-text-secondary);
+  margin: 0.15rem 0 0;
+  line-height: 1.45;
+}
+
+.rm-form-field .form-control,
+.rm-form-field .form-select {
+  border-radius: 0.65rem !important;
+  padding: 0.6rem 0.85rem !important;
+  font-size: 0.9rem !important;
+  background: var(--rm-input-bg) !important;
+  border: 1px solid var(--rm-input-border) !important;
+  color: var(--rm-text-primary) !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.rm-form-field .form-control:focus,
+.rm-form-field .form-select:focus {
+  border-color: var(--rm-primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.15) !important;
+}
+
+.rm-form-field .text-danger {
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+/* Switch / checkbox linha */
+.rm-form-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: var(--rm-bg-secondary);
+  border: 1px solid var(--rm-border-surface, var(--rm-card-border));
+  border-radius: 0.85rem;
+  grid-column: 1 / -1;
+}
+
+.rm-form-switch .form-check-input {
+  width: 2.5rem;
+  height: 1.35rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+.rm-form-switch .form-check-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--rm-text-primary);
+  cursor: pointer;
+  margin: 0;
+}
+
+.rm-form-switch__hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--rm-text-secondary);
+  font-weight: 400;
+  margin-top: 0.15rem;
+}
+
+/* Plano — destaque */
+.rm-form-plan-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rm-form-plan-limits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.rm-form-plan-chip {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: var(--rm-bg-secondary);
+  border: 1px solid var(--rm-border-surface, var(--rm-card-border));
+  color: var(--rm-text-secondary);
+}
+
+/* Módulos — cards */
+.rm-module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem;
+}
+
+.rm-module-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.15rem;
+  border-radius: 1rem;
+  border: 2px solid var(--rm-border-surface, var(--rm-card-border));
+  background: var(--rm-bg-secondary);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  user-select: none;
+}
+
+.rm-module-card:hover {
+  border-color: rgba(0, 51, 102, 0.35);
+}
+
+.rm-module-card.is-checked {
+  border-color: var(--rm-primary);
+  background: var(--rm-primary-50, rgba(0, 51, 102, 0.08));
+  box-shadow: 0 4px 16px rgba(0, 51, 102, 0.12);
+}
+
+[data-theme="dark"] .rm-module-card.is-checked {
+  background: rgba(0, 51, 102, 0.15);
+}
+
+/* Input cobre o card inteiro para o clique funcionar */
+.rm-module-card__input,
+.rm-module-card input[type="checkbox"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: auto;
+}
+
+.rm-module-card__icon,
+.rm-module-card__title,
+.rm-module-card__desc,
+.rm-module-card__check {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.rm-module-card__check {
+  position: absolute;
+  z-index: 1;
+}
+
+.rm-module-card__icon {
+  font-size: 1.35rem;
+  color: var(--rm-primary);
+  margin-bottom: 0.15rem;
+}
+
+.rm-module-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--rm-text-primary);
+}
+
+.rm-module-card__desc {
+  font-size: 0.75rem;
+  color: var(--rm-text-secondary);
+  line-height: 1.4;
+}
+
+.rm-module-card__check {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  border: 2px solid var(--rm-border-surface, var(--rm-card-border));
+  background: var(--rm-card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: transparent;
+  transition: all 0.18s ease;
+}
+
+.rm-module-card.is-checked .rm-module-card__check {
+  background: var(--rm-primary);
+  border-color: var(--rm-primary);
+  color: #fff;
+}
+
+/* Ações */
+.rm-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1.25rem 0 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.rm-form-actions .rm-panel__btn-primary {
+  border: none;
+  cursor: pointer;
+}
+
+.rm-form-actions .rm-panel__btn-primary i {
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .rm-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rm-form-section {
+    padding: 1.15rem;
+  }
+
+  .rm-panel__hero {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .rm-panel__hero .rm-panel__btn-secondary {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ticket {{ ticket.ticket_number }} — {{ company.name }}{% endblock %}
+{% block body_class %}dashboard-page company-tickets-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/tickets-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="saas-page company-tickets ds-content-enter">
+  <header class="company-tickets__hero">
+    <div>
+      <span class="company-tickets__badge"><i class="fas fa-ticket-alt me-1" aria-hidden="true"></i>{{ ticket.ticket_number }}</span>
+      <h2>{{ ticket.title }}</h2>
+      <p class="company-tickets__hero-lead">Acompanhe o andamento e converse com a equipe RM Systems.</p>
+    </div>
+    <div class="company-tickets__hero-actions">
+      <a href="{% url 'company:ticket_list' company.slug %}" class="company-tickets__btn-clear btn">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i> Meus tickets
+      </a>
+    </div>
+  </header>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="company-tickets-detail__layout">
+    <section class="company-tickets-chat" id="ticketChatRoot"
+      data-poll-url="{% url 'company:get_new_messages' company.slug ticket.id %}"
+      data-user-name="{{ request.user.get_full_name|default:request.user.username }}"
+      data-user-role="{{ request.user.role }}"
+      data-last-message-id="{% for msg in chat_messages %}{% if forloop.last %}{{ msg.id }}{% endif %}{% empty %}0{% endfor %}">
+      <div class="company-tickets-chat__header">
+        <div class="company-tickets-chat__header-top">
+          <h3><i class="fas fa-comments me-2" aria-hidden="true"></i>Conversa</h3>
+          {% if ticket.status != 'fechado' %}
+          <span class="company-tickets-chat__live" title="Novas mensagens são carregadas automaticamente">
+            <span class="company-tickets-chat__live-dot" aria-hidden="true"></span> Ao vivo
+          </span>
+          {% endif %}
+        </div>
+        <small>Você será notificado por e-mail quando a equipe RM responder.</small>
+      </div>
+
+      <div class="company-tickets-chat__messages" id="chatMessages">
+        {% for msg in chat_messages %}
+          {% with author=msg.sent_by.get_full_name|default:msg.sent_by.username %}
+          <div class="company-tickets-chat__message {% if msg.sent_by == request.user %}company-tickets-chat__message--mine{% endif %}{% if msg.sent_by.role == 'RM' %} company-tickets-chat__message--rm{% endif %}"
+               data-message-id="{{ msg.id }}">
+            <span class="company-tickets-chat__avatar" aria-hidden="true">{{ author|slice:":1"|upper }}</span>
+            <div>
+              {% if msg.sent_by.role == 'RM' %}
+                <span class="company-tickets-chat__role">Equipe RM Systems</span>
+              {% endif %}
+              <div class="company-tickets-chat__bubble">{{ msg.message|linebreaksbr }}</div>
+              <div class="company-tickets-chat__meta">
+                <strong>{{ author }}</strong> · {{ msg.created_at|date:"d/m/Y H:i" }}
+              </div>
+            </div>
+          </div>
+          {% endwith %}
+        {% empty %}
+          <div class="company-tickets-chat__empty">
+            <i class="fas fa-comments d-block" aria-hidden="true"></i>
+            <p class="mb-1"><strong>Nenhuma resposta ainda</strong></p>
+            <p class="mb-0 small">A descrição inicial está no painel ao lado. Envie uma mensagem abaixo se precisar complementar.</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="company-tickets-chat__input">
+        {% if ticket.status != 'fechado' %}
+        <form method="post" id="messageForm" class="company-tickets-chat__composer">
+          {% csrf_token %}
+          <label for="{{ form.message.id_for_label }}">Sua mensagem</label>
+          {{ form.message }}
+          {% if form.message.errors %}
+            <div class="text-danger small mt-1">{{ form.message.errors }}</div>
+          {% endif %}
+          <div class="company-tickets-chat__composer-actions">
+            <p class="company-tickets-chat__composer-hint mb-0">Seja objetivo — isso agiliza o suporte.</p>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-paper-plane me-1" aria-hidden="true"></i> Enviar
+            </button>
+          </div>
+        </form>
+        {% else %}
+        <div class="alert alert-secondary mb-0 py-2">
+          <i class="fas fa-lock me-2" aria-hidden="true"></i>
+          Ticket fechado — não é possível enviar novas mensagens.
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <aside class="company-tickets-detail__sidebar">
+      <div class="company-tickets-detail__card">
+        <p class="company-tickets-detail__card-title">Status do chamado</p>
+        <div class="company-tickets-detail__badges">
+          <span class="company-tickets__badge-pill" style="background-color: {{ ticket.get_status_color }};">
+            {{ ticket.get_status_display }}
+          </span>
+          <span class="company-tickets__badge-pill" style="background-color: {{ ticket.get_priority_color }};">
+            {{ ticket.get_priority_display }}
+          </span>
+        </div>
+        {% if ticket.assigned_to %}
+        <div class="company-tickets-detail__status-hint company-tickets-detail__status-hint--assigned">
+          <i class="fas fa-user-check" aria-hidden="true"></i>
+          <span>Atendido por <strong>{{ ticket.assigned_to.get_full_name|default:ticket.assigned_to.username }}</strong></span>
+        </div>
+        {% else %}
+        <div class="company-tickets-detail__status-hint">
+          <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+          <span>Aguardando atribuição da equipe RM</span>
+        </div>
+        {% endif %}
+        <div class="company-tickets-detail__meta">
+          <span><i class="fas fa-calendar me-1" aria-hidden="true"></i>{{ ticket.created_at|date:"d/m/Y H:i" }}</span>
+        </div>
+      </div>
+
+      <div class="company-tickets-detail__card">
+        <p class="company-tickets-detail__card-title">Descrição inicial</p>
+        <div class="company-tickets-detail__desc">{{ ticket.description|linebreaksbr }}</div>
+      </div>
+
+      <div class="company-tickets-detail__card">
+        <p class="company-tickets-detail__card-title">Detalhes</p>
+        <ul class="company-tickets-detail__facts">
+          <li>
+            <i class="fas fa-building" aria-hidden="true"></i>
+            <span>Empresa: <strong>{{ company.name }}</strong></span>
+          </li>
+          <li>
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span>Aberto por: <strong>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</strong></span>
+          </li>
+          {% if ticket.updated_at %}
+          <li>
+            <i class="fas fa-sync" aria-hidden="true"></i>
+            <span>Atualizado: <strong>{{ ticket.updated_at|date:"d/m/Y H:i" }}</strong></span>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      {% if ticket.status != 'fechado' %}
+        {% if ticket.created_by == request.user or request.user.is_company_admin %}
+        <div class="company-tickets-detail__card company-tickets-detail__close-form">
+          <p class="company-tickets-detail__card-title">Encerrar</p>
+          <p class="small text-muted mb-2">Após fechar, não será possível enviar novas mensagens.</p>
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="close_ticket" class="btn btn-outline-danger"
+              onclick="return confirm('Fechar este ticket? Você não poderá enviar novas mensagens.');">
+              <i class="fas fa-lock me-1" aria-hidden="true"></i> Fechar ticket
+            </button>
+          </form>
+        </div>
+        {% endif %}
+      {% else %}
+        <div class="company-tickets-detail__card">
+          <span class="badge bg-secondary w-100 py-2"><i class="fas fa-lock me-1" aria-hidden="true"></i> Ticket fechado</span>
+        </div>
+      {% endif %}
+    </aside>
+  </div>
+</div>
+
+<script nonce="{{ csp_nonce }}" src="{% static 'js/dom-safe.js' %}"></script>
+<script nonce="{{ csp_nonce }}" src="{% static 'js/ticket-detail.js' %}"></script>
+{% endblock %}

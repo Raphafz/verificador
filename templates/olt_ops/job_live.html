@@ -1,0 +1,67 @@
+{% extends "olt_ops/base_olt.html" %}
+
+{% block title %}Operação ao vivo — {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="saas-page olt-console rm-v2-route-enter" data-no-global-loading="1" id="oltLiveShell" data-status-url="{{ status_url }}">
+  <header class="saas-page-header">
+    <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="saas-breadcrumb">
+      <i class="fas fa-arrow-left"></i> OLT / ONU
+    </a>
+    <h2>Operação ao vivo</h2>
+    <p class="saas-lead mb-0">
+      {{ job.olt.name }}
+      {% if job.gpon_port %} · Porta {{ job.gpon_port }}{% endif %}
+    </p>
+  </header>
+
+  <div class="olt-live-shell">
+    <div class="olt-live-status" id="liveStatusBar">
+      <div>
+        <span class="ds-badge ds-badge--{{ job.status }}" id="jobStatusBadge">
+          <span class="ds-badge__dot"></span>
+          <span id="jobStatusLabel">{{ job.get_status_display }}</span>
+        </span>
+        <p class="small text-muted mb-0 mt-2" id="jobStatusHint">Conectando na OLT…</p>
+      </div>
+      <div class="olt-live-status__progress">
+        <span class="small text-muted">Progresso</span>
+        <div class="olt-live-status__progress-bar">
+          <div class="olt-live-status__progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-none" id="summaryPanel">
+      <div class="olt-live-summary" id="jobSummary"></div>
+    </div>
+
+    <div class="ds-card" id="logWrap">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+        <h3 class="ds-card__title mb-0">
+          <span class="spinner-border spinner-border-sm text-primary me-2" id="jobSpinner" role="status"></span>
+          Log completo (OLT + VPN)
+        </h3>
+        <div class="d-flex gap-2">
+          <button type="button" class="ds-btn ds-btn--ghost py-1 px-2" id="btnToggleLog">Ocultar log técnico</button>
+          <button type="button" class="ds-btn ds-btn--outline py-1 px-2" id="btnCopyLiveLog" disabled>
+            <i class="fas fa-copy"></i> Copiar
+          </button>
+        </div>
+      </div>
+      <pre class="olt-live-log mb-0" id="liveLogPre" aria-live="polite">Aguardando resposta da OLT…</pre>
+    </div>
+
+    <div class="ds-card d-none" id="resultPanel">
+      <h3 class="ds-card__title" id="resultTitle"></h3>
+      <textarea class="form-control font-monospace olt-live-serials d-none" rows="8" readonly id="resultSerials"></textarea>
+      <p class="mb-0 small text-muted d-none" id="resultMessage"></p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{% url 'company:olt_ops:home' company_slug=company.slug %}" class="ds-btn ds-btn--outline">Voltar</a>
+      <a href="{% url 'company:olt_ops:job_detail' company_slug=company.slug pk=job.pk %}" class="ds-btn ds-btn--ghost d-none" id="btnStaticLog">Ver histórico</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

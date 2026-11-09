@@ -1,0 +1,18 @@
+{% if show %}
+<nav class="rm-breadcrumb-bar rm-breadcrumb-shell" aria-label="Breadcrumb">
+  <ol class="rm-breadcrumb-bar__list">
+    {% for crumb in crumbs %}
+    <li class="rm-breadcrumb-bar__item">
+      {% if crumb.url and not forloop.last %}
+      <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+      {% else %}
+      <span class="rm-breadcrumb-bar__current"{% if forloop.last %} aria-current="page"{% endif %}>{{ crumb.label }}</span>
+      {% endif %}
+      {% if not forloop.last %}
+      <span class="rm-breadcrumb-bar__sep" aria-hidden="true">/</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</nav>
+{% endif %}

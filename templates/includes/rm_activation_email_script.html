@@ -1,0 +1,122 @@
+<script nonce="{{ csp_nonce }}">
+(function () {
+  if (window.__rmUserEmailInit) return;
+  window.__rmUserEmailInit = true;
+
+  function getCookie(name) {
+    const value = '; ' + document.cookie;
+    const parts = value.split('; ' + name + '=');
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  function getCsrfToken() {
+    return (
+      getCookie('csrftoken') ||
+      document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+      ''
+    );
+  }
+
+  function showEmailFeedback(type, message) {
+    const toast = document.getElementById('rmActivationToast');
+    const text = document.getElementById('rmActivationToastText');
+    if (toast && text) {
+      toast.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-warning');
+      toast.classList.add(
+        type === 'success' ? 'alert-success' : type === 'warning' ? 'alert-warning' : 'alert-danger'
+      );
+      text.textContent = message;
+      toast.classList.add('show');
+      toast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return;
+    }
+    alert(message);
+  }
+
+  function templateLabel(selectEl) {
+    if (!selectEl || !selectEl.options.length) return 'e-mail';
+    const opt = selectEl.options[selectEl.selectedIndex];
+    return opt ? opt.textContent.trim() : 'e-mail';
+  }
+
+  document.addEventListener('click', function (event) {
+    const btn = event.target.closest('.rm-send-email-btn, .rm-send-activation-btn');
+    if (!btn || btn.disabled) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const userId = btn.dataset.userId;
+    const userEmail = btn.dataset.userEmail || '';
+    if (!userId) return;
+
+    const group = btn.closest('.rm-email-send-group');
+    const selectEl = group ? group.querySelector('.rm-email-template-select') : null;
+    const templateId = selectEl ? selectEl.value : 'activation';
+    const templateName = templateLabel(selectEl);
+
+    const csrftoken = getCsrfToken();
+    if (!csrftoken) {
+      showEmailFeedback('error', 'Token CSRF ausente. Recarregue a página e tente novamente.');
+      return;
+    }
+
+    if (!confirm('Enviar e-mail «' + templateName + '» para ' + userEmail + '?')) {
+      return;
+    }
+
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i>';
+
+    const body = new URLSearchParams();
+    body.set('template', templateId);
+
+    fetch('/rm/usuarios/' + userId + '/enviar-email/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      credentials: 'same-origin',
+      body: body.toString(),
+    })
+      .then(function (response) {
+        return response.text().then(function (raw) {
+          let data = {};
+          try {
+            data = raw ? JSON.parse(raw) : {};
+          } catch (e) {
+            data = {
+              message: response.ok
+                ? 'Resposta inválida do servidor.'
+                : (raw || 'Erro no servidor.'),
+            };
+          }
+          return { ok: response.ok, status: response.status, data: data };
+        });
+      })
+      .then(function (result) {
+        if (result.ok && result.data.success) {
+          showEmailFeedback('success', result.data.message);
+        } else if (result.status === 403) {
+          showEmailFeedback(
+            'error',
+            'Sessão expirada ou CSRF inválido. Recarregue a página e faça login novamente.'
+          );
+        } else {
+          showEmailFeedback('error', result.data.message || 'Erro ao enviar e-mail');
+        }
+      })
+      .catch(function () {
+        showEmailFeedback('error', 'Falha de rede ao enviar e-mail. Verifique a conexão.');
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      });
+  });
+})();
+</script>

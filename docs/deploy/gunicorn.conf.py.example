@@ -1,0 +1,31 @@
+# Gunicorn — produção RM Systems
+# Uso: gunicorn -c docs/deploy/gunicorn.conf.py.example saas_viabilidade.wsgi:application
+
+import multiprocessing
+import os
+
+bind = os.getenv("GUNICORN_BIND", "127.0.0.1:8000")
+workers = int(os.getenv("GUNICORN_WORKERS", max(2, multiprocessing.cpu_count() * 2 + 1)))
+threads = int(os.getenv("GUNICORN_THREADS", "2"))
+worker_class = "gthread"
+timeout = int(os.getenv("GUNICORN_TIMEOUT", "120"))
+graceful_timeout = 30
+keepalive = 5
+max_requests = int(os.getenv("GUNICORN_MAX_REQUESTS", "1000"))
+max_requests_jitter = 50
+
+# Segurança
+limit_request_line = 4096
+limit_request_fields = 100
+limit_request_field_size = 8190
+forwarded_allow_ips = os.getenv("GUNICORN_FORWARDED_ALLOW_IPS", "127.0.0.1")
+
+accesslog = os.getenv("GUNICORN_ACCESS_LOG", "-")
+errorlog = os.getenv("GUNICORN_ERROR_LOG", "-")
+loglevel = os.getenv("GUNICORN_LOG_LEVEL", "info")
+capture_output = True
+
+# Headers proxy (Nginx)
+raw_env = [
+    f"DJANGO_SETTINGS_MODULE={os.getenv('DJANGO_SETTINGS_MODULE', 'saas_viabilidade.settings')}",
+]

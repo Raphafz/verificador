@@ -1,0 +1,47 @@
+{% extends "core/email/base_transactional.html" %}
+
+{% block email_title %}Novo ticket {{ ticket.ticket_number }}{% endblock %}
+
+{% block email_preheader %}
+Novo chamado de {{ company.name }}: {{ ticket.ticket_number }} — {{ ticket.title }}
+{% endblock %}
+
+{% block email_body %}
+<h2 style="margin:0 0 20px;font-family:'Montserrat',Arial,sans-serif;color:#003366;font-size:20px;font-weight:600;">
+  Novo ticket de suporte
+</h2>
+
+<p style="margin:0 0 15px;font-size:15px;color:#2C3E50;line-height:1.6;">
+  {% if opened_by_company_admin %}
+  O administrador da empresa <strong>{{ actor.get_full_name|default:actor.username }}</strong> abriu um novo chamado em <strong>{{ company.name }}</strong>.
+  {% else %}
+  Um novo chamado foi aberto em <strong>{{ company.name }}</strong> por <strong>{{ user.get_full_name|default:user.username }}</strong>.
+  {% endif %}
+</p>
+
+<div style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:20px;margin:20px 0;">
+  <p style="margin:0 0 12px;font-size:22px;font-weight:700;color:#003366;">{{ ticket.ticket_number }}</p>
+  <p style="margin:0 0 8px;font-size:14px;color:#2C3E50;"><strong>Título:</strong> {{ ticket.title }}</p>
+  <p style="margin:0 0 8px;font-size:14px;color:#2C3E50;"><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+  <p style="margin:0 0 8px;font-size:14px;color:#2C3E50;"><strong>Prioridade:</strong> {{ ticket.get_priority_display }}</p>
+  <p style="margin:0 0 8px;font-size:14px;color:#2C3E50;"><strong>Solicitante:</strong> {{ user.get_full_name|default:user.username }}{% if user.email %} ({{ user.email }}){% endif %}</p>
+  <p style="margin:12px 0 0;font-size:14px;color:#2C3E50;"><strong>Descrição:</strong></p>
+  <div style="margin-top:8px;padding:12px;background:#ffffff;border-radius:6px;font-size:14px;color:#212529;line-height:1.5;">
+    {{ ticket.description|linebreaks }}
+  </div>
+</div>
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:24px auto;">
+  <tr>
+    <td align="center" bgcolor="#003366" style="background-color:#003366;border-radius:8px;">
+      <a href="{{ ticket_url }}" style="display:inline-block;padding:12px 30px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">
+        Atender no painel RM
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:20px 0 0;font-size:13px;color:#6c757d;line-height:1.6;">
+  Este e-mail foi enviado automaticamente pelo sistema de tickets RM Systems.
+</p>
+{% endblock %}

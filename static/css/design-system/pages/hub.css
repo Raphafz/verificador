@@ -1,0 +1,32 @@
+/**
+ * RM Systems DS — Hub page
+ */
+
+.rm-ui-v2 .platform-hub__hero {
+  border-bottom-color: var(--ds-border-subtle);
+}
+
+.rm-ui-v2 .module-card {
+  border-radius: var(--ds-radius-lg);
+  border-color: var(--ds-border-default);
+  background: var(--ds-bg-elevated);
+  box-shadow: var(--ds-shadow-xs);
+  transition:
+    transform var(--ds-duration-fast) var(--ds-ease-out),
+    box-shadow var(--ds-duration-normal),
+    border-color var(--ds-duration-normal);
+}
+
+.rm-ui-v2 .module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ds-shadow-md);
+  border-color: var(--ds-border-accent);
+}
+
+.rm-ui-v2 .module-card__icon {
+  border-radius: var(--ds-radius-md);
+}
+
+.rm-ui-v2 .platform-hub__title {
+  letter-spacing: -0.03em;
+}

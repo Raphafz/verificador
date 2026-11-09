@@ -1,0 +1,12 @@
+{% comment %}Resolve URL principal de cada módulo{% endcomment %}
+{% if module.code == "verificador" %}
+  {% if user.is_company_admin %}
+    {% url 'company:dashboard' company_slug=company.slug as module_url %}
+  {% else %}
+    {% url 'company:ftth_viewer:index' company_slug=company.slug as module_url %}
+  {% endif %}
+{% elif module.code == "alertas" %}
+  {% url 'company:alerts:settings' company_slug=company.slug as module_url %}
+{% elif module.code == "olt" %}
+  {% url 'company:olt_ops:home' company_slug=company.slug as module_url %}
+{% endif %}

@@ -1,0 +1,156 @@
+{% extends 'docs_base.html' %}
+
+{% block title %}FAQ - Perguntas Frequentes - RM Systems{% endblock %}
+{% block docs_nav_faq %} is-active{% endblock %}
+{% block docs_icon %}fa-question-circle{% endblock %}
+{% block docs_title %}Perguntas Frequentes{% endblock %}
+{% block docs_lead %}Respostas rápidas sobre conta, mapas CTO, verificador de viabilidade e segurança dos dados.{% endblock %}
+
+{% block docs_body %}
+<div class="docs-faq-group">
+  <h2 class="docs-faq-group__title"><i class="fas fa-user" aria-hidden="true"></i> Conta e Acesso</h2>
+
+  <details class="docs-accordion">
+    <summary>Como criar uma conta?</summary>
+    <div class="docs-accordion__body">
+      <p>Entre em contato com o administrador do sistema RM Systems ou com o administrador da sua empresa. Eles criarão sua conta e enviarão as credenciais de acesso por e-mail.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Esqueci minha senha. Como recuperar?</summary>
+    <div class="docs-accordion__body">
+      <p>Na tela de login, clique em <strong>Esqueci minha senha</strong> e informe seu e-mail cadastrado. Você receberá um link seguro para redefinir a senha. Também pode solicitar ajuda ao administrador da empresa.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Posso usar e-mail ou nome de usuário para login?</summary>
+    <div class="docs-accordion__body">
+      <p>Sim. O campo de login aceita tanto seu e-mail quanto seu nome de usuário.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Como alterar minha senha?</summary>
+    <div class="docs-accordion__body">
+      <p>Use a opção de recuperação na tela de login ou peça ao administrador para redefinir sua senha. No primeiro acesso com senha provisória, o sistema pode solicitar a troca obrigatória.</p>
+    </div>
+  </details>
+</div>
+
+<div class="docs-faq-group">
+  <h2 class="docs-faq-group__title"><i class="fas fa-cloud-upload-alt" aria-hidden="true"></i> Upload de Mapas</h2>
+
+  <details class="docs-accordion">
+    <summary>Quais formatos de arquivo são suportados?</summary>
+    <div class="docs-accordion__body">
+      <ul>
+        <li>Excel: .xlsx, .xls</li>
+        <li>CSV: .csv</li>
+        <li>Google Earth: .kml, .kmz</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Qual é o tamanho máximo de arquivo?</summary>
+    <div class="docs-accordion__body">
+      <p>O limite padrão é de <strong>5 MB</strong> por arquivo. Para arquivos maiores, entre em contato com o suporte.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Meu arquivo não foi processado. O que fazer?</summary>
+    <div class="docs-accordion__body">
+      <p>Verifique o formato, o tamanho e se o arquivo não está corrompido. Se o problema persistir, acesse a <a href="{% url 'ajuda' %}">página de Ajuda</a>.</p>
+    </div>
+  </details>
+</div>
+
+<div class="docs-faq-group">
+  <h2 class="docs-faq-group__title"><i class="fas fa-map-marked-alt" aria-hidden="true"></i> Verificador de Viabilidade</h2>
+
+  <details class="docs-accordion">
+    <summary>Como funciona o verificador?</summary>
+    <div class="docs-accordion__body">
+      <p>O sistema analisa a distância até a CTO mais próxima:</p>
+      <ul class="docs-badge-list">
+        <li><span class="docs-badge docs-badge--ok" aria-hidden="true"></span> <strong>Viável:</strong> até 300 m</li>
+        <li><span class="docs-badge docs-badge--warn" aria-hidden="true"></span> <strong>Viabilidade limitada:</strong> 300 m a 800 m</li>
+        <li><span class="docs-badge docs-badge--no" aria-hidden="true"></span> <strong>Sem viabilidade:</strong> acima de 800 m</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Posso verificar múltiplas localizações ao mesmo tempo?</summary>
+    <div class="docs-accordion__body">
+      <p>Sim. Selecione vários mapas no menu lateral para visualizar todas as localizações no mapa simultaneamente.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Os resultados são salvos?</summary>
+    <div class="docs-accordion__body">
+      <p>Sim. Os resultados ficam disponíveis no histórico de análises da sua empresa.</p>
+    </div>
+  </details>
+</div>
+
+<div class="docs-faq-group">
+  <h2 class="docs-faq-group__title"><i class="fas fa-users" aria-hidden="true"></i> Gestão de Usuários</h2>
+
+  <details class="docs-accordion">
+    <summary>Quem pode criar usuários?</summary>
+    <div class="docs-accordion__body">
+      <p>Administradores RM e administradores da empresa (Company Admin). Cada empresa gerencia apenas seus próprios usuários.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Quais são os tipos de usuário?</summary>
+    <div class="docs-accordion__body">
+      <ul>
+        <li><strong>RM Admin:</strong> acesso total ao sistema</li>
+        <li><strong>Company Admin:</strong> gestão da empresa</li>
+        <li><strong>Company User:</strong> uso do verificador e recursos operacionais</li>
+      </ul>
+    </div>
+  </details>
+</div>
+
+<div class="docs-faq-group">
+  <h2 class="docs-faq-group__title"><i class="fas fa-shield-alt" aria-hidden="true"></i> Segurança e Privacidade</h2>
+
+  <details class="docs-accordion">
+    <summary>Meus dados estão seguros?</summary>
+    <div class="docs-accordion__body">
+      <p>Sim. Utilizamos criptografia, isolamento multi-tenant e controles de acesso por perfil. Consulte a <a href="{% url 'politica_privacidade' %}">Política de Privacidade</a>.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>Outras empresas podem ver meus dados?</summary>
+    <div class="docs-accordion__body">
+      <p>Não. Cada empresa acessa apenas seus próprios dados e mapas.</p>
+    </div>
+  </details>
+
+  <details class="docs-accordion">
+    <summary>O sistema está em conformidade com a LGPD?</summary>
+    <div class="docs-accordion__body">
+      <p>Sim. Veja detalhes na <a href="{% url 'lgpd' %}">página de Compliance LGPD</a>.</p>
+    </div>
+  </details>
+</div>
+{% endblock %}
+
+{% block docs_actions_extra %}
+<a href="{% url 'ajuda' %}" class="docs-btn docs-btn--primary">
+  <i class="fas fa-life-ring" aria-hidden="true"></i> Ajuda
+</a>
+<a href="mailto:{{ site_support_email }}" class="docs-btn">
+  <i class="fas fa-envelope" aria-hidden="true"></i> {{ site_support_email }}
+</a>
+{% endblock %}
