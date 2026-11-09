@@ -13,14 +13,6 @@ SaaS **multi-tenant** para provedores de internet (ISPs): verificação de viabi
 | [docs/README.md](docs/README.md) | Índice de toda a documentação |
 | [docs/deploy/DEPLOY.md](docs/deploy/DEPLOY.md) | Deploy em VPS (Nginx + Gunicorn) |
 
-## Autoria e uso
-
-Projeto desenvolvido por **Raphael Ferraz** em parceria com **[castrox-dev](https://github.com/castrox-dev)**.
-
-> ⚠️ **Uso comercial não autorizado.** Este projeto **não autoriza** o uso para comercialização — é proibido vender, sublicenciar, hospedar como serviço pago ou usar este código/produto com fins comerciais sem autorização expressa dos autores.
-
-Licença: [PolyForm Noncommercial 1.0.0](LICENSE) — uso permitido apenas para fins não comerciais.
-
 ---
 
 ## Objetivo
@@ -323,6 +315,12 @@ Backlog interno: [docs/internal/MELHORIAS_A_FAZER.md](docs/internal/MELHORIAS_A_
 ## Licença
 
 Código proprietário RM Systems. Defina termos de uso com o mantenedor antes de redistribuir.
+
+Projeto desenvolvido por **Raphael Ferraz** em parceria com **[castrox-dev](https://github.com/castrox-dev)**.
+
+> ⚠️ **Uso comercial não autorizado.** Este projeto **não autoriza** o uso para comercialização — é proibido vender, sublicenciar, hospedar como serviço pago ou usar este código/produto com fins comerciais sem autorização expressa dos autores.
+
+Licença: [PolyForm Noncommercial 1.0.0](LICENSE) — uso permitido apenas para fins não comerciais.
 
 ---
 
