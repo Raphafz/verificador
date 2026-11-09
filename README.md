@@ -314,8 +314,6 @@ Backlog interno: [docs/internal/MELHORIAS_A_FAZER.md](docs/internal/MELHORIAS_A_
 
 ## Licença
 
-Código proprietário RM Systems. Defina termos de uso com o mantenedor antes de redistribuir.
-
 Projeto desenvolvido por **Raphael Ferraz** em parceria com **[castrox-dev](https://github.com/castrox-dev)**.
 
 > ⚠️ **Uso comercial não autorizado.** Este projeto **não autoriza** o uso para comercialização — é proibido vender, sublicenciar, hospedar como serviço pago ou usar este código/produto com fins comerciais sem autorização expressa dos autores.
